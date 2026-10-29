@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity() {
 
         val channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "overload/notifications")
         WorkoutNotifier.channel = channel
+        registerInstaller(flutterEngine)
         channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "updateWorkout" -> {
@@ -64,6 +65,31 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    private fun registerInstaller(flutterEngine: FlutterEngine) {
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "overload/installer")
+            .setMethodCallHandler { call, result ->
+                when (call.method) {
+                    "abis" -> result.success(Build.SUPPORTED_ABIS.toList())
+                    "canInstall" -> result.success(
+                        Build.VERSION.SDK_INT < 26 || packageManager.canRequestPackageInstalls(),
+                    )
+                    "openInstallSettings" -> {
+                        startActivity(
+                            Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:$packageName")),
+                        )
+                        result.success(null)
+                    }
+                    "install" -> try {
+                        ApkInstaller.install(this, call.arguments as String)
+                        result.success(null)
+                    } catch (e: Exception) {
+                        result.error("install", e.message, null)
+                    }
+                    else -> result.notImplemented()
+                }
+            }
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {

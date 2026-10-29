@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../app/providers.dart';
 import '../../core/format.dart';
@@ -18,6 +17,7 @@ import '../../widgets/common.dart';
 import '../workout/active_workout_controller.dart';
 import '../workout/exercise_card.dart';
 import 'notification_settings.dart';
+import 'update_dialog.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -357,14 +357,11 @@ class SettingsScreen extends ConsumerWidget {
                     update.isLoading
                         ? 'A verificar…'
                         : info != null
-                        ? 'Toca para abrir a página de download'
+                        ? 'Toca para descarregar e instalar'
                         : 'Estás na versão mais recente',
                   ),
                   onTap: info != null
-                      ? () => launchUrl(
-                          Uri.parse(info.url),
-                          mode: LaunchMode.externalApplication,
-                        )
+                      ? () => showUpdateDialog(context, info)
                       : () => ref.invalidate(updateProvider),
                 );
               },
