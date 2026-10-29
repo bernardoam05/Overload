@@ -3,9 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../core/format.dart';
 import '../features/workout/active_workout_controller.dart';
+import 'providers.dart';
 import 'theme.dart';
 
 class AppShell extends ConsumerWidget {
@@ -16,6 +18,21 @@ class AppShell extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final active = ref.watch(activeWorkoutProvider.select((w) => w != null));
+    // Checked once per launch; failures and "up to date" stay silent.
+    ref.listen(updateProvider, (_, next) {
+      final info = next.value;
+      if (info == null) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(
+          content: Text('Nova versão ${info.version} disponível'),
+          duration: const Duration(seconds: 10),
+          action: SnackBarAction(
+            label: 'Ver',
+            onPressed: () => launchUrl(Uri.parse(info.url), mode: LaunchMode.externalApplication),
+          ),
+        ));
+    });
     return Scaffold(
       body: shell,
       bottomNavigationBar: Column(
