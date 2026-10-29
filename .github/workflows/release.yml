@@ -1,0 +1,100 @@
+name: Release
+
+# Publica uma release sempre que a versão no pubspec.yaml muda e ainda não
+# existe a tag correspondente. Para lançar: subir `version:` e fazer push para main.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ler versão do pubspec
+        id: ver
+        run: |
+          full=$(grep -m1 '^version:' pubspec.yaml | awk '{print $2}')
+          echo "name=${full%%+*}" >> "$GITHUB_OUTPUT"
+          echo "build=${full##*+}" >> "$GITHUB_OUTPUT"
+          echo "tag=v${full%%+*}" >> "$GITHUB_OUTPUT"
+
+      - name: Verificar se a tag já existe
+        id: tag
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/${{ steps.ver.outputs.tag }}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-java@v4
+        if: steps.tag.outputs.exists == 'false'
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: subosito/flutter-action@v2
+        if: steps.tag.outputs.exists == 'false'
+        with:
+          channel: stable
+          cache: true
+
+      - name: Dependências, análise e testes
+        if: steps.tag.outputs.exists == 'false'
+        run: |
+          flutter pub get
+          flutter analyze
+          flutter test
+
+      - name: Configurar assinatura
+        if: steps.tag.outputs.exists == 'false'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          for v in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_ALIAS KEY_PASSWORD; do
+            [ -n "${!v}" ] || { echo "::error::Secret em falta: $v"; exit 1; }
+          done
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          cat > android/key.properties <<PROPS
+          storeFile=$RUNNER_TEMP/release.jks
+          storePassword=$KEYSTORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          PROPS
+
+      - name: Build APK
+        if: steps.tag.outputs.exists == 'false'
+        run: |
+          flutter build apk --release --split-per-abi \
+            --build-name=${{ steps.ver.outputs.name }} \
+            --build-number=${{ steps.ver.outputs.build }}
+
+      - name: Renomear artefactos
+        if: steps.tag.outputs.exists == 'false'
+        run: |
+          app=$(grep -m1 '^name:' pubspec.yaml | awk '{print $2}')
+          mkdir dist
+          for f in build/app/outputs/flutter-apk/app-*-release.apk; do
+            abi=$(basename "$f" | sed -E 's/app-(.*)-release.apk/\1/')
+            cp "$f" "dist/${app}-${{ steps.ver.outputs.tag }}-${abi}.apk"
+          done
+          (cd dist && sha256sum * > SHA256SUMS.txt)
+
+      - name: Criar release
+        if: steps.tag.outputs.exists == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.ver.outputs.tag }}" dist/* \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.ver.outputs.tag }}" \
+            --generate-notes

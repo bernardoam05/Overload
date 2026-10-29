@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Monochrome status bar icon: barbell with an upward arrow. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <group
+        android:translateX="-22"
+        android:translateY="-14">
+        <path
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="6"
+            android:strokeLineCap="round"
+            android:pathData="M28,50L28,66M80,50L80,66" />
+        <path
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="8"
+            android:strokeLineCap="round"
+            android:pathData="M36,44L36,72M72,44L72,72" />
+        <path
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="4"
+            android:strokeLineCap="round"
+            android:pathData="M24,58L84,58" />
+        <path
+            android:strokeColor="#FFFFFFFF"
+            android:strokeWidth="4.5"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round"
+            android:pathData="M54,50L54,30M46,38L54,30L62,38" />
+    </group>
+</vector>
