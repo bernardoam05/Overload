@@ -53,123 +53,126 @@ Downloading packages...
 Got dependencies!
 50 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
-00:00 +0: loading /home/runner/work/Overload/Overload/test/features/active_workout_test.dart
-00:00 +0: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
-00:00 +1: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: ticking an empty set uses the previous performance
-00:00 +2: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: a set without values and without hint cannot be completed
-00:00 +3: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: finishing without completed sets fails
-00:00 +4: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: second workout detects personal records
-00:00 +5: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: editing replaces the original workout
-00:00 +6: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: draft is persisted and can be decoded
-00:00 +7: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest timer can be adjusted and skipped
-00:00 +8: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: removed exercises and sets can be restored in place
-00:00 +9: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set no rest before a drop set, full rest after it
-00:00 +10: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set warm-ups get a shorter rest
-00:00 +11: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set no rest after the last set of the workout
-00:00 +12: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: filled but unticked sets can be completed in one go
-00:00 +13: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: a routine plan carries warm-ups, drops and pinned notes
-00:00 +14: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: warm-ups go before working sets, drops at the end
-00:00 +15: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: assisted sets use body weight minus the assistance
-00:01 +16: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +17: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +18: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +19: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +20: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +21: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:01 +22: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +23: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +24: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +25: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +26: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +27: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +28: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +29: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +30: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:02 +31: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:03 +32: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:03 +33: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:03 +34: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:03 +35: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
-00:04 +36: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
-00:04 +37: /home/runner/work/Overload/Overload/test/data/library_test.dart: seed keys are unique and every alias points to a real exercise
-00:04 +38: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Supino haltere 30⁰" finds db incline
-00:05 +39: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.parseRelease collects APKs per ABI and the checksums file
-00:05 +40: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
-00:05 +41: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
-00:05 +42: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
-00:05 +43: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
-00:05 +44: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
-00:05 +45: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Chest press" finds chest press
-00:05 +46: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Peck deck" finds pec deck
-00:05 +47: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises polia" finds cable lateral
-00:05 +48: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises" finds lateral raise
-00:05 +49: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Skullcrushers haltere" finds db skull crusher
-00:05 +50: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Tricep polia" finds pushdown
-00:05 +51: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Pull up" finds pull up
-00:05 +52: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada baixa" finds cable row
-00:05 +53: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral" finds kneeling cable row
-00:05 +54: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral polia" finds kneeling cable row
-00:05 +55: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Deadlift" finds deadlift
-00:05 +56: /home/runner/work/Overload/Overload/test/data/library_test.dart: "RDL" finds rdl
-00:05 +57: /home/runner/work/Overload/Overload/test/data/library_test.dart: "OHP" finds ohp
-00:05 +58: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lat pulldown" finds lat pulldown
-00:05 +59: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Hip thrust" finds hip thrust
-00:05 +60: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Reverse fly" finds reverse pec deck
-00:05 +61: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bíceps banco 45" finds incline db curl
-00:05 +62: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shrugs" finds shrug
-00:05 +63: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Rosca martelo" finds hammer curl
-00:05 +64: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora deitado" finds leg curl
-00:05 +65: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Stiff" finds stiff
-00:05 +66: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora em pé" finds standing leg curl
-00:05 +67: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Addutora" finds hip adduction
-00:05 +68: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Gemeos prensa" finds leg press calf
-00:05 +69: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora" finds leg extension
-00:05 +70: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora unilateral" finds leg extension single
-00:05 +71: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Prensa" finds leg press
-00:05 +72: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bulgarian split squats" finds bulgarian split
-00:05 +73: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Agachamento" finds squat
-00:05 +74: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Abdutora" finds hip abduction
-00:05 +75: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Elevação de gémeos sentado" finds seated calf
-00:05 +76: /home/runner/work/Overload/Overload/test/data/library_test.dart: seeding refreshes built-in names but keeps user settings
-00:05 +77: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max single rep is the weight itself
-00:05 +78: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max Epley estimate and inverse agree
-00:05 +79: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max reps are capped for very high rep sets
-00:05 +80: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max invalid input yields zero
-00:05 +81: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max plate calculator loads greedily and reports remainder
-00:05 +82: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score interpolates between thresholds
-00:05 +83: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score is capped at the top tier
-00:05 +84: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks best working set defines the group rank
-00:05 +85: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks warm-up sets do not count
-00:05 +86: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks female standards are lower
-00:05 +87: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks divisions and next label
-00:05 +88: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks overall is the mean of all groups
-00:05 +89: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression levels accumulate xp
-00:05 +90: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression xp rewards sets, time and records
-00:05 +91: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression week starts on monday
-00:05 +92: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression streak counts consecutive weeks meeting the goal
-00:05 +93: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression a missed week breaks the streak
-00:05 +94: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression several workouts on one day count as one day
-00:05 +95: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records first time doing an exercise is not a record
-00:05 +96: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records detects improved weight, e1rm and volume
-00:05 +97: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records more reps at lower weight can be an e1rm record only
-00:05 +98: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records body-weight exercises track reps
-00:05 +99: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records counts record breaks chronologically
-00:05 +100: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats weekly buckets include empty weeks
-00:05 +101: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats progress series is oldest first
-00:05 +102: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats volume excludes warm-ups
-00:06 +103: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder fires at 18h on the last day the goal can still be met
-00:06 +104: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder once the goal is met
-00:06 +105: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder when the last chance already passed
-00:06 +106: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder mentions the streak at stake
-00:06 +107: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: unfinished workout reminder waits at least 3 hours from the start
-00:06 +108: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: live notification shows progress and the next set
-00:06 +109: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: prefers the latest session of the same routine
-00:06 +110: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: ignores an old same-routine session in favour of a recent one
-00:06 +111: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: skips the workout being edited
-00:06 +112: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: warm-ups and working sets are matched separately
-00:06 +113: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets more weight or reps is better
-00:06 +114: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets reps beyond the estimate cap still count as progress
-00:06 +115: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets body-weight sets compare reps with body weight included
-00:06 +116: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets timed sets compare seconds
-00:06 +117: All tests passed!
+00:00 +0: loading /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart
+00:00 +0: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +1: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +2: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +3: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +4: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +5: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +6: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +7: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +8: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +9: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +10: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:00 +11: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +12: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +13: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +14: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +15: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +16: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:01 +17: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the routine editor edits set types
+00:02 +18: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: finishing lists the changes to take to the routine
+00:03 +19: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +20: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +21: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +22: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +23: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +24: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:03 +25: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:04 +26: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:04 +27: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +28: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +29: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +30: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +31: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +32: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +33: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +34: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +35: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +36: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +37: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:05 +38: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:06 +39: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
+00:07 +40: /home/runner/work/Overload/Overload/test/data/library_test.dart: seed keys are unique and every alias points to a real exercise
+00:07 +41: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Supino haltere 30⁰" finds db incline
+00:07 +42: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Supino haltere 30⁰" finds db incline
+00:07 +43: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Supino haltere 30⁰" finds db incline
+00:07 +44: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.isNewer compares major, minor and patch numerically
+00:07 +45: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
+00:07 +46: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
+00:07 +47: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shoulder press" finds machine shoulder press
+00:07 +48: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Chest press" finds chest press
+00:07 +49: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Peck deck" finds pec deck
+00:07 +50: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises polia" finds cable lateral
+00:07 +51: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises" finds lateral raise
+00:07 +52: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Skullcrushers haltere" finds db skull crusher
+00:07 +53: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Tricep polia" finds pushdown
+00:07 +54: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Pull up" finds pull up
+00:07 +55: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada baixa" finds cable row
+00:07 +56: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral" finds kneeling cable row
+00:07 +57: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral polia" finds kneeling cable row
+00:07 +58: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Deadlift" finds deadlift
+00:07 +59: /home/runner/work/Overload/Overload/test/data/library_test.dart: "RDL" finds rdl
+00:07 +60: /home/runner/work/Overload/Overload/test/data/library_test.dart: "OHP" finds ohp
+00:07 +61: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lat pulldown" finds lat pulldown
+00:07 +62: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Hip thrust" finds hip thrust
+00:07 +63: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Reverse fly" finds reverse pec deck
+00:07 +64: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bíceps banco 45" finds incline db curl
+00:07 +65: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shrugs" finds shrug
+00:07 +66: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Rosca martelo" finds hammer curl
+00:07 +67: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora deitado" finds leg curl
+00:07 +68: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Stiff" finds stiff
+00:07 +69: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora em pé" finds standing leg curl
+00:07 +70: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Addutora" finds hip adduction
+00:07 +71: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Gemeos prensa" finds leg press calf
+00:07 +72: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora" finds leg extension
+00:07 +73: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora unilateral" finds leg extension single
+00:07 +74: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Prensa" finds leg press
+00:07 +75: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bulgarian split squats" finds bulgarian split
+00:07 +76: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Agachamento" finds squat
+00:07 +77: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Abdutora" finds hip abduction
+00:07 +78: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Elevação de gémeos sentado" finds seated calf
+00:07 +79: /home/runner/work/Overload/Overload/test/data/library_test.dart: seeding refreshes built-in names but keeps user settings
+00:08 +80: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max single rep is the weight itself
+00:08 +81: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max Epley estimate and inverse agree
+00:08 +82: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max reps are capped for very high rep sets
+00:08 +83: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max invalid input yields zero
+00:08 +84: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max plate calculator loads greedily and reports remainder
+00:08 +85: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score interpolates between thresholds
+00:08 +86: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score is capped at the top tier
+00:08 +87: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks best working set defines the group rank
+00:08 +88: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks warm-up sets do not count
+00:08 +89: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks female standards are lower
+00:08 +90: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks divisions and next label
+00:08 +91: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks overall is the mean of all groups
+00:08 +92: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression levels accumulate xp
+00:08 +93: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression xp rewards sets, time and records
+00:08 +94: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression week starts on monday
+00:08 +95: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression streak counts consecutive weeks meeting the goal
+00:08 +96: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression a missed week breaks the streak
+00:08 +97: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression several workouts on one day count as one day
+00:08 +98: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records first time doing an exercise is not a record
+00:08 +99: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records detects improved weight, e1rm and volume
+00:08 +100: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records more reps at lower weight can be an e1rm record only
+00:08 +101: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records body-weight exercises track reps
+00:08 +102: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records counts record breaks chronologically
+00:08 +103: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats weekly buckets include empty weeks
+00:08 +104: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats progress series is oldest first
+00:08 +105: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats volume excludes warm-ups
+00:08 +106: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder fires at 18h on the last day the goal can still be met
+00:08 +107: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder once the goal is met
+00:08 +108: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder when the last chance already passed
+00:08 +109: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder mentions the streak at stake
+00:08 +110: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: unfinished workout reminder waits at least 3 hours from the start
+00:08 +111: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: live notification shows progress and the next set
+00:09 +112: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: prefers the latest session of the same routine
+00:09 +113: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: ignores an old same-routine session in favour of a recent one
+00:09 +114: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: skips the workout being edited
+00:09 +115: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: warm-ups and working sets are matched separately
+00:09 +116: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets more weight or reps is better
+00:09 +117: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets reps beyond the estimate cap still count as progress
+00:09 +118: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets body-weight sets compare reps with body weight included
+00:09 +119: /home/runner/work/Overload/Overload/test/domain/previous_test.dart: compareSets timed sets compare seconds
+00:09 +120: All tests passed!
 exit=0

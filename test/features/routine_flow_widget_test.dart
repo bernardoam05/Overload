@@ -34,7 +34,13 @@ const _curl = Exercise(
 );
 
 final _routine = RoutineWithItems(
-  Routine(id: 3, name: 'Braços', notes: '', position: 0, createdAt: DateTime(2026)),
+  Routine(
+    id: 3,
+    name: 'Braços',
+    notes: '',
+    position: 0,
+    createdAt: DateTime(2026),
+  ),
   [
     RoutineItem(
       exerciseId: 1,
@@ -62,7 +68,11 @@ void main() {
     tester.view.physicalSize = const Size(360 * 3, 740 * 3);
     tester.view.devicePixelRatio = 3;
     addTearDown(tester.view.reset);
-    const profile = Profile(name: 'Teste', onboarded: true, seenWorkoutTips: true);
+    const profile = Profile(
+      name: 'Teste',
+      onboarded: true,
+      seenWorkoutTips: true,
+    );
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
