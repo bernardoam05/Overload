@@ -47,6 +47,24 @@ enum Equipment {
   final String label;
 }
 
+/// How the load is held, so the logged weight is unambiguous.
+enum LoadMode {
+  /// Both sides move together under one load: a barbell, a machine, or a
+  /// single dumbbell held with both hands. The weight is the total load.
+  bilateral('Os dois lados juntos', 'Peso total'),
+
+  /// One dumbbell (or handle) in each hand, both working at the same time.
+  /// The weight is that of each dumbbell.
+  perHand('Um em cada mão', 'Peso de cada haltere'),
+
+  /// One arm or leg at a time. The weight and reps are per side.
+  unilateral('Um lado de cada vez', 'Peso e reps por lado');
+
+  const LoadMode(this.label, this.weightMeaning);
+  final String label;
+  final String weightMeaning;
+}
+
 /// How a set of this exercise is measured.
 enum ExerciseKind {
   /// External load × reps.

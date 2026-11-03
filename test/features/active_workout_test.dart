@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:overload/app/providers.dart';
 import 'package:overload/data/database.dart';
+import 'package:overload/data/repositories/routine_repository.dart';
 import 'package:overload/data/repositories/settings_repository.dart';
 import 'package:overload/domain/enums.dart';
 import 'package:overload/domain/models.dart';
@@ -300,6 +301,70 @@ void main() {
       true,
       true,
       false,
+    ]);
+  });
+
+  test('a routine plan carries warm-ups, drops and pinned notes', () async {
+    final bench = await benchId();
+    final repo = container.read(routineRepositoryProvider);
+    final id = await repo.save(
+      name: 'Peito',
+      items: [
+        RoutineItem(
+          exerciseId: bench,
+          setTypes: const [
+            SetType.warmup,
+            SetType.normal,
+            SetType.normal,
+            SetType.drop,
+          ],
+          reps: 8,
+          notes: 'pausa em baixo',
+        ),
+      ],
+    );
+    final routine = (await repo.watchAll().first).firstWhere(
+      (r) => r.routine.id == id,
+    );
+    controller().startFromRoutine(routine);
+    final ex = state().exercises.single;
+    expect(ex.sets.map((s) => s.type), [
+      SetType.warmup,
+      SetType.normal,
+      SetType.normal,
+      SetType.drop,
+    ]);
+    expect(ex.sets.map((s) => s.reps), [null, 8, 8, null]);
+    expect(ex.routineNotes, 'pausa em baixo');
+    expect(ex.routineIndex, 0);
+
+    // Survives the draft round-trip.
+    final restored = ActiveWorkout.fromJson(
+      (jsonDecode(jsonEncode(state().toJson())) as Map).cast(),
+    );
+    expect(restored.exercises.single.routineNotes, 'pausa em baixo');
+    expect(restored.exercises.single.routineIndex, 0);
+  });
+
+  test('warm-ups go before working sets, drops at the end', () async {
+    final bench = await benchId();
+    controller()
+      ..startEmpty()
+      ..addExercises([bench]);
+    final id = state().exercises.single.id;
+    controller()
+      ..addSet(id)
+      ..addDrop(id)
+      ..addWarmup(id)
+      ..addWarmup(id)
+      ..addSet(id);
+    expect(state().exercises.single.sets.map((s) => s.type), [
+      SetType.warmup,
+      SetType.warmup,
+      SetType.normal,
+      SetType.normal,
+      SetType.normal,
+      SetType.drop,
     ]);
   });
 

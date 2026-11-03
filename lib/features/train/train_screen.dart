@@ -6,6 +6,7 @@ import '../../app/providers.dart';
 import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../data/repositories/routine_repository.dart';
+import '../../domain/enums.dart';
 import '../../widgets/common.dart';
 import '../workout/active_workout_controller.dart';
 import '../workout/start_workout.dart';
@@ -129,7 +130,7 @@ class _RoutineCard extends ConsumerWidget {
     final names = [
       for (final i in routine.items)
         if (library[i.exerciseId] != null)
-          '${i.sets}× ${library[i.exerciseId]!.name}',
+          '${_setsShort(i.setTypes)} ${library[i.exerciseId]!.name}',
     ];
     final last = routine.routine.lastUsedAt;
 
@@ -234,4 +235,16 @@ class _RoutineCard extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// "3×", or "A+3×+D" when the plan has warm-ups or drops.
+String _setsShort(List<SetType> types) {
+  final warmups = types.where((t) => t == SetType.warmup).length;
+  final drops = types.where((t) => t == SetType.drop).length;
+  final working = types.length - warmups - drops;
+  return [
+    if (warmups > 0) '${warmups > 1 ? warmups : ''}A',
+    if (working > 0) '$working×',
+    if (drops > 0) '${drops > 1 ? drops : ''}D',
+  ].join('+');
 }

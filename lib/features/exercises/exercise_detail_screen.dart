@@ -357,6 +357,13 @@ class _AboutTab extends StatelessWidget {
                 subtitle: Text(exercise.equipment.label),
               ),
               ListTile(
+                leading: const Icon(Icons.back_hand_outlined),
+                title: Text(exercise.loadMode.label),
+                subtitle: Text(
+                  exercise.loadLabel ?? exercise.loadMode.weightMeaning,
+                ),
+              ),
+              ListTile(
                 leading: const Icon(Icons.straighten_rounded),
                 title: const Text('Registo'),
                 subtitle: Text(exercise.kind.label),

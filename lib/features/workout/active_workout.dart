@@ -56,12 +56,24 @@ class ActiveExercise {
     required this.exerciseId,
     required this.sets,
     this.notes = '',
+    this.routineNotes = '',
+    this.routineIndex,
   });
 
   final String id;
   final int exerciseId;
   final List<ActiveSet> sets;
+
+  /// Note for this workout only; saved in the history.
   final String notes;
+
+  /// Note pinned in the routine. Changing it here only reaches the routine if
+  /// the change is accepted when the workout finishes.
+  final String routineNotes;
+
+  /// Position of the routine item this exercise came from (kept when the
+  /// exercise is replaced), or `null` if it was added during the workout.
+  final int? routineIndex;
 
   int get doneCount => sets.where((s) => s.done).length;
 
@@ -69,17 +81,22 @@ class ActiveExercise {
     int? exerciseId,
     List<ActiveSet>? sets,
     String? notes,
+    String? routineNotes,
   }) => ActiveExercise(
     id: id,
     exerciseId: exerciseId ?? this.exerciseId,
     sets: sets ?? this.sets,
     notes: notes ?? this.notes,
+    routineNotes: routineNotes ?? this.routineNotes,
+    routineIndex: routineIndex,
   );
 
   Map<String, Object?> toJson() => {
     'id': id,
     'exerciseId': exerciseId,
     'notes': notes,
+    'routineNotes': routineNotes,
+    'routineIndex': routineIndex,
     'sets': [for (final s in sets) s.toJson()],
   };
 
@@ -87,6 +104,8 @@ class ActiveExercise {
     id: j['id'] as String? ?? newLocalId(),
     exerciseId: (j['exerciseId']! as num).toInt(),
     notes: j['notes'] as String? ?? '',
+    routineNotes: j['routineNotes'] as String? ?? '',
+    routineIndex: (j['routineIndex'] as num?)?.toInt(),
     sets: [
       for (final s in (j['sets'] as List? ?? const []))
         ActiveSet.fromJson((s as Map).cast<String, Object?>()),

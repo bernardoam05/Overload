@@ -33,7 +33,10 @@ class _UpdateDialogState extends State<_UpdateDialog> {
     try {
       final url = await UpdateInstaller.apkFor(widget.info);
       if (url == null) {
-        await launchUrl(Uri.parse(widget.info.url), mode: LaunchMode.externalApplication);
+        await launchUrl(
+          Uri.parse(widget.info.url),
+          mode: LaunchMode.externalApplication,
+        );
         if (mounted) Navigator.pop(context);
         return;
       }
@@ -56,7 +59,9 @@ class _UpdateDialogState extends State<_UpdateDialog> {
       if (mounted) {
         setState(() {
           _stage = _Stage.error;
-          _error = e is FormatException ? e.message : 'Não foi possível atualizar. Verifica a ligação.';
+          _error = e is FormatException
+              ? e.message
+              : 'Não foi possível atualizar. Verifica a ligação.';
         });
       }
     }
@@ -68,24 +73,31 @@ class _UpdateDialogState extends State<_UpdateDialog> {
     return AlertDialog(
       title: Text('Overload ${widget.info.version}'),
       content: switch (_stage) {
-        _Stage.ask => const Text('Há uma versão nova. Queres descarregar e instalar agora?'),
+        _Stage.ask => const Text(
+          'Há uma versão nova. Queres descarregar e instalar agora?',
+        ),
         _Stage.needsPermission => const Text(
-            'Para instalar a atualização, permite que o Overload instale aplicações. '
-            'Ativa a opção no ecrã seguinte, volta atrás e toca em Atualizar.'),
+          'Para instalar a atualização, permite que o Overload instale aplicações. '
+          'Ativa a opção no ecrã seguinte, volta atrás e toca em Atualizar.',
+        ),
         _Stage.downloading => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('A descarregar…'),
-              const SizedBox(height: 12),
-              LinearProgressIndicator(value: _progress > 0 ? _progress : null),
-            ],
-          ),
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('A descarregar…'),
+            const SizedBox(height: 12),
+            LinearProgressIndicator(value: _progress > 0 ? _progress : null),
+          ],
+        ),
         _Stage.installing => const Text('A abrir o instalador…'),
         _Stage.error => Text(_error),
       },
       actions: [
-        if (!busy) TextButton(onPressed: () => Navigator.pop(context), child: const Text('Agora não')),
+        if (!busy)
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Agora não'),
+          ),
         if (_stage == _Stage.needsPermission)
           FilledButton(
             onPressed: () async {
@@ -95,7 +107,12 @@ class _UpdateDialogState extends State<_UpdateDialog> {
             child: const Text('Abrir definições'),
           )
         else if (!busy)
-          FilledButton(onPressed: _start, child: Text(_stage == _Stage.error ? 'Tentar de novo' : 'Atualizar')),
+          FilledButton(
+            onPressed: _start,
+            child: Text(
+              _stage == _Stage.error ? 'Tentar de novo' : 'Atualizar',
+            ),
+          ),
       ],
     );
   }

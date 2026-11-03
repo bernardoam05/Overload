@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/exercise_repository.dart';
 import '../../domain/enums.dart';
+import '../../domain/exercise.dart';
 import '../../widgets/common.dart';
 
 /// Create (no id) or edit a custom exercise. Pops with the exercise id.
@@ -25,6 +26,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
   final Set<Muscle> _secondary = {};
   Equipment _equipment = Equipment.barbell;
   ExerciseKind _kind = ExerciseKind.weighted;
+  LoadMode _loadMode = LoadMode.bilateral;
   bool _loaded = false;
 
   @override
@@ -42,6 +44,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
       _secondary.addAll(existing.secondaryMuscles);
       _equipment = existing.equipment;
       _kind = existing.kind;
+      _loadMode = existing.loadMode;
     }
   }
 
@@ -60,6 +63,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
       equipment: _equipment,
       kind: _kind,
       instructions: _instructions.text,
+      loadMode: _loadMode,
     );
     final error = draft.validate();
     if (error != null) {
@@ -187,6 +191,28 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
                   onSelected: (_) => setState(() => _equipment = e),
                 ),
             ],
+          ),
+          const SizedBox(height: 20),
+          Text('Como seguras o peso', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final m in LoadMode.values)
+                ChoiceChip(
+                  label: Text(m.label),
+                  selected: _loadMode == m,
+                  onSelected: (_) => setState(() => _loadMode = m),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            loadLabelFor(_loadMode, _equipment) ?? _loadMode.weightMeaning,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 20),
           TextField(

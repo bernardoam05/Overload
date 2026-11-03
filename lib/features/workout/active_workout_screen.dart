@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,6 +13,7 @@ import '../../widgets/common.dart';
 import 'active_workout_controller.dart';
 import 'exercise_card.dart';
 import 'finish_sheet.dart';
+import 'routine_sync.dart';
 import 'workout_tips.dart';
 
 class ActiveWorkoutScreen extends ConsumerStatefulWidget {
@@ -53,14 +55,20 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
       showMessage(context, 'Completa pelo menos uma série antes de terminar.');
       return;
     }
-    final choice = await showFinishSheet(
+    final routine = ref
+        .read(routinesProvider)
+        .value
+        ?.firstWhereOrNull((r) => r.routine.id == w.routineId);
+    final sync = routineSync(w, routine, library);
+    final result = await showFinishSheet(
       context,
       workout: w,
       library: library,
       unit: ref.read(currentProfileProvider).unit,
+      sync: sync,
     );
-    if (choice == null || !mounted) return;
-    if (choice == FinishChoice.completeFilledAndFinish) {
+    if (result == null || !mounted) return;
+    if (result.choice == FinishChoice.completeFilledAndFinish) {
       ref.read(activeWorkoutProvider.notifier).completeFilledSets({
         for (final e in library.values)
           if (e.kind != ExerciseKind.weighted) e.id,
@@ -69,12 +77,31 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
     setState(() => _finishing = true);
     try {
       final summary = await ref.read(activeWorkoutProvider.notifier).finish();
+      var routineUpdated = false;
+      if (sync != null && result.routineChanges.isNotEmpty) {
+        final r = sync.routine.routine;
+        await ref
+            .read(routineRepositoryProvider)
+            .save(
+              id: r.id,
+              name: r.name,
+              notes: r.notes,
+              items: sync.apply(result.routineChanges),
+            );
+        routineUpdated = true;
+      }
       if (!mounted) return;
       if (summary.edited) {
         context.pop();
         showMessage(context, 'Treino atualizado.');
       } else {
         context.pushReplacement('/summary', extra: summary);
+        if (routineUpdated) {
+          showMessage(
+            context,
+            'Rotina «${sync!.routine.routine.name}» atualizada.',
+          );
+        }
       }
     } on FinishException catch (e) {
       if (mounted) showMessage(context, e.message);

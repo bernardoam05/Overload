@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,6 +17,7 @@ import '../../domain/ranks.dart';
 import '../../domain/records.dart';
 import '../notifications/notification_sync.dart';
 import 'active_workout.dart';
+import 'routine_sync.dart';
 
 /// Draft restored from storage at startup (overridden in `main`).
 final initialActiveWorkoutProvider = Provider<ActiveWorkout?>((ref) => null);
@@ -234,42 +237,73 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
         startedAt: DateTime.now(),
         routineId: routine.routine.id,
         exercises: [
-          for (final item in routine.items)
+          for (final (i, item) in routine.items.indexed)
             ActiveExercise(
               id: newLocalId(),
               exerciseId: item.exerciseId,
-              sets: [
-                for (var i = 0; i < item.sets; i++)
-                  ActiveSet(
-                    id: newLocalId(),
-                    weightKg: item.weightKg,
-                    reps: item.reps,
-                  ),
-              ],
+              routineIndex: i,
+              routineNotes: item.notes,
+              sets: [for (final type in item.setTypes) _plannedSet(type, item)],
             ),
         ],
       ),
     );
   }
 
-  /// Starts a new workout with the same exercises and set count as [record].
+  /// Working sets start with the routine's targets; warm-ups and drops are
+  /// lighter by nature, so they start empty and show last time's values.
+  static ActiveSet _plannedSet(SetType type, RoutineItem item) =>
+      switch (type) {
+        SetType.normal || SetType.failure => ActiveSet(
+          id: newLocalId(),
+          type: type,
+          weightKg: item.weightKg,
+          reps: item.reps,
+        ),
+        SetType.warmup ||
+        SetType.drop => ActiveSet(id: newLocalId(), type: type),
+      };
+
+  /// Starts a new workout with the same exercises and sets as [record]. A
+  /// routine workout stays linked to its routine and pinned notes.
   void repeat(WorkoutRecord record) {
+    final routine = record.routineId == null
+        ? null
+        : ref
+              .read(routinesProvider)
+              .value
+              ?.firstWhereOrNull((r) => r.routine.id == record.routineId);
+    var exercises = [
+      for (final e in record.exercises)
+        ActiveExercise(
+          id: newLocalId(),
+          exerciseId: e.exerciseId,
+          sets: [
+            for (final s in e.sets) ActiveSet(id: newLocalId(), type: s.type),
+          ],
+        ),
+    ];
+    if (routine != null) {
+      final match = matchToRoutine(exercises, routine.items);
+      exercises = [
+        for (final (i, e) in exercises.indexed)
+          match[i] == null
+              ? e
+              : ActiveExercise(
+                  id: e.id,
+                  exerciseId: e.exerciseId,
+                  sets: e.sets,
+                  routineIndex: match[i],
+                  routineNotes: routine.items[match[i]!].notes,
+                ),
+      ];
+    }
     _set(
       ActiveWorkout(
         name: record.name,
         startedAt: DateTime.now(),
         routineId: record.routineId,
-        exercises: [
-          for (final e in record.exercises)
-            ActiveExercise(
-              id: newLocalId(),
-              exerciseId: e.exerciseId,
-              sets: [
-                for (final s in e.sets)
-                  ActiveSet(id: newLocalId(), type: s.type),
-              ],
-            ),
-        ],
+        exercises: exercises,
       ),
     );
   }
@@ -367,20 +401,52 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
   void setExerciseNotes(String id, String notes) =>
       _updateExercise(id, (e) => e.copyWith(notes: notes));
 
-  void addSet(String exId) => _updateExercise(exId, (e) {
-    final last = e.sets.isEmpty ? null : e.sets.last;
+  /// Edits the note pinned in the routine (applied to the routine only if
+  /// accepted when finishing).
+  void setRoutineNotes(String id, String notes) =>
+      _updateExercise(id, (e) => e.copyWith(routineNotes: notes));
+
+  /// Adds a warm-up before the working sets (after any existing warm-ups).
+  void addWarmup(String exId) => _updateExercise(exId, (e) {
+    final at = e.sets.lastIndexWhere((s) => s.type == SetType.warmup) + 1;
     return e.copyWith(
+      sets: [...e.sets]
+        ..insert(at, ActiveSet(id: newLocalId(), type: SetType.warmup)),
+    );
+  });
+
+  /// Adds a drop set at the end, empty so last time's drop shows as a hint.
+  void addDrop(String exId) => _updateExercise(
+    exId,
+    (e) => e.copyWith(
       sets: [
         ...e.sets,
-        ActiveSet(
-          id: newLocalId(),
-          type: last == null || last.type == SetType.warmup
-              ? SetType.normal
-              : last.type,
-          weightKg: last?.weightKg,
-          reps: last?.reps,
-        ),
+        ActiveSet(id: newLocalId(), type: SetType.drop),
       ],
+    ),
+  );
+
+  /// Adds a working set like the last one (values copied). Drops stay at
+  /// the end, so the new set goes before them.
+  void addSet(String exId) => _updateExercise(exId, (e) {
+    var at = e.sets.length;
+    while (at > 0 && e.sets[at - 1].type == SetType.drop) {
+      at--;
+    }
+    final last = e.sets
+        .take(at)
+        .lastWhereOrNull((s) => s.type != SetType.warmup);
+    return e.copyWith(
+      sets: [...e.sets]
+        ..insert(
+          at,
+          ActiveSet(
+            id: newLocalId(),
+            type: last?.type ?? SetType.normal,
+            weightKg: last?.weightKg,
+            reps: last?.reps,
+          ),
+        ),
     );
   });
 

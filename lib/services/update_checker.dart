@@ -26,11 +26,16 @@ class UpdateChecker {
   Future<UpdateInfo?> check(String currentVersion) async {
     final client = HttpClient()..connectionTimeout = const Duration(seconds: 8);
     try {
-      final req = await client.getUrl(Uri.https('api.github.com', '/repos/$repo/releases/latest'));
+      final req = await client.getUrl(
+        Uri.https('api.github.com', '/repos/$repo/releases/latest'),
+      );
       req.headers.set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
       final res = await req.close().timeout(const Duration(seconds: 8));
       if (res.statusCode != 200) return null;
-      return parseRelease(jsonDecode(await res.transform(utf8.decoder).join()), currentVersion);
+      return parseRelease(
+        jsonDecode(await res.transform(utf8.decoder).join()),
+        currentVersion,
+      );
     } catch (_) {
       return null;
     } finally {
@@ -60,7 +65,12 @@ class UpdateChecker {
         if (name == 'SHA256SUMS.txt') checksums = link;
       }
     }
-    return UpdateInfo(version: version, url: url, apks: apks, checksumsUrl: checksums);
+    return UpdateInfo(
+      version: version,
+      url: url,
+      apks: apks,
+      checksumsUrl: checksums,
+    );
   }
 
   /// True when [latest] is a higher `major.minor.patch` than [current].

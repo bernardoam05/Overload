@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../app/providers.dart';
 import '../../data/repositories/routine_repository.dart';
 import '../../domain/enums.dart';
+import '../../app/theme.dart';
 import '../../widgets/common.dart';
 
 /// Pre-filled content for a new routine (duplicate / save workout as routine).
@@ -38,6 +39,7 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
   int _nextKey = 0;
   bool _loaded = false;
   bool _dirty = false;
+  String _routineNotes = '';
 
   @override
   void didChangeDependencies() {
@@ -53,6 +55,7 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
     final name = existing?.routine.name ?? widget.template?.name ?? '';
     final items = existing?.items ?? widget.template?.items ?? const [];
     _name.text = name;
+    _routineNotes = existing?.routine.notes ?? '';
     _rows.addAll([for (final i in items) _Row(_nextKey++, i)]);
   }
 
@@ -83,6 +86,7 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
         .save(
           id: widget.routineId,
           name: _name.text,
+          notes: _routineNotes,
           items: [for (final r in _rows) r.item],
         );
     if (mounted) context.pop();
@@ -178,9 +182,21 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
                             MuscleAvatar(ex.primaryMuscle, size: 34),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: Text(
-                              ex?.name ?? 'Exercício removido',
-                              style: theme.textTheme.titleSmall,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  ex?.name ?? 'Exercício removido',
+                                  style: theme.textTheme.titleSmall,
+                                ),
+                                if (ex?.loadLabel case final load?)
+                                  Text(
+                                    load,
+                                    style: theme.textTheme.bodySmall?.copyWith(
+                                      color: theme.colorScheme.tertiary,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                           IconButton(
@@ -193,24 +209,24 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
                         ],
                       ),
                       const SizedBox(height: 6),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: SetPlanEditor(
+                          types: row.item.setTypes,
+                          onChanged: (types) => setState(() {
+                            _dirty = true;
+                            row.item = row.item.copyWith(setTypes: types);
+                          }),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Expanded(
                             child: _Stepper(
-                              label: 'Séries',
-                              value: row.item.sets,
-                              min: 1,
-                              max: 20,
-                              onChanged: (v) => setState(() {
-                                _dirty = true;
-                                row.item = row.item.copyWith(sets: v);
-                              }),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: _Stepper(
-                              label: isTime ? 'Segundos' : 'Reps alvo',
+                              label: isTime
+                                  ? 'Segundos por série'
+                                  : 'Reps alvo por série',
                               value: row.item.reps,
                               min: 1,
                               max: isTime ? 900 : 100,
@@ -223,6 +239,27 @@ class _RoutineEditorScreenState extends ConsumerState<RoutineEditorScreen> {
                           ),
                           const SizedBox(width: 8),
                         ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 8, 8, 0),
+                        child: TextFormField(
+                          key: ValueKey('note-${row.key}'),
+                          initialValue: row.item.notes,
+                          minLines: 1,
+                          maxLines: 3,
+                          maxLength: 500,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: const InputDecoration(
+                            isDense: true,
+                            counterText: '',
+                            prefixIcon: Icon(Icons.push_pin_outlined, size: 18),
+                            hintText: 'Nota fixa (aparece em todos os treinos)',
+                          ),
+                          onChanged: (v) {
+                            _dirty = true;
+                            row.item = row.item.copyWith(notes: v);
+                          },
+                        ),
                       ),
                     ],
                   ),
@@ -291,6 +328,164 @@ class _Stepper extends StatelessWidget {
                 : null,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Planned sets of a routine exercise as chips (A = aquecimento, numbers for
+/// working sets, F = até à falha, D = drop). Tap a chip to change its type
+/// or remove it.
+class SetPlanEditor extends StatelessWidget {
+  const SetPlanEditor({
+    super.key,
+    required this.types,
+    required this.onChanged,
+  });
+
+  final List<SetType> types;
+  final ValueChanged<List<SetType>> onChanged;
+
+  bool get _full => types.length >= RoutineItem.maxSets;
+
+  void _insert(SetType type) {
+    if (_full) return;
+    final list = [...types];
+    switch (type) {
+      case SetType.warmup:
+        list.insert(list.lastIndexWhere((t) => t == SetType.warmup) + 1, type);
+      case SetType.drop:
+        list.add(type);
+      case SetType.normal || SetType.failure:
+        // Before trailing drops, which follow the last working set.
+        var at = list.length;
+        while (at > 0 && list[at - 1] == SetType.drop) {
+          at--;
+        }
+        list.insert(at, type);
+    }
+    onChanged(list);
+  }
+
+  Future<void> _edit(BuildContext context, int i) async {
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (final t in SetType.values)
+              ListTile(
+                leading: _SetChipLabel(type: t, number: null),
+                title: Text(t.label),
+                trailing: types[i] == t ? const Icon(Icons.check) : null,
+                onTap: () => Navigator.pop(context, t.name),
+              ),
+            if (types.length > 1)
+              ListTile(
+                leading: Icon(
+                  Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.error,
+                ),
+                title: const Text('Remover série'),
+                onTap: () => Navigator.pop(context, 'remove'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (choice == null) return;
+    if (choice == 'remove') {
+      _remove(i);
+    } else {
+      onChanged([...types]..[i] = SetType.values.byName(choice));
+    }
+  }
+
+  void _remove(int i) => onChanged([...types]..removeAt(i));
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    var working = 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: 6,
+          runSpacing: 6,
+          children: [
+            for (final (i, t) in types.indexed)
+              InkWell(
+                borderRadius: BorderRadius.circular(10),
+                onTap: () => _edit(context, i),
+                onLongPress: types.length > 1 ? () => _remove(i) : null,
+                child: _SetChipLabel(
+                  type: t,
+                  number: t == SetType.warmup ? null : ++working,
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          describeSetTypes(types),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+        ),
+        Wrap(
+          spacing: 4,
+          children: [
+            TextButton(
+              onPressed: _full ? null : () => _insert(SetType.normal),
+              child: const Text('+ Série'),
+            ),
+            TextButton(
+              onPressed: _full ? null : () => _insert(SetType.warmup),
+              child: const Text('+ Aquecimento'),
+            ),
+            TextButton(
+              onPressed: _full ? null : () => _insert(SetType.drop),
+              child: const Text('+ Drop'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _SetChipLabel extends StatelessWidget {
+  const _SetChipLabel({required this.type, required this.number});
+
+  final SetType type;
+  final int? number;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final (bg, fg) = switch (type) {
+      SetType.warmup => (Brand.amber.withValues(alpha: 0.18), Brand.amber),
+      SetType.drop => (scheme.tertiaryContainer, scheme.onTertiaryContainer),
+      SetType.failure => (scheme.errorContainer, scheme.onErrorContainer),
+      SetType.normal => (scheme.surfaceContainerHighest, scheme.onSurface),
+    };
+    final text = switch (type) {
+      SetType.normal => number?.toString() ?? '1',
+      _ => type.short,
+    };
+    return Container(
+      width: 36,
+      height: 32,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(color: fg, fontWeight: FontWeight.w800),
       ),
     );
   }

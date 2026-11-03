@@ -109,6 +109,8 @@ class BackupRepository {
           );
         }
       }
+      // Backups from older versions lack newer library fields (load mode).
+      await seedExercises(_db);
     });
     _notifyAll();
   }

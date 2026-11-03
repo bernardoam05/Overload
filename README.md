@@ -5,7 +5,9 @@ App de registo de treinos de ginásio, inspirada em apps como o Liftoff, mas **1
 ## Funcionalidades
 
 - **Treino ativo**: séries com peso/reps (ou duração), tipos de série (aquecimento, drop, falha), coluna "anterior" com a última performance, ✓ com um toque usa os valores anteriores, temporizador de descanso automático, o treino sobrevive ao fecho da app.
-- **Rotinas**: Push/Pull/Pernas/Corpo inteiro de exemplo; criar, editar, reordenar, duplicar, guardar um treino como rotina.
+- **Rotinas**: Push/Pull/Pernas/Corpo inteiro de exemplo; criar, editar, reordenar, duplicar, guardar um treino como rotina. Cada exercício da rotina tem um plano de séries por tipo (aquecimentos, séries, até à falha, drops), reps alvo e uma nota fixa.
+- **Treino vs rotina**: o que mudas num treino fica nesse treino (e no histórico). A rotina é o plano para a próxima vez e só muda no editor de rotinas ou quando, ao terminar, marcas as alterações a levar para ela (séries/aquecimentos/drops, notas fixas, exercícios adicionados, trocados ou retirados, ordem). As notas "só neste treino" aparecem no treino seguinte como "da última vez".
+- **Modo de carga**: cada exercício diz se o peso é total (barra, máquina, 1 haltere com as duas mãos), de cada haltere (um em cada mão) ou por lado (unilateral).
 - **Ranks por grupo muscular** (Ferro → Lenda, divisões III–I) calculados pelo 1RM estimado relativo ao peso corporal, ajustados ao sexo.
 - **XP e níveis**, **streak semanal** com objetivo configurável, **25 conquistas**.
 - **Recordes pessoais** (1RM estimado, peso máximo, melhor série, reps, duração) e gráficos de progresso por exercício.

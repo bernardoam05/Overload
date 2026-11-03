@@ -27,6 +27,43 @@ const _cab = Equipment.cable;
 const _body = Equipment.bodyweight;
 const _kb = Equipment.kettlebell;
 
+/// How the load is held for library exercises; anything not listed moves
+/// both sides together under one load ([LoadMode.bilateral]).
+const Map<String, LoadMode> libraryLoadModes = {
+  // Um haltere (ou pega) em cada mão, os dois lados ao mesmo tempo.
+  'db_bench': LoadMode.perHand,
+  'db_incline': LoadMode.perHand,
+  'db_fly': LoadMode.perHand,
+  'kneeling_cable_row': LoadMode.perHand,
+  'shrug': LoadMode.perHand,
+  'db_shoulder_press': LoadMode.perHand,
+  'arnold_press': LoadMode.perHand,
+  'lateral_raise': LoadMode.perHand,
+  'front_raise': LoadMode.perHand,
+  'rear_delt_fly': LoadMode.perHand,
+  'db_curl': LoadMode.perHand,
+  'hammer_curl': LoadMode.perHand,
+  'incline_db_curl': LoadMode.perHand,
+  'db_skull_crusher': LoadMode.perHand,
+  'lunge': LoadMode.perHand,
+  'wrist_curl': LoadMode.perHand,
+  'farmer_walk': LoadMode.perHand,
+  // Um braço ou uma perna de cada vez.
+  'db_row': LoadMode.unilateral,
+  'single_arm_pulldown': LoadMode.unilateral,
+  'cable_lateral': LoadMode.unilateral,
+  'concentration_curl': LoadMode.unilateral,
+  'bayesian_curl': LoadMode.unilateral,
+  'kickback': LoadMode.unilateral,
+  'overhead_ext_single': LoadMode.unilateral,
+  'bulgarian_split': LoadMode.unilateral,
+  'smith_bulgarian': LoadMode.unilateral,
+  'leg_extension_single': LoadMode.unilateral,
+  'step_up': LoadMode.unilateral,
+  'standing_leg_curl': LoadMode.unilateral,
+  'cable_kickback': LoadMode.unilateral,
+};
+
 /// Built-in exercise library. `rankFactor` converts the exercise's 1RM into
 /// the benchmark lift of its rank group (dumbbell loads are per hand).
 const List<ExerciseSeed> librarySeed = [
@@ -569,13 +606,23 @@ const List<ExerciseSeed> librarySeed = [
   ),
   (
     'overhead_ext',
-    'Extensão sobre a cabeça com halter',
+    'Extensão de tríceps sobre a cabeça com 1 halter (duas mãos)',
     Muscle.triceps,
     [],
     _db,
     _w,
     2.6,
-    'Halter seguro com as duas mãos atrás da cabeça.',
+    'Um só halter seguro com as duas mãos atrás da cabeça. Regista o peso desse halter.',
+  ),
+  (
+    'overhead_ext_single',
+    'Extensão de tríceps sobre a cabeça unilateral com halter',
+    Muscle.triceps,
+    [],
+    _db,
+    _w,
+    5.0,
+    'Um halter numa mão, cotovelo a apontar para cima; um braço de cada vez. Regista o peso do halter e as reps de cada braço.',
   ),
   (
     'dips',
@@ -1170,6 +1217,7 @@ Future<void> seedExercises(AppDatabase db) async {
           kind: s.$6,
           rankFactor: Value(s.$7),
           instructions: Value(s.$8),
+          loadMode: Value(libraryLoadModes[s.$1] ?? LoadMode.bilateral),
         ),
         onConflict: DoUpdate(
           (_) => ExercisesCompanion(
@@ -1179,6 +1227,7 @@ Future<void> seedExercises(AppDatabase db) async {
             equipment: Value(s.$5),
             rankFactor: Value(s.$7),
             instructions: Value(s.$8),
+            loadMode: Value(libraryLoadModes[s.$1] ?? LoadMode.bilateral),
           ),
           target: [db.exercises.seedKey],
         ),

@@ -69,6 +69,11 @@ class _CardBody extends ConsumerWidget {
     final isEditing = ref.watch(
       activeWorkoutProvider.select((w) => w?.isEditing ?? false),
     );
+    final inRoutine = ref.watch(
+      activeWorkoutProvider.select(
+        (w) => w != null && !w.isEditing && w.routineId != null,
+      ),
+    );
 
     if (exercise == null) {
       return const Card(child: ListTile(title: Text('Exercício removido')));
@@ -176,6 +181,14 @@ class _CardBody extends ConsumerWidget {
                               color: theme.colorScheme.onSurfaceVariant,
                             ),
                           ),
+                          if (exercise.loadLabel case final load?)
+                            Text(
+                              load,
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.tertiary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                         ],
                       ),
                     ),
@@ -215,16 +228,12 @@ class _CardBody extends ConsumerWidget {
                 ],
               ),
             ),
-            if (entry.notes.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
-                child: Text(
-                  entry.notes,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ),
+            _Notes(
+              pinned: entry.routineNotes.trim(),
+              session: entry.notes.trim(),
+              last: previous?.entry.notes.trim() ?? '',
+              onTap: () => _editNotes(context, ref, inRoutine),
+            ),
             _ReferenceLine(
               exercise: exercise,
               previous: previous,
@@ -238,16 +247,46 @@ class _CardBody extends ConsumerWidget {
             ...rows,
             Padding(
               padding: const EdgeInsets.fromLTRB(8, 4, 8, 0),
-              child: TextButton.icon(
-                onPressed: () => controller.addSet(entry.id),
-                icon: const Icon(Icons.add_rounded),
-                label: const Text('Adicionar série'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton.icon(
+                      onPressed: () => controller.addSet(entry.id),
+                      icon: const Icon(Icons.add_rounded),
+                      label: const Text('Série'),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => controller.addWarmup(entry.id),
+                    child: const Text('+ Aquecimento'),
+                  ),
+                  TextButton(
+                    onPressed: () => controller.addDrop(entry.id),
+                    child: const Text('+ Drop'),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _editNotes(
+    BuildContext context,
+    WidgetRef ref,
+    bool inRoutine,
+  ) async {
+    final result = await showNotesDialog(
+      context,
+      session: entry.notes,
+      pinned: inRoutine ? entry.routineNotes : null,
+    );
+    if (result == null) return;
+    final controller = ref.read(activeWorkoutProvider.notifier);
+    controller.setExerciseNotes(entry.id, result.session.trim());
+    if (inRoutine) controller.setRoutineNotes(entry.id, result.pinned.trim());
   }
 
   /// Shows a toast when the set just completed beats the all-time record
@@ -324,14 +363,12 @@ class _CardBody extends ConsumerWidget {
     final controller = ref.read(activeWorkoutProvider.notifier);
     switch (action) {
       case _Action.notes:
-        final notes = await promptText(
-          context,
-          title: 'Notas',
-          initial: entry.notes,
-          maxLines: 4,
-          maxLength: 500,
+        final inRoutine = ref.read(
+          activeWorkoutProvider.select(
+            (w) => w != null && !w.isEditing && w.routineId != null,
+          ),
         );
-        if (notes != null) controller.setExerciseNotes(entry.id, notes.trim());
+        await _editNotes(context, ref, inRoutine);
       case _Action.rest:
         final seconds = await pickRestSeconds(context, exercise.restSeconds);
         if (seconds != null) {
@@ -506,4 +543,157 @@ class _Header extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Notes on an exercise card: the routine's pinned note, this workout's
+/// note, and, if there is none today, the note written last time.
+class _Notes extends StatelessWidget {
+  const _Notes({
+    required this.pinned,
+    required this.session,
+    required this.last,
+    required this.onTap,
+  });
+
+  final String pinned;
+  final String session;
+  final String last;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final muted = theme.colorScheme.onSurfaceVariant;
+    Widget line(
+      IconData icon,
+      String text, {
+      Color? color,
+      bool italic = false,
+    }) => Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 15, color: color ?? muted),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: color,
+                fontStyle: italic ? FontStyle.italic : null,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+    final showLast = session.isEmpty && last.isNotEmpty && last != pinned;
+    if (pinned.isEmpty && session.isEmpty && !showLast) {
+      return const SizedBox.shrink();
+    }
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 4, 14, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (pinned.isNotEmpty)
+              line(
+                Icons.push_pin_rounded,
+                pinned,
+                color: theme.colorScheme.primary,
+              ),
+            if (session.isNotEmpty)
+              line(Icons.notes_rounded, session, italic: true),
+            if (showLast)
+              line(
+                Icons.history_rounded,
+                'Da última vez: $last',
+                color: muted,
+                italic: true,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Edits an exercise's notes. [pinned] is `null` when the workout has no
+/// routine, and only the note for this workout is shown.
+Future<({String session, String pinned})?> showNotesDialog(
+  BuildContext context, {
+  required String session,
+  String? pinned,
+}) {
+  final sessionCtrl = TextEditingController(text: session);
+  final pinnedCtrl = TextEditingController(text: pinned ?? '');
+  return showDialog<({String session, String pinned})>(
+    context: context,
+    builder: (context) {
+      final theme = Theme.of(context);
+      final help = theme.textTheme.bodySmall?.copyWith(
+        color: theme.colorScheme.onSurfaceVariant,
+      );
+      return AlertDialog(
+        title: const Text('Notas'),
+        scrollable: true,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: sessionCtrl,
+              autofocus: pinned == null || pinned.isNotEmpty,
+              maxLines: 3,
+              minLines: 1,
+              maxLength: 500,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: const InputDecoration(
+                labelText: 'Só neste treino',
+                prefixIcon: Icon(Icons.notes_rounded),
+              ),
+            ),
+            Text(
+              'Fica no histórico e aparece no próximo treino como "da última vez".',
+              style: help,
+            ),
+            if (pinned != null) ...[
+              const SizedBox(height: 16),
+              TextField(
+                controller: pinnedCtrl,
+                maxLines: 3,
+                minLines: 1,
+                maxLength: 500,
+                textCapitalization: TextCapitalization.sentences,
+                decoration: const InputDecoration(
+                  labelText: 'Fixa na rotina',
+                  prefixIcon: Icon(Icons.push_pin_rounded),
+                ),
+              ),
+              Text(
+                'Aparece sempre que fizeres esta rotina. Ao terminar o treino confirmas se a guardas na rotina.',
+                style: help,
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, (
+              session: sessionCtrl.text,
+              pinned: pinnedCtrl.text,
+            )),
+            child: const Text('Guardar'),
+          ),
+        ],
+      );
+    },
+  );
 }
