@@ -62,133 +62,137 @@ Future<FinishResult?> showFinishSheet(
   return showModalBottomSheet<FinishResult>(
     context: context,
     isScrollControlled: true,
-    builder: (context) => StatefulBuilder(builder: (context, setSheetState) {
-      final theme = Theme.of(context);
-      final muted = theme.textTheme.bodyMedium?.copyWith(
-        color: theme.colorScheme.onSurfaceVariant,
-      );
-      return SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                workout.isEditing ? 'Guardar alterações?' : 'Terminar treino?',
-                style: theme.textTheme.headlineSmall,
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  if (!workout.isEditing)
+    builder: (context) => StatefulBuilder(
+      builder: (context, setSheetState) {
+        final theme = Theme.of(context);
+        final muted = theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        );
+        return SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  workout.isEditing
+                      ? 'Guardar alterações?'
+                      : 'Terminar treino?',
+                  style: theme.textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    if (!workout.isEditing)
+                      Expanded(
+                        child: StatTile(
+                          value: formatDuration(
+                            DateTime.now().difference(workout.startedAt),
+                          ),
+                          label: 'Duração',
+                          icon: Icons.timer_outlined,
+                        ),
+                      ),
                     Expanded(
                       child: StatTile(
-                        value: formatDuration(
-                          DateTime.now().difference(workout.startedAt),
-                        ),
-                        label: 'Duração',
-                        icon: Icons.timer_outlined,
+                        value: '${workout.doneSets}',
+                        label: 'Séries feitas',
+                        icon: Icons.check_rounded,
                       ),
                     ),
-                  Expanded(
-                    child: StatTile(
-                      value: '${workout.doneSets}',
-                      label: 'Séries feitas',
-                      icon: Icons.check_rounded,
+                    Expanded(
+                      child: StatTile(
+                        value: formatVolume(volume, unit),
+                        label: 'Volume',
+                        icon: Icons.fitness_center_rounded,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                if (pending.filled > 0)
+                  _Notice(
+                    icon: Icons.edit_note_rounded,
+                    color: Brand.amber,
+                    text: pending.filled == 1
+                        ? '1 série tem valores mas não está marcada como feita.'
+                        : '${pending.filled} séries têm valores mas não estão marcadas como feitas.',
+                  ),
+                if (pending.empty > 0)
+                  _Notice(
+                    icon: Icons.remove_circle_outline_rounded,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    text: pending.empty == 1
+                        ? '1 série vazia vai ser ignorada.'
+                        : '${pending.empty} séries vazias vão ser ignoradas.',
+                  ),
+                if (exercisesDone < workout.exercises.length)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'Exercícios sem séries feitas não ficam no histórico.',
+                      style: muted,
                     ),
                   ),
-                  Expanded(
-                    child: StatTile(
-                      value: formatVolume(volume, unit),
-                      label: 'Volume',
-                      icon: Icons.fitness_center_rounded,
+                if (sync != null)
+                  _RoutineChanges(
+                    sync: sync,
+                    selected: selected,
+                    onChanged: (id, on) => setSheetState(
+                      () => on ? selected.add(id) : selected.remove(id),
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (pending.filled > 0)
-                _Notice(
-                  icon: Icons.edit_note_rounded,
-                  color: Brand.amber,
-                  text: pending.filled == 1
-                      ? '1 série tem valores mas não está marcada como feita.'
-                      : '${pending.filled} séries têm valores mas não estão marcadas como feitas.',
-                ),
-              if (pending.empty > 0)
-                _Notice(
-                  icon: Icons.remove_circle_outline_rounded,
-                  color: theme.colorScheme.onSurfaceVariant,
-                  text: pending.empty == 1
-                      ? '1 série vazia vai ser ignorada.'
-                      : '${pending.empty} séries vazias vão ser ignoradas.',
-                ),
-              if (exercisesDone < workout.exercises.length)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    'Exercícios sem séries feitas não ficam no histórico.',
-                    style: muted,
-                  ),
-                ),
-              if (sync != null)
-                _RoutineChanges(
-                  sync: sync,
-                  selected: selected,
-                  onChanged: (id, on) => setSheetState(
-                    () => on ? selected.add(id) : selected.remove(id),
-                  ),
-                ),
-              const SizedBox(height: 8),
-              if (pending.filled > 0) ...[
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Brand.success,
-                    foregroundColor: Colors.black,
-                  ),
-                  onPressed: () => Navigator.pop(
-                    context,
-                    result(FinishChoice.completeFilledAndFinish),
-                  ),
-                  child: Text(
-                    pending.filled == 1
-                        ? 'Marcar 1 como feita e terminar'
-                        : 'Marcar ${pending.filled} como feitas e terminar',
-                  ),
-                ),
                 const SizedBox(height: 8),
-                if (workout.doneSets > 0)
-                  OutlinedButton(
+                if (pending.filled > 0) ...[
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Brand.success,
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: () => Navigator.pop(
+                      context,
+                      result(FinishChoice.completeFilledAndFinish),
+                    ),
+                    child: Text(
+                      pending.filled == 1
+                          ? 'Marcar 1 como feita e terminar'
+                          : 'Marcar ${pending.filled} como feitas e terminar',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  if (workout.doneSets > 0)
+                    OutlinedButton(
+                      onPressed: () =>
+                          Navigator.pop(context, result(FinishChoice.finish)),
+                      child: const Text('Terminar só com as marcadas'),
+                    ),
+                ] else
+                  FilledButton(
+                    style: FilledButton.styleFrom(
+                      backgroundColor: Brand.success,
+                      foregroundColor: Colors.black,
+                    ),
                     onPressed: () =>
                         Navigator.pop(context, result(FinishChoice.finish)),
-                    child: const Text('Terminar só com as marcadas'),
+                    child: Text(
+                      workout.isEditing ? 'Guardar' : 'Terminar treino',
+                    ),
                   ),
-              ] else
-                FilledButton(
-                  style: FilledButton.styleFrom(
-                    backgroundColor: Brand.success,
-                    foregroundColor: Colors.black,
-                  ),
-                  onPressed: () =>
-                      Navigator.pop(context, result(FinishChoice.finish)),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
                   child: Text(
-                    workout.isEditing ? 'Guardar' : 'Terminar treino',
+                    workout.isEditing
+                        ? 'Continuar a editar'
+                        : 'Continuar a treinar',
                   ),
                 ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(
-                  workout.isEditing
-                      ? 'Continuar a editar'
-                      : 'Continuar a treinar',
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      );
-    }),
+        );
+      },
+    ),
   );
 }
 

@@ -149,6 +149,16 @@ class $ExercisesTable extends Exercises
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<LoadMode, String> loadMode =
+      GeneratedColumn<String>(
+        'load_mode',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('bilateral'),
+      ).withConverter<LoadMode>($ExercisesTable.$converterloadMode);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     name,
@@ -162,6 +172,7 @@ class $ExercisesTable extends Exercises
     seedKey,
     restSeconds,
     archived,
+    loadMode,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -293,6 +304,12 @@ class $ExercisesTable extends Exercises
         DriftSqlType.bool,
         data['${effectivePrefix}archived'],
       )!,
+      loadMode: $ExercisesTable.$converterloadMode.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}load_mode'],
+        )!,
+      ),
     );
   }
 
@@ -309,6 +326,8 @@ class $ExercisesTable extends Exercises
       const EnumNameConverter<Equipment>(Equipment.values);
   static JsonTypeConverter2<ExerciseKind, String, String> $converterkind =
       const EnumNameConverter<ExerciseKind>(ExerciseKind.values);
+  static JsonTypeConverter2<LoadMode, String, String> $converterloadMode =
+      const EnumNameConverter<LoadMode>(LoadMode.values);
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
@@ -324,6 +343,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   final Value<String?> seedKey;
   final Value<int?> restSeconds;
   final Value<bool> archived;
+  final Value<LoadMode> loadMode;
   const ExercisesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -337,6 +357,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     this.seedKey = const Value.absent(),
     this.restSeconds = const Value.absent(),
     this.archived = const Value.absent(),
+    this.loadMode = const Value.absent(),
   });
   ExercisesCompanion.insert({
     this.id = const Value.absent(),
@@ -351,6 +372,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     this.seedKey = const Value.absent(),
     this.restSeconds = const Value.absent(),
     this.archived = const Value.absent(),
+    this.loadMode = const Value.absent(),
   }) : name = Value(name),
        primaryMuscle = Value(primaryMuscle),
        equipment = Value(equipment),
@@ -368,6 +390,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Expression<String>? seedKey,
     Expression<int>? restSeconds,
     Expression<bool>? archived,
+    Expression<String>? loadMode,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -382,6 +405,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       if (seedKey != null) 'seed_key': seedKey,
       if (restSeconds != null) 'rest_seconds': restSeconds,
       if (archived != null) 'archived': archived,
+      if (loadMode != null) 'load_mode': loadMode,
     });
   }
 
@@ -398,6 +422,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Value<String?>? seedKey,
     Value<int?>? restSeconds,
     Value<bool>? archived,
+    Value<LoadMode>? loadMode,
   }) {
     return ExercisesCompanion(
       id: id ?? this.id,
@@ -412,6 +437,7 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       seedKey: seedKey ?? this.seedKey,
       restSeconds: restSeconds ?? this.restSeconds,
       archived: archived ?? this.archived,
+      loadMode: loadMode ?? this.loadMode,
     );
   }
 
@@ -464,6 +490,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     if (archived.present) {
       map['archived'] = Variable<bool>(archived.value);
     }
+    if (loadMode.present) {
+      map['load_mode'] = Variable<String>(
+        $ExercisesTable.$converterloadMode.toSql(loadMode.value),
+      );
+    }
     return map;
   }
 
@@ -481,7 +512,8 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
           ..write('isCustom: $isCustom, ')
           ..write('seedKey: $seedKey, ')
           ..write('restSeconds: $restSeconds, ')
-          ..write('archived: $archived')
+          ..write('archived: $archived, ')
+          ..write('loadMode: $loadMode')
           ..write(')'))
         .toString();
   }
@@ -2245,6 +2277,26 @@ class $RoutineExercisesTable extends RoutineExercises
     requiredDuringInsert: false,
   );
   @override
+  late final GeneratedColumnWithTypeConverter<List<SetType>, String> setTypes =
+      GeneratedColumn<String>(
+        'set_types',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant(''),
+      ).withConverter<List<SetType>>($RoutineExercisesTable.$convertersetTypes);
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     routineId,
@@ -2253,6 +2305,8 @@ class $RoutineExercisesTable extends RoutineExercises
     sets,
     reps,
     weightKg,
+    setTypes,
+    notes,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2311,6 +2365,12 @@ class $RoutineExercisesTable extends RoutineExercises
         weightKg.isAcceptableOrUnknown(data['weight_kg']!, _weightKgMeta),
       );
     }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
     return context;
   }
 
@@ -2348,6 +2408,16 @@ class $RoutineExercisesTable extends RoutineExercises
         DriftSqlType.double,
         data['${effectivePrefix}weight_kg'],
       ),
+      setTypes: $RoutineExercisesTable.$convertersetTypes.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}set_types'],
+        )!,
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      )!,
     );
   }
 
@@ -2355,6 +2425,9 @@ class $RoutineExercisesTable extends RoutineExercises
   $RoutineExercisesTable createAlias(String alias) {
     return $RoutineExercisesTable(attachedDatabase, alias);
   }
+
+  static TypeConverter<List<SetType>, String> $convertersetTypes =
+      const SetTypeListConverter();
 }
 
 class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
@@ -2365,6 +2438,13 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
   final int sets;
   final int reps;
   final double? weightKg;
+
+  /// Type of each planned set, in order. Empty (rows from before v2) means
+  /// [sets] normal sets.
+  final List<SetType> setTypes;
+
+  /// Note pinned to this exercise in the routine, shown in every workout.
+  final String notes;
   const RoutineExercise({
     required this.id,
     required this.routineId,
@@ -2373,6 +2453,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     required this.sets,
     required this.reps,
     this.weightKg,
+    required this.setTypes,
+    required this.notes,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2386,6 +2468,12 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     if (!nullToAbsent || weightKg != null) {
       map['weight_kg'] = Variable<double>(weightKg);
     }
+    {
+      map['set_types'] = Variable<String>(
+        $RoutineExercisesTable.$convertersetTypes.toSql(setTypes),
+      );
+    }
+    map['notes'] = Variable<String>(notes);
     return map;
   }
 
@@ -2400,6 +2488,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       weightKg: weightKg == null && nullToAbsent
           ? const Value.absent()
           : Value(weightKg),
+      setTypes: Value(setTypes),
+      notes: Value(notes),
     );
   }
 
@@ -2416,6 +2506,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       sets: serializer.fromJson<int>(json['sets']),
       reps: serializer.fromJson<int>(json['reps']),
       weightKg: serializer.fromJson<double?>(json['weightKg']),
+      setTypes: serializer.fromJson<List<SetType>>(json['setTypes']),
+      notes: serializer.fromJson<String>(json['notes']),
     );
   }
   @override
@@ -2429,6 +2521,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       'sets': serializer.toJson<int>(sets),
       'reps': serializer.toJson<int>(reps),
       'weightKg': serializer.toJson<double?>(weightKg),
+      'setTypes': serializer.toJson<List<SetType>>(setTypes),
+      'notes': serializer.toJson<String>(notes),
     };
   }
 
@@ -2440,6 +2534,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     int? sets,
     int? reps,
     Value<double?> weightKg = const Value.absent(),
+    List<SetType>? setTypes,
+    String? notes,
   }) => RoutineExercise(
     id: id ?? this.id,
     routineId: routineId ?? this.routineId,
@@ -2448,6 +2544,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
     sets: sets ?? this.sets,
     reps: reps ?? this.reps,
     weightKg: weightKg.present ? weightKg.value : this.weightKg,
+    setTypes: setTypes ?? this.setTypes,
+    notes: notes ?? this.notes,
   );
   RoutineExercise copyWithCompanion(RoutineExercisesCompanion data) {
     return RoutineExercise(
@@ -2460,6 +2558,8 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
       sets: data.sets.present ? data.sets.value : this.sets,
       reps: data.reps.present ? data.reps.value : this.reps,
       weightKg: data.weightKg.present ? data.weightKg.value : this.weightKg,
+      setTypes: data.setTypes.present ? data.setTypes.value : this.setTypes,
+      notes: data.notes.present ? data.notes.value : this.notes,
     );
   }
 
@@ -2472,14 +2572,25 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
           ..write('position: $position, ')
           ..write('sets: $sets, ')
           ..write('reps: $reps, ')
-          ..write('weightKg: $weightKg')
+          ..write('weightKg: $weightKg, ')
+          ..write('setTypes: $setTypes, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, routineId, exerciseId, position, sets, reps, weightKg);
+  int get hashCode => Object.hash(
+    id,
+    routineId,
+    exerciseId,
+    position,
+    sets,
+    reps,
+    weightKg,
+    setTypes,
+    notes,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2490,7 +2601,9 @@ class RoutineExercise extends DataClass implements Insertable<RoutineExercise> {
           other.position == this.position &&
           other.sets == this.sets &&
           other.reps == this.reps &&
-          other.weightKg == this.weightKg);
+          other.weightKg == this.weightKg &&
+          other.setTypes == this.setTypes &&
+          other.notes == this.notes);
 }
 
 class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
@@ -2501,6 +2614,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
   final Value<int> sets;
   final Value<int> reps;
   final Value<double?> weightKg;
+  final Value<List<SetType>> setTypes;
+  final Value<String> notes;
   const RoutineExercisesCompanion({
     this.id = const Value.absent(),
     this.routineId = const Value.absent(),
@@ -2509,6 +2624,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     this.sets = const Value.absent(),
     this.reps = const Value.absent(),
     this.weightKg = const Value.absent(),
+    this.setTypes = const Value.absent(),
+    this.notes = const Value.absent(),
   });
   RoutineExercisesCompanion.insert({
     this.id = const Value.absent(),
@@ -2518,6 +2635,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     this.sets = const Value.absent(),
     this.reps = const Value.absent(),
     this.weightKg = const Value.absent(),
+    this.setTypes = const Value.absent(),
+    this.notes = const Value.absent(),
   }) : routineId = Value(routineId),
        exerciseId = Value(exerciseId),
        position = Value(position);
@@ -2529,6 +2648,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     Expression<int>? sets,
     Expression<int>? reps,
     Expression<double>? weightKg,
+    Expression<String>? setTypes,
+    Expression<String>? notes,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2538,6 +2659,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
       if (sets != null) 'sets': sets,
       if (reps != null) 'reps': reps,
       if (weightKg != null) 'weight_kg': weightKg,
+      if (setTypes != null) 'set_types': setTypes,
+      if (notes != null) 'notes': notes,
     });
   }
 
@@ -2549,6 +2672,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     Value<int>? sets,
     Value<int>? reps,
     Value<double?>? weightKg,
+    Value<List<SetType>>? setTypes,
+    Value<String>? notes,
   }) {
     return RoutineExercisesCompanion(
       id: id ?? this.id,
@@ -2558,6 +2683,8 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
       sets: sets ?? this.sets,
       reps: reps ?? this.reps,
       weightKg: weightKg ?? this.weightKg,
+      setTypes: setTypes ?? this.setTypes,
+      notes: notes ?? this.notes,
     );
   }
 
@@ -2585,6 +2712,14 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
     if (weightKg.present) {
       map['weight_kg'] = Variable<double>(weightKg.value);
     }
+    if (setTypes.present) {
+      map['set_types'] = Variable<String>(
+        $RoutineExercisesTable.$convertersetTypes.toSql(setTypes.value),
+      );
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
     return map;
   }
 
@@ -2597,7 +2732,9 @@ class RoutineExercisesCompanion extends UpdateCompanion<RoutineExercise> {
           ..write('position: $position, ')
           ..write('sets: $sets, ')
           ..write('reps: $reps, ')
-          ..write('weightKg: $weightKg')
+          ..write('weightKg: $weightKg, ')
+          ..write('setTypes: $setTypes, ')
+          ..write('notes: $notes')
           ..write(')'))
         .toString();
   }
@@ -3134,6 +3271,7 @@ typedef $$ExercisesTableCreateCompanionBuilder =
       Value<String?> seedKey,
       Value<int?> restSeconds,
       Value<bool> archived,
+      Value<LoadMode> loadMode,
     });
 typedef $$ExercisesTableUpdateCompanionBuilder =
     ExercisesCompanion Function({
@@ -3149,6 +3287,7 @@ typedef $$ExercisesTableUpdateCompanionBuilder =
       Value<String?> seedKey,
       Value<int?> restSeconds,
       Value<bool> archived,
+      Value<LoadMode> loadMode,
     });
 
 final class $$ExercisesTableReferences
@@ -3269,6 +3408,12 @@ class $$ExercisesTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnWithTypeConverterFilters<LoadMode, LoadMode, String> get loadMode =>
+      $composableBuilder(
+        column: $table.loadMode,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
   Expression<bool> workoutExercisesRefs(
     Expression<bool> Function($$WorkoutExercisesTableFilterComposer f) f,
   ) {
@@ -3388,6 +3533,11 @@ class $$ExercisesTableOrderingComposer
     column: $table.archived,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get loadMode => $composableBuilder(
+    column: $table.loadMode,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ExercisesTableAnnotationComposer
@@ -3446,6 +3596,9 @@ class $$ExercisesTableAnnotationComposer
 
   GeneratedColumn<bool> get archived =>
       $composableBuilder(column: $table.archived, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<LoadMode, String> get loadMode =>
+      $composableBuilder(column: $table.loadMode, builder: (column) => column);
 
   Expression<T> workoutExercisesRefs<T extends Object>(
     Expression<T> Function($$WorkoutExercisesTableAnnotationComposer a) f,
@@ -3541,6 +3694,7 @@ class $$ExercisesTableTableManager
                 Value<String?> seedKey = const Value.absent(),
                 Value<int?> restSeconds = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<LoadMode> loadMode = const Value.absent(),
               }) => ExercisesCompanion(
                 id: id,
                 name: name,
@@ -3554,6 +3708,7 @@ class $$ExercisesTableTableManager
                 seedKey: seedKey,
                 restSeconds: restSeconds,
                 archived: archived,
+                loadMode: loadMode,
               ),
           createCompanionCallback:
               ({
@@ -3569,6 +3724,7 @@ class $$ExercisesTableTableManager
                 Value<String?> seedKey = const Value.absent(),
                 Value<int?> restSeconds = const Value.absent(),
                 Value<bool> archived = const Value.absent(),
+                Value<LoadMode> loadMode = const Value.absent(),
               }) => ExercisesCompanion.insert(
                 id: id,
                 name: name,
@@ -3582,6 +3738,7 @@ class $$ExercisesTableTableManager
                 seedKey: seedKey,
                 restSeconds: restSeconds,
                 archived: archived,
+                loadMode: loadMode,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -5405,6 +5562,8 @@ typedef $$RoutineExercisesTableCreateCompanionBuilder =
       Value<int> sets,
       Value<int> reps,
       Value<double?> weightKg,
+      Value<List<SetType>> setTypes,
+      Value<String> notes,
     });
 typedef $$RoutineExercisesTableUpdateCompanionBuilder =
     RoutineExercisesCompanion Function({
@@ -5415,6 +5574,8 @@ typedef $$RoutineExercisesTableUpdateCompanionBuilder =
       Value<int> sets,
       Value<int> reps,
       Value<double?> weightKg,
+      Value<List<SetType>> setTypes,
+      Value<String> notes,
     });
 
 final class $$RoutineExercisesTableReferences
@@ -5492,6 +5653,17 @@ class $$RoutineExercisesTableFilterComposer
 
   ColumnFilters<double> get weightKg => $composableBuilder(
     column: $table.weightKg,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<List<SetType>, List<SetType>, String>
+  get setTypes => $composableBuilder(
+    column: $table.setTypes,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5576,6 +5748,16 @@ class $$RoutineExercisesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get setTypes => $composableBuilder(
+    column: $table.setTypes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$RoutinesTableOrderingComposer get routineId {
     final $$RoutinesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5646,6 +5828,12 @@ class $$RoutineExercisesTableAnnotationComposer
 
   GeneratedColumn<double> get weightKg =>
       $composableBuilder(column: $table.weightKg, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<List<SetType>, String> get setTypes =>
+      $composableBuilder(column: $table.setTypes, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
 
   $$RoutinesTableAnnotationComposer get routineId {
     final $$RoutinesTableAnnotationComposer composer = $composerBuilder(
@@ -5731,6 +5919,8 @@ class $$RoutineExercisesTableTableManager
                 Value<int> sets = const Value.absent(),
                 Value<int> reps = const Value.absent(),
                 Value<double?> weightKg = const Value.absent(),
+                Value<List<SetType>> setTypes = const Value.absent(),
+                Value<String> notes = const Value.absent(),
               }) => RoutineExercisesCompanion(
                 id: id,
                 routineId: routineId,
@@ -5739,6 +5929,8 @@ class $$RoutineExercisesTableTableManager
                 sets: sets,
                 reps: reps,
                 weightKg: weightKg,
+                setTypes: setTypes,
+                notes: notes,
               ),
           createCompanionCallback:
               ({
@@ -5749,6 +5941,8 @@ class $$RoutineExercisesTableTableManager
                 Value<int> sets = const Value.absent(),
                 Value<int> reps = const Value.absent(),
                 Value<double?> weightKg = const Value.absent(),
+                Value<List<SetType>> setTypes = const Value.absent(),
+                Value<String> notes = const Value.absent(),
               }) => RoutineExercisesCompanion.insert(
                 id: id,
                 routineId: routineId,
@@ -5757,6 +5951,8 @@ class $$RoutineExercisesTableTableManager
                 sets: sets,
                 reps: reps,
                 weightKg: weightKg,
+                setTypes: setTypes,
+                notes: notes,
               ),
           withReferenceMapper: (p0) => p0
               .map(

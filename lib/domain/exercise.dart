@@ -57,8 +57,7 @@ String? loadLabelFor(LoadMode mode, Equipment equipment) {
     _ => (null, null),
   };
   return switch (mode) {
-    LoadMode.bilateral =>
-      one == null ? null : '$one seguro com as duas mãos',
+    LoadMode.bilateral => one == null ? null : '$one seguro com as duas mãos',
     LoadMode.perHand =>
       plural == null
           ? 'Um em cada mão · peso de cada lado'

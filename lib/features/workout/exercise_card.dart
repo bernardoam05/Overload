@@ -564,26 +564,30 @@ class _Notes extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final muted = theme.colorScheme.onSurfaceVariant;
-    Widget line(IconData icon, String text, {Color? color, bool italic = false}) =>
-        Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(icon, size: 15, color: color ?? muted),
-              const SizedBox(width: 6),
-              Expanded(
-                child: Text(
-                  text,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: color,
-                    fontStyle: italic ? FontStyle.italic : null,
-                  ),
-                ),
+    Widget line(
+      IconData icon,
+      String text, {
+      Color? color,
+      bool italic = false,
+    }) => Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 15, color: color ?? muted),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              text,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: color,
+                fontStyle: italic ? FontStyle.italic : null,
               ),
-            ],
+            ),
           ),
-        );
+        ],
+      ),
+    );
     final showLast = session.isEmpty && last.isNotEmpty && last != pinned;
     if (pinned.isEmpty && session.isEmpty && !showLast) {
       return const SizedBox.shrink();
@@ -596,10 +600,20 @@ class _Notes extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (pinned.isNotEmpty)
-              line(Icons.push_pin_rounded, pinned, color: theme.colorScheme.primary),
-            if (session.isNotEmpty) line(Icons.notes_rounded, session, italic: true),
+              line(
+                Icons.push_pin_rounded,
+                pinned,
+                color: theme.colorScheme.primary,
+              ),
+            if (session.isNotEmpty)
+              line(Icons.notes_rounded, session, italic: true),
             if (showLast)
-              line(Icons.history_rounded, 'Da última vez: $last', color: muted, italic: true),
+              line(
+                Icons.history_rounded,
+                'Da última vez: $last',
+                color: muted,
+                italic: true,
+              ),
           ],
         ),
       ),

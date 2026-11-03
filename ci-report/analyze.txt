@@ -54,5 +54,9 @@ Got dependencies!
 50 packages have newer versions incompatible with dependency constraints.
 Try `flutter pub outdated` for more information.
 Analyzing Overload...                                           
-No issues found! (ran in 24.4s)
-exit=0
+
+   info • Use the null-aware marker '?' rather than a null check via an 'if' • lib/data/database.dart:31:7 • use_null_aware_elements
+   info • Use the null-aware marker '?' rather than a null check via an 'if' • lib/features/workout/routine_sync.dart:128:13 • use_null_aware_elements
+
+2 issues found. (ran in 22.8s)
+exit=1

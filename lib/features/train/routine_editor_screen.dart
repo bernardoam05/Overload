@@ -337,7 +337,11 @@ class _Stepper extends StatelessWidget {
 /// working sets, F = até à falha, D = drop). Tap a chip to change its type
 /// or remove it.
 class SetPlanEditor extends StatelessWidget {
-  const SetPlanEditor({super.key, required this.types, required this.onChanged});
+  const SetPlanEditor({
+    super.key,
+    required this.types,
+    required this.onChanged,
+  });
 
   final List<SetType> types;
   final ValueChanged<List<SetType>> onChanged;

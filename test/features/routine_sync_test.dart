@@ -46,7 +46,9 @@ ActiveWorkout _workout(List<ActiveExercise> exercises) => ActiveWorkout(
   exercises: exercises,
 );
 
-final _library = {for (final id in [1, 2, 3, 4]) id: exercise(id, name: 'E$id')};
+final _library = {
+  for (final id in [1, 2, 3, 4]) id: exercise(id, name: 'E$id'),
+};
 
 void main() {
   final routine = _routine([
@@ -88,38 +90,44 @@ void main() {
     final sync = routineSync(w, routine, _library)!;
     expect(sync.changes.map((c) => c.id), ['sets:0', 'removed:2']);
     expect(sync.defaultSelection, isEmpty);
-    expect(
-      sync.apply({}).map((i) => (i.exerciseId, i.sets)),
-      [(1, 3), (2, 3), (3, 2)],
-    );
+    expect(sync.apply({}).map((i) => (i.exerciseId, i.sets)), [
+      (1, 3),
+      (2, 3),
+      (3, 2),
+    ]);
     expect(
       sync.apply({'sets:0', 'removed:2'}).map((i) => (i.exerciseId, i.sets)),
       [(1, 2), (2, 3)],
     );
   });
 
-  test('added exercises keep their place; replacements and order are opt-in', () {
-    final w = _workout([
-      _ex('b', 2, [_n, _n, _n], routineIndex: 1, routineNotes: 'banco a 30°'),
-      _ex('a', 4, [_n, _n, _n], routineIndex: 0),
-      _ex('new', 1, [_n, _n]),
-      _ex('c', 3, [_n, _n], routineIndex: 2),
-    ]);
-    final sync = routineSync(w, routine, _library)!;
-    expect(sync.changes.map((c) => c.id), [
-      'replaced:0',
-      'added:new',
-      'order',
-    ]);
-    expect(sync.defaultSelection, {'added:new'});
+  test(
+    'added exercises keep their place; replacements and order are opt-in',
+    () {
+      final w = _workout([
+        _ex('b', 2, [_n, _n, _n], routineIndex: 1, routineNotes: 'banco a 30°'),
+        _ex('a', 4, [_n, _n, _n], routineIndex: 0),
+        _ex('new', 1, [_n, _n]),
+        _ex('c', 3, [_n, _n], routineIndex: 2),
+      ]);
+      final sync = routineSync(w, routine, _library)!;
+      expect(sync.changes.map((c) => c.id), [
+        'replaced:0',
+        'added:new',
+        'order',
+      ]);
+      expect(sync.defaultSelection, {'added:new'});
 
-    // Routine order kept, the new exercise goes after the one it followed.
-    expect(sync.apply({'added:new'}).map((i) => i.exerciseId), [1, 1, 2, 3]);
-    expect(
-      sync.apply({'added:new', 'replaced:0', 'order'}).map((i) => i.exerciseId),
-      [2, 4, 1, 3],
-    );
-  });
+      // Routine order kept, the new exercise goes after the one it followed.
+      expect(sync.apply({'added:new'}).map((i) => i.exerciseId), [1, 1, 2, 3]);
+      expect(
+        sync
+            .apply({'added:new', 'replaced:0', 'order'})
+            .map((i) => i.exerciseId),
+        [2, 4, 1, 3],
+      );
+    },
+  );
 
   test('workouts without routine links are matched by exercise', () {
     final match = matchToRoutine([
@@ -131,7 +139,10 @@ void main() {
   });
 
   test('describes set plans', () {
-    expect(describeSetTypes([_a, _a, _n, _n, _n, _d]), '2 aquecimentos + 3 séries + 1 drop');
+    expect(
+      describeSetTypes([_a, _a, _n, _n, _n, _d]),
+      '2 aquecimentos + 3 séries + 1 drop',
+    );
     expect(describeSetTypes([_n]), '1 série');
   });
 }

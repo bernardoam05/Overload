@@ -260,7 +260,8 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
           weightKg: item.weightKg,
           reps: item.reps,
         ),
-        SetType.warmup || SetType.drop => ActiveSet(id: newLocalId(), type: type),
+        SetType.warmup ||
+        SetType.drop => ActiveSet(id: newLocalId(), type: type),
       };
 
   /// Starts a new workout with the same exercises and sets as [record]. A

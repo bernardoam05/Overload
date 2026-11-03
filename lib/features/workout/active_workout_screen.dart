@@ -97,7 +97,10 @@ class _ActiveWorkoutScreenState extends ConsumerState<ActiveWorkoutScreen> {
       } else {
         context.pushReplacement('/summary', extra: summary);
         if (routineUpdated) {
-          showMessage(context, 'Rotina «${sync!.routine.routine.name}» atualizada.');
+          showMessage(
+            context,
+            'Rotina «${sync!.routine.routine.name}» atualizada.',
+          );
         }
       }
     } on FinishException catch (e) {

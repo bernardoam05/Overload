@@ -143,10 +143,7 @@ class RoutineSync {
     ];
     final common = reps.isEmpty
         ? 10
-        : maxBy(
-            reps.toSet(),
-            (r) => reps.where((x) => x == r).length,
-          )!;
+        : maxBy(reps.toSet(), (r) => reps.where((x) => x == r).length)!;
     return RoutineItem(
       exerciseId: e.exerciseId,
       setTypes: setTypesOf(e),
@@ -199,7 +196,8 @@ RoutineSync? routineSync(
       );
     }
     final types = setTypesOf(e);
-    if (types.isNotEmpty && !const ListEquality<SetType>().equals(types, item.setTypes)) {
+    if (types.isNotEmpty &&
+        !const ListEquality<SetType>().equals(types, item.setTypes)) {
       int count(List<SetType> l, SetType t) => l.where((x) => x == t).length;
       final added = SetType.values.any(
         (t) => count(types, t) > count(item.setTypes, t),
