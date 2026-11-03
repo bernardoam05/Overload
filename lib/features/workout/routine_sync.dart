@@ -124,8 +124,7 @@ class RoutineSync {
       } else {
         // Right after the closest earlier routine item still in the workout.
         final before = [
-          for (var j = idx - 1; j >= 0; j--)
-            ?positionInWorkout[j],
+          for (var j = idx - 1; j >= 0; j--) ?positionInWorkout[j],
         ].firstOrNull;
         key = (before ?? -1) + 0.5 + idx * 1e-4;
       }

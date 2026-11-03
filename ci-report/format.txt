@@ -1,9 +1,3 @@
-Formatted lib/domain/exercise.dart
-Formatted lib/features/train/routine_editor_screen.dart
-Formatted lib/features/workout/active_workout_controller.dart
-Formatted lib/features/workout/active_workout_screen.dart
-Formatted lib/features/workout/exercise_card.dart
-Formatted lib/features/workout/finish_sheet.dart
+Formatted lib/data/database.dart
 Formatted lib/features/workout/routine_sync.dart
-Formatted test/features/routine_sync_test.dart
-Formatted 73 files (8 changed) in 0.60 seconds.
+Formatted 73 files (2 changed) in 0.60 seconds.
