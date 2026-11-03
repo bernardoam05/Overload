@@ -236,6 +236,7 @@ class _ExercisesScreenState extends ConsumerState<ExercisesScreen> {
                     else ...[
                       e.primaryMuscle.label,
                       e.equipment.label,
+                      if (e.loadMode == LoadMode.unilateral) 'Unilateral',
                     ],
                     if (count > 0) '$count× feito',
                   ].join(' · '),

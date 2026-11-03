@@ -232,10 +232,9 @@ class WorkoutDetailScreen extends ConsumerWidget {
             for (final e in workout.exercises)
               RoutineItem(
                 exerciseId: e.exerciseId,
-                sets: e.workingSets.isEmpty
-                    ? e.sets.length
-                    : e.workingSets.length,
+                setTypes: [for (final s in e.sets) s.type],
                 reps: (e.workingSets.firstOrNull ?? e.sets.first).reps,
+                notes: e.notes,
               ),
           ]),
         );

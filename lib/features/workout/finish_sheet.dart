@@ -7,8 +7,13 @@ import '../../domain/exercise.dart';
 import '../../widgets/common.dart';
 import 'active_workout.dart';
 import 'active_workout_controller.dart';
+import 'routine_sync.dart';
 
 enum FinishChoice { finish, completeFilledAndFinish }
+
+/// What the user chose in the finish sheet, including which changes to take
+/// to the routine (empty to leave it as it was).
+typedef FinishResult = ({FinishChoice choice, Set<String> routineChanges});
 
 /// Sets that are not done, split by whether their values were typed in.
 ({int filled, int empty}) pendingSets(
@@ -28,11 +33,16 @@ enum FinishChoice { finish, completeFilledAndFinish }
 
 /// Confirmation before finishing, with a short recap so it is worth reading,
 /// and a one-tap fix for sets that were filled in but never ticked.
-Future<FinishChoice?> showFinishSheet(
+///
+/// When the workout came from a routine and its structure or pinned notes
+/// changed, [sync] lists those changes so the user picks which ones the
+/// routine keeps.
+Future<FinishResult?> showFinishSheet(
   BuildContext context, {
   required ActiveWorkout workout,
   required Map<int, Exercise> library,
   required WeightUnit unit,
+  RoutineSync? sync,
 }) {
   final pending = pendingSets(workout, library);
   var volume = 0.0;
@@ -46,16 +56,19 @@ Future<FinishChoice?> showFinishSheet(
   }
   final exercisesDone = workout.exercises.where((e) => e.doneCount > 0).length;
 
-  return showModalBottomSheet<FinishChoice>(
+  final selected = {...?sync?.defaultSelection};
+  FinishResult result(FinishChoice c) => (choice: c, routineChanges: selected);
+
+  return showModalBottomSheet<FinishResult>(
     context: context,
     isScrollControlled: true,
-    builder: (context) {
+    builder: (context) => StatefulBuilder(builder: (context, setSheetState) {
       final theme = Theme.of(context);
       final muted = theme.textTheme.bodyMedium?.copyWith(
         color: theme.colorScheme.onSurfaceVariant,
       );
       return SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -119,6 +132,14 @@ Future<FinishChoice?> showFinishSheet(
                     style: muted,
                   ),
                 ),
+              if (sync != null)
+                _RoutineChanges(
+                  sync: sync,
+                  selected: selected,
+                  onChanged: (id, on) => setSheetState(
+                    () => on ? selected.add(id) : selected.remove(id),
+                  ),
+                ),
               const SizedBox(height: 8),
               if (pending.filled > 0) ...[
                 FilledButton(
@@ -128,7 +149,7 @@ Future<FinishChoice?> showFinishSheet(
                   ),
                   onPressed: () => Navigator.pop(
                     context,
-                    FinishChoice.completeFilledAndFinish,
+                    result(FinishChoice.completeFilledAndFinish),
                   ),
                   child: Text(
                     pending.filled == 1
@@ -140,7 +161,7 @@ Future<FinishChoice?> showFinishSheet(
                 if (workout.doneSets > 0)
                   OutlinedButton(
                     onPressed: () =>
-                        Navigator.pop(context, FinishChoice.finish),
+                        Navigator.pop(context, result(FinishChoice.finish)),
                     child: const Text('Terminar só com as marcadas'),
                   ),
               ] else
@@ -149,7 +170,8 @@ Future<FinishChoice?> showFinishSheet(
                     backgroundColor: Brand.success,
                     foregroundColor: Colors.black,
                   ),
-                  onPressed: () => Navigator.pop(context, FinishChoice.finish),
+                  onPressed: () =>
+                      Navigator.pop(context, result(FinishChoice.finish)),
                   child: Text(
                     workout.isEditing ? 'Guardar' : 'Terminar treino',
                   ),
@@ -166,8 +188,66 @@ Future<FinishChoice?> showFinishSheet(
           ),
         ),
       );
-    },
+    }),
   );
+}
+
+/// Checklist of what changed compared with the routine.
+class _RoutineChanges extends StatelessWidget {
+  const _RoutineChanges({
+    required this.sync,
+    required this.selected,
+    required this.onChanged,
+  });
+
+  final RoutineSync sync;
+  final Set<String> selected;
+  final void Function(String id, bool on) onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 4, bottom: 8),
+      padding: const EdgeInsets.fromLTRB(12, 12, 4, 4),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Levar para a rotina «${sync.routine.routine.name}»?',
+            style: theme.textTheme.titleSmall,
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'Só o que marcares muda a rotina. O resto fica apenas neste treino.',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          for (final c in sync.changes)
+            CheckboxListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+              value: selected.contains(c.id),
+              onChanged: (v) => onChanged(c.id, v ?? false),
+              title: Text(c.title),
+              subtitle: c.detail == null
+                  ? null
+                  : Text(
+                      c.detail!,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+            ),
+        ],
+      ),
+    );
+  }
 }
 
 class _Notice extends StatelessWidget {

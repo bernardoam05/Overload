@@ -21,6 +21,20 @@ class MuscleListConverter extends TypeConverter<List<Muscle>, String> {
   String toSql(List<Muscle> value) => value.map((m) => m.name).join(',');
 }
 
+/// Stores a routine's planned set types as a comma separated list of names.
+class SetTypeListConverter extends TypeConverter<List<SetType>, String> {
+  const SetTypeListConverter();
+
+  @override
+  List<SetType> fromSql(String fromDb) => [
+    for (final name in fromDb.split(','))
+      if (SetType.values.asNameMap()[name] case final type?) type,
+  ];
+
+  @override
+  String toSql(List<SetType> value) => value.map((t) => t.name).join(',');
+}
+
 @UseRowClass(Exercise)
 class Exercises extends Table {
   IntColumn get id => integer().autoIncrement()();
@@ -36,6 +50,8 @@ class Exercises extends Table {
   TextColumn get seedKey => text().nullable().unique()();
   IntColumn get restSeconds => integer().nullable()();
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
+  TextColumn get loadMode =>
+      textEnum<LoadMode>().withDefault(const Constant('bilateral'))();
 }
 
 @DataClassName('WorkoutRow')
@@ -98,6 +114,15 @@ class RoutineExercises extends Table {
   IntColumn get sets => integer().withDefault(const Constant(3))();
   IntColumn get reps => integer().withDefault(const Constant(10))();
   RealColumn get weightKg => real().nullable()();
+
+  /// Type of each planned set, in order. Empty (rows from before v2) means
+  /// [sets] normal sets.
+  TextColumn get setTypes => text()
+      .map(const SetTypeListConverter())
+      .withDefault(const Constant(''))();
+
+  /// Note pinned to this exercise in the routine, shown in every workout.
+  TextColumn get notes => text().withDefault(const Constant(''))();
 }
 
 @DataClassName('BodyWeightEntry')
@@ -134,11 +159,18 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'overload'));
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) => m.createAll(),
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.addColumn(exercises, exercises.loadMode);
+        await m.addColumn(routineExercises, routineExercises.setTypes);
+        await m.addColumn(routineExercises, routineExercises.notes);
+      }
+    },
     beforeOpen: (details) async {
       await customStatement('PRAGMA foreign_keys = ON');
       // Adds library exercises shipped in newer versions of the app.

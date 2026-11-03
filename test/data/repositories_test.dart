@@ -27,6 +27,32 @@ void main() {
     expect(routines.first.items, isNotEmpty);
   });
 
+  test('routines keep set types and pinned notes', () async {
+    final repo = RoutineRepository(db);
+    final ids = (await db.select(db.exercises).get()).map((e) => e.id).toList();
+    final id = await repo.save(
+      name: 'Teste',
+      items: [
+        RoutineItem(
+          exerciseId: ids[0],
+          setTypes: const [SetType.warmup, SetType.normal, SetType.drop],
+          notes: 'banco a 30°',
+        ),
+        RoutineItem(exerciseId: ids[1], sets: 4),
+      ],
+    );
+    final saved = (await repo.watchAll().first).firstWhere(
+      (r) => r.routine.id == id,
+    );
+    expect(saved.items[0].setTypes, [
+      SetType.warmup,
+      SetType.normal,
+      SetType.drop,
+    ]);
+    expect(saved.items[0].notes, 'banco a 30°');
+    expect(saved.items[1].setTypes, List.filled(4, SetType.normal));
+  });
+
   test('seeding again does not duplicate exercises', () async {
     await seedExercises(db);
     expect(await db.select(db.exercises).get(), hasLength(librarySeed.length));

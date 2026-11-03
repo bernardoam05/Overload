@@ -13,6 +13,7 @@ class ExerciseDraft {
     this.secondaryMuscles = const [],
     this.instructions = '',
     this.restSeconds,
+    this.loadMode = LoadMode.bilateral,
   });
 
   final String name;
@@ -22,6 +23,7 @@ class ExerciseDraft {
   final ExerciseKind kind;
   final String instructions;
   final int? restSeconds;
+  final LoadMode loadMode;
 
   /// Validates user input; returns an error message or `null`.
   String? validate() {
@@ -54,6 +56,7 @@ class ExerciseRepository {
             kind: draft.kind,
             instructions: Value(draft.instructions.trim()),
             restSeconds: Value(draft.restSeconds),
+            loadMode: Value(draft.loadMode),
             isCustom: const Value(true),
           ),
         );
@@ -71,6 +74,7 @@ class ExerciseRepository {
         kind: Value(draft.kind),
         instructions: Value(draft.instructions.trim()),
         restSeconds: Value(draft.restSeconds),
+        loadMode: Value(draft.loadMode),
       ),
     );
   }

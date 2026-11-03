@@ -1,28 +1,66 @@
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
+import '../../domain/enums.dart';
 import '../database.dart';
 import 'workout_repository.dart';
 
+/// One exercise of a routine: the planned sets (by type), the target reps
+/// and load for working sets, and a note pinned to it.
 class RoutineItem {
-  const RoutineItem({
+  RoutineItem({
     required this.exerciseId,
-    this.sets = 3,
+    List<SetType>? setTypes,
+    int sets = 3,
     this.reps = 10,
     this.weightKg,
-  });
+    this.notes = '',
+  }) : setTypes = List.unmodifiable(
+         setTypes == null || setTypes.isEmpty
+             ? List.filled(sets.clamp(1, maxSets), SetType.normal)
+             : setTypes.take(maxSets),
+       );
+
+  static const maxSets = 20;
 
   final int exerciseId;
-  final int sets;
+
+  /// Type of each planned set, in order; never empty.
+  final List<SetType> setTypes;
   final int reps;
   final double? weightKg;
+  final String notes;
 
-  RoutineItem copyWith({int? sets, int? reps, double? weightKg}) => RoutineItem(
-    exerciseId: exerciseId,
-    sets: sets ?? this.sets,
+  int get sets => setTypes.length;
+
+  RoutineItem copyWith({
+    int? exerciseId,
+    List<SetType>? setTypes,
+    int? reps,
+    double? Function()? weightKg,
+    String? notes,
+  }) => RoutineItem(
+    exerciseId: exerciseId ?? this.exerciseId,
+    setTypes: setTypes ?? this.setTypes,
     reps: reps ?? this.reps,
-    weightKg: weightKg ?? this.weightKg,
+    weightKg: weightKg == null ? this.weightKg : weightKg(),
+    notes: notes ?? this.notes,
   );
+}
+
+/// "1 aquecimento + 3 séries + 1 drop" (types counted, in a fixed order).
+String describeSetTypes(List<SetType> types) {
+  int count(SetType t) => types.where((x) => x == t).length;
+  final warmup = count(SetType.warmup);
+  final normal = count(SetType.normal);
+  final failure = count(SetType.failure);
+  final drop = count(SetType.drop);
+  return [
+    if (warmup > 0) '$warmup ${warmup == 1 ? 'aquecimento' : 'aquecimentos'}',
+    if (normal > 0) '$normal ${normal == 1 ? 'série' : 'séries'}',
+    if (failure > 0) '$failure até à falha',
+    if (drop > 0) '$drop drop',
+  ].join(' + ');
 }
 
 class RoutineWithItems {
@@ -55,9 +93,11 @@ class RoutineRepository {
           for (final e in byRoutine[r.id] ?? <RoutineExercise>[])
             RoutineItem(
               exerciseId: e.exerciseId,
+              setTypes: e.setTypes,
               sets: e.sets,
               reps: e.reps,
               weightKg: e.weightKg,
+              notes: e.notes,
             ),
         ]),
     ];
@@ -102,9 +142,11 @@ class RoutineRepository {
               routineId: routineId,
               exerciseId: item.exerciseId,
               position: i,
-              sets: Value(item.sets.clamp(1, 20)),
+              sets: Value(item.sets),
+              setTypes: Value(item.setTypes),
               reps: Value(item.reps.clamp(1, 999)),
               weightKg: Value(item.weightKg),
+              notes: Value(item.notes.trim()),
             ),
         ]),
       );
