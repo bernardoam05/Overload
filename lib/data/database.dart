@@ -28,7 +28,7 @@ class SetTypeListConverter extends TypeConverter<List<SetType>, String> {
   @override
   List<SetType> fromSql(String fromDb) => [
     for (final name in fromDb.split(','))
-      if (SetType.values.asNameMap()[name] case final type?) type,
+      ?SetType.values.asNameMap()[name],
   ];
 
   @override

@@ -356,10 +356,12 @@ void main() {
       ..addSet(id)
       ..addDrop(id)
       ..addWarmup(id)
-      ..addWarmup(id);
+      ..addWarmup(id)
+      ..addSet(id);
     expect(state().exercises.single.sets.map((s) => s.type), [
       SetType.warmup,
       SetType.warmup,
+      SetType.normal,
       SetType.normal,
       SetType.normal,
       SetType.drop,

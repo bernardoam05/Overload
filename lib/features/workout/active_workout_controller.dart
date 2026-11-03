@@ -426,20 +426,27 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
     ),
   );
 
+  /// Adds a working set like the last one (values copied). Drops stay at
+  /// the end, so the new set goes before them.
   void addSet(String exId) => _updateExercise(exId, (e) {
-    final last = e.sets.isEmpty ? null : e.sets.last;
+    var at = e.sets.length;
+    while (at > 0 && e.sets[at - 1].type == SetType.drop) {
+      at--;
+    }
+    final last = e.sets
+        .take(at)
+        .lastWhereOrNull((s) => s.type != SetType.warmup);
     return e.copyWith(
-      sets: [
-        ...e.sets,
-        ActiveSet(
-          id: newLocalId(),
-          type: last == null || last.type == SetType.warmup
-              ? SetType.normal
-              : last.type,
-          weightKg: last?.weightKg,
-          reps: last?.reps,
+      sets: [...e.sets]
+        ..insert(
+          at,
+          ActiveSet(
+            id: newLocalId(),
+            type: last?.type ?? SetType.normal,
+            weightKg: last?.weightKg,
+            reps: last?.reps,
+          ),
         ),
-      ],
     );
   });
 
