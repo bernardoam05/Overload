@@ -22,15 +22,22 @@ class UpdateInstaller {
     return null;
   }
 
-  static Future<bool> canInstall() async => (await _channel.invokeMethod<bool>('canInstall')) ?? false;
+  static Future<bool> canInstall() async =>
+      (await _channel.invokeMethod<bool>('canInstall')) ?? false;
 
-  static Future<void> openInstallSettings() => _channel.invokeMethod('openInstallSettings');
+  static Future<void> openInstallSettings() =>
+      _channel.invokeMethod('openInstallSettings');
 
   /// Downloads [url] reporting progress in 0..1, and verifies it against the release checksums.
-  static Future<File> download(UpdateInfo info, String url, void Function(double) onProgress) async {
+  static Future<File> download(
+    UpdateInfo info,
+    String url,
+    void Function(double) onProgress,
+  ) async {
     final dir = await getTemporaryDirectory();
     final file = File('${dir.path}/overload-update.apk');
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 15);
+    final client = HttpClient()
+      ..connectionTimeout = const Duration(seconds: 15);
     try {
       final res = await (await client.getUrl(Uri.parse(url))).close();
       if (res.statusCode != 200) throw HttpException('HTTP ${res.statusCode}');
@@ -51,14 +58,17 @@ class UpdateInstaller {
       if (sums != null) {
         final text = await _fetchText(client, sums);
         final name = Uri.parse(url).pathSegments.last;
-        final expected = RegExp('^([0-9a-f]{64})\\s+\\*?${RegExp.escape(name)}\$', multiLine: true)
-            .firstMatch(text)
-            ?.group(1);
+        final expected = RegExp(
+          '^([0-9a-f]{64})\\s+\\*?${RegExp.escape(name)}\$',
+          multiLine: true,
+        ).firstMatch(text)?.group(1);
         if (expected == null) throw const FormatException('Checksum em falta.');
         final actual = (await sha256.bind(file.openRead()).first).toString();
         if (actual != expected) {
           await file.delete();
-          throw const FormatException('O ficheiro descarregado está corrompido.');
+          throw const FormatException(
+            'O ficheiro descarregado está corrompido.',
+          );
         }
       }
       return file;
@@ -73,5 +83,6 @@ class UpdateInstaller {
     return res.transform(const SystemEncoding().decoder).join();
   }
 
-  static Future<void> install(File apk) => _channel.invokeMethod('install', apk.path);
+  static Future<void> install(File apk) =>
+      _channel.invokeMethod('install', apk.path);
 }

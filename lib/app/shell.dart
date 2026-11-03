@@ -24,14 +24,16 @@ class AppShell extends ConsumerWidget {
       if (info == null) return;
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: Text('Nova versão ${info.version} disponível'),
-          duration: const Duration(seconds: 10),
-          action: SnackBarAction(
-            label: 'Atualizar',
-            onPressed: () => showUpdateDialog(context, info),
+        ..showSnackBar(
+          SnackBar(
+            content: Text('Nova versão ${info.version} disponível'),
+            duration: const Duration(seconds: 10),
+            action: SnackBarAction(
+              label: 'Atualizar',
+              onPressed: () => showUpdateDialog(context, info),
+            ),
           ),
-        ));
+        );
     });
     return Scaffold(
       body: shell,

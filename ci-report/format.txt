@@ -1,0 +1,6 @@
+Formatted lib/app/shell.dart
+Formatted lib/features/settings/update_dialog.dart
+Formatted lib/services/update_checker.dart
+Formatted lib/services/update_installer.dart
+Formatted test/services/update_checker_test.dart
+Formatted 70 files (5 changed) in 0.57 seconds.
