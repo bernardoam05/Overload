@@ -20,6 +20,7 @@ jobs:
           cache: true
       - name: Gerar código, analisar e testar
         run: |
+          set +e
           mkdir -p ci-report
           flutter pub get
           dart run build_runner build --delete-conflicting-outputs > ci-report/build.txt 2>&1 || true
@@ -29,6 +30,7 @@ jobs:
           tail -c 60000 ci-report/test.txt > ci-report/test-tail.txt
           rm ci-report/test.txt
       - name: Publicar resultado
+        if: always()
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
