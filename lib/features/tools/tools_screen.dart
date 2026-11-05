@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/one_rm.dart';
+import 'inclinometer.dart';
 
 class ToolsScreen extends StatelessWidget {
   const ToolsScreen({super.key});
@@ -14,18 +15,23 @@ class ToolsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Calculadoras'),
+          title: const Text('Ferramentas'),
           bottom: const TabBar(
             tabs: [
               Tab(text: '1RM'),
               Tab(text: 'Discos'),
+              Tab(text: 'Inclinação'),
             ],
           ),
         ),
-        body: const TabBarView(children: [_OneRepMaxTab(), _PlatesTab()]),
+        body: const TabBarView(
+          // Swiping would fight with tilting the phone on the inclinometer.
+          physics: NeverScrollableScrollPhysics(),
+          children: [_OneRepMaxTab(), _PlatesTab(), InclinometerView()],
+        ),
       ),
     );
   }

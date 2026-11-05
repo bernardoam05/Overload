@@ -51,11 +51,15 @@ class ExerciseEntry {
     required this.exerciseId,
     required this.sets,
     this.notes = '',
+    this.supersetNext = false,
   });
 
   final int exerciseId;
   final List<SetEntry> sets;
   final String notes;
+
+  /// Done back to back with the next exercise (a superset).
+  final bool supersetNext;
 
   Iterable<SetEntry> get workingSets => sets.where((s) => s.type.isWorking);
 }

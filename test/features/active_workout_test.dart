@@ -8,6 +8,7 @@ import 'package:overload/data/repositories/routine_repository.dart';
 import 'package:overload/data/repositories/settings_repository.dart';
 import 'package:overload/domain/enums.dart';
 import 'package:overload/domain/models.dart';
+import 'package:overload/domain/overload.dart';
 import 'package:overload/domain/records.dart';
 import 'package:overload/features/workout/active_workout.dart';
 import 'package:overload/features/workout/active_workout_controller.dart';
@@ -100,7 +101,7 @@ void main() {
     final ok = controller().toggleDone(
       ex.id,
       ex.sets.single.id,
-      hint: const SetEntry(type: SetType.normal, weightKg: 70, reps: 8),
+      hint: const SetAim(weightKg: 70, reps: 8),
       weightRequired: true,
     );
     expect(ok, isTrue);
@@ -334,7 +335,9 @@ void main() {
       SetType.normal,
       SetType.drop,
     ]);
-    expect(ex.sets.map((s) => s.reps), [null, 8, 8, null]);
+    // Sets start empty; the targets show as hints and fill in when ticked.
+    expect(ex.sets.map((s) => s.reps), everyElement(isNull));
+    expect(ex.sets.map((s) => s.targetReps), [null, 8, 8, null]);
     expect(ex.routineNotes, 'pausa em baixo');
     expect(ex.routineIndex, 0);
 
@@ -344,6 +347,79 @@ void main() {
     );
     expect(restored.exercises.single.routineNotes, 'pausa em baixo');
     expect(restored.exercises.single.routineIndex, 0);
+    expect(restored.exercises.single.sets.map((s) => s.targetReps), [
+      null,
+      8,
+      8,
+      null,
+    ]);
+  });
+
+  test('descending reps: each set gets its own target', () async {
+    final bench = await benchId();
+    final repo = container.read(routineRepositoryProvider);
+    final id = await repo.save(
+      name: 'Peito',
+      items: [
+        RoutineItem(
+          exerciseId: bench,
+          setTypes: const [SetType.warmup, SetType.normal, SetType.normal],
+          reps: 10,
+          repStep: 1,
+          supersetNext: true,
+        ),
+        RoutineItem(exerciseId: bench, sets: 2),
+      ],
+    );
+    final routine = (await repo.watchAll().first).firstWhere(
+      (r) => r.routine.id == id,
+    );
+    expect(routine.items.first.repStep, 1, reason: 'saved and loaded');
+    controller().startFromRoutine(routine);
+    final ex = state().exercises.first;
+    expect(ex.sets.map((s) => s.targetReps), [null, 10, 9]);
+    expect(ex.supersetNext, isTrue);
+
+    // "+ Série" continues the descent instead of repeating the first target.
+    controller().addSet(ex.id);
+    expect(state().exercises.first.sets.map((s) => s.targetReps), [
+      null,
+      10,
+      9,
+      8,
+    ]);
+
+    // Ticking an empty set logs the aim it was showing.
+    final second = state().exercises.first.sets[2];
+    controller().toggleDone(
+      ex.id,
+      second.id,
+      hint: const SetAim(weightKg: 60, reps: 9),
+      weightRequired: true,
+    );
+    final done = state().exercises.first.sets[2];
+    expect((done.weightKg, done.reps, done.done), (60.0, 9, true));
+  });
+
+  test('supersets are kept in the history and when repeating', () async {
+    final bench = await benchId();
+    controller()
+      ..startEmpty()
+      ..addExercises([bench, bench]);
+    final first = state().exercises.first;
+    controller()
+      ..toggleSuperset(first.id)
+      ..setWeight(first.id, first.sets.single.id, 50)
+      ..setReps(first.id, first.sets.single.id, 8)
+      ..toggleDone(first.id, first.sets.single.id, weightRequired: true);
+    final summary = await controller().finish();
+    expect(summary.record.exercises.single.supersetNext, isTrue);
+    await settle();
+    final saved = (await container.read(historyProvider.future)).single;
+    expect(saved.exercises.single.supersetNext, isTrue);
+
+    controller().repeat(saved);
+    expect(state().exercises.single.supersetNext, isTrue);
   });
 
   test('warm-ups go before working sets, drops at the end', () async {

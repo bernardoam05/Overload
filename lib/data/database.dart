@@ -51,6 +51,12 @@ class Exercises extends Table {
   BoolColumn get archived => boolean().withDefault(const Constant(false))();
   TextColumn get loadMode =>
       textEnum<LoadMode>().withDefault(const Constant('bilateral'))();
+
+  /// Equipment setup to remember (seat height, pins, grip…).
+  TextColumn get setup => text().withDefault(const Constant(''))();
+
+  /// Bench angle in degrees (negative is a decline), if the exercise uses one.
+  IntColumn get benchAngle => integer().nullable()();
 }
 
 @DataClassName('WorkoutRow')
@@ -77,6 +83,9 @@ class WorkoutExercises extends Table {
   IntColumn get exerciseId => integer().references(Exercises, #id)();
   IntColumn get position => integer()();
   TextColumn get notes => text().withDefault(const Constant(''))();
+
+  /// Done back to back with the next exercise (a superset).
+  BoolColumn get supersetNext => boolean().withDefault(const Constant(false))();
 }
 
 @DataClassName('WorkoutSetRow')
@@ -122,6 +131,13 @@ class RoutineExercises extends Table {
 
   /// Note pinned to this exercise in the routine, shown in every workout.
   TextColumn get notes => text().withDefault(const Constant(''))();
+
+  /// Reps fewer than the previous set for each working set after the first
+  /// (0 keeps every set at [reps]).
+  IntColumn get repStep => integer().withDefault(const Constant(0))();
+
+  /// Done back to back with the next exercise (a superset).
+  BoolColumn get supersetNext => boolean().withDefault(const Constant(false))();
 }
 
 @DataClassName('BodyWeightEntry')
@@ -158,7 +174,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'overload'));
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -168,6 +184,13 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(exercises, exercises.loadMode);
         await m.addColumn(routineExercises, routineExercises.setTypes);
         await m.addColumn(routineExercises, routineExercises.notes);
+      }
+      if (from < 3) {
+        await m.addColumn(exercises, exercises.setup);
+        await m.addColumn(exercises, exercises.benchAngle);
+        await m.addColumn(routineExercises, routineExercises.repStep);
+        await m.addColumn(routineExercises, routineExercises.supersetNext);
+        await m.addColumn(workoutExercises, workoutExercises.supersetNext);
       }
     },
     beforeOpen: (details) async {

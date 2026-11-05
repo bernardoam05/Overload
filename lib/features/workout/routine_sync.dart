@@ -15,7 +15,15 @@ import 'active_workout.dart';
 ///   note. It only changes in the routine editor, or when, at the end of a
 ///   workout, the user accepts the changes listed by [routineSync].
 
-enum RoutineChangeKind { sets, notes, replaced, added, removed, order }
+enum RoutineChangeKind {
+  sets,
+  notes,
+  replaced,
+  added,
+  removed,
+  order,
+  supersets,
+}
 
 class RoutineChange {
   const RoutineChange({
@@ -107,6 +115,9 @@ class RoutineSync {
         if (selected.contains('notes:$idx')) {
           item = item.copyWith(notes: e.routineNotes.trim());
         }
+        if (selected.contains('supersets')) {
+          item = item.copyWith(supersetNext: e.supersetNext);
+        }
         lastKey = keepOrder ? idx.toDouble() : i.toDouble();
         slots.add((key: lastKey, item: item));
       } else if (selected.contains('added:${e.id}') && e.sets.isNotEmpty) {
@@ -140,16 +151,37 @@ class RoutineSync {
       for (final s in e.sets)
         if (s.type != SetType.warmup && (s.reps ?? 0) > 0) s.reps!,
     ];
+    final main = [
+      for (final s in e.sets)
+        if ((s.type == SetType.normal || s.type == SetType.failure) &&
+            (s.reps ?? 0) > 0)
+          s.reps!,
+    ];
+    final step = descendingStep(main);
     final common = reps.isEmpty
         ? 10
         : maxBy(reps.toSet(), (r) => reps.where((x) => x == r).length)!;
     return RoutineItem(
       exerciseId: e.exerciseId,
       setTypes: setTypesOf(e),
-      reps: common,
+      reps: step > 0 ? main.first : common,
+      repStep: step,
       notes: e.routineNotes.trim(),
+      supersetNext: e.supersetNext,
     );
   }
+}
+
+/// The constant drop in reps between consecutive sets (10 · 9 · 8 → 1), or
+/// 0 when the reps don't descend evenly.
+int descendingStep(List<int> reps) {
+  if (reps.length < 2) return 0;
+  final step = reps[0] - reps[1];
+  if (step <= 0 || step > RoutineItem.maxRepStep) return 0;
+  for (var i = 1; i < reps.length; i++) {
+    if (reps[i - 1] - reps[i] != step) return 0;
+  }
+  return step;
 }
 
 /// Lists what changed in [workout] compared with [routine]; `null` when the
@@ -223,6 +255,31 @@ RoutineSync? routineSync(
         ),
       );
     }
+  }
+
+  // Superset links between exercises that are in the routine.
+  var linked = false;
+  var unlinked = false;
+  for (final (i, e) in exercises.indexed) {
+    final idx = match[i];
+    if (idx == null) continue;
+    if (e.supersetNext && !items[idx].supersetNext) linked = true;
+    if (!e.supersetNext && items[idx].supersetNext) unlinked = true;
+  }
+  if (linked || unlinked) {
+    changes.add(
+      RoutineChange(
+        id: 'supersets',
+        kind: RoutineChangeKind.supersets,
+        title: 'Guardar as superséries deste treino',
+        detail: linked && unlinked
+            ? 'Juntaste e separaste exercícios'
+            : linked
+            ? 'Juntaste exercícios em supersérie'
+            : 'Separaste exercícios de uma supersérie',
+        selectedByDefault: linked,
+      ),
+    );
   }
 
   final matched = match.whereType<int>().toList();

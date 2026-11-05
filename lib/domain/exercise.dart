@@ -16,6 +16,8 @@ class Exercise {
     required this.restSeconds,
     required this.archived,
     this.loadMode = LoadMode.bilateral,
+    this.setup = '',
+    this.benchAngle,
   });
 
   final int id;
@@ -40,6 +42,21 @@ class Exercise {
   /// How the load is held (see [LoadMode]).
   final LoadMode loadMode;
 
+  /// Equipment setup to remember (seat height, pins, grip…).
+  final String setup;
+
+  /// Bench angle in degrees (negative is a decline), if one is used.
+  final int? benchAngle;
+
+  /// "Banco 30° · Assento 4", or `null` when nothing is recorded.
+  String? get setupSummary {
+    final parts = [
+      if (benchAngle case final a?) 'Banco ${formatAngle(a)}',
+      if (setup.trim().isNotEmpty) setup.trim(),
+    ];
+    return parts.isEmpty ? null : parts.join(' · ');
+  }
+
   RankGroup? get rankGroup =>
       rankFactor == null ? null : primaryMuscle.rankGroup;
 
@@ -49,6 +66,13 @@ class Exercise {
   /// obvious (a barbell or a machine moved with both sides).
   String? get loadLabel => loadLabelFor(loadMode, equipment);
 }
+
+/// "30°", "0° (plano)" or "-15° (declinado)".
+String formatAngle(int degrees) => switch (degrees) {
+  0 => '0° (plano)',
+  < 0 => '$degrees° (declinado)',
+  _ => '$degrees°',
+};
 
 String? loadLabelFor(LoadMode mode, Equipment equipment) {
   final (one, plural) = switch (equipment) {

@@ -12,9 +12,11 @@ import '../../data/repositories/routine_repository.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../domain/enums.dart';
 import '../../domain/models.dart';
+import '../../domain/overload.dart';
 import '../../domain/progression.dart';
 import '../../domain/ranks.dart';
 import '../../domain/records.dart';
+import '../../domain/superset.dart';
 import '../notifications/notification_sync.dart';
 import 'active_workout.dart';
 import 'routine_sync.dart';
@@ -68,18 +70,28 @@ bool isFilled(ActiveSet s, {required bool weightOptional}) =>
 
 /// Rest to start after completing [setId], or `null` for none:
 /// - no rest before a drop set, which follows immediately;
+/// - no rest in the middle of a superset: the next exercise follows;
 /// - a shorter rest after a warm-up;
 /// - no rest after the last pending set of the workout.
 int? restAfter(ActiveWorkout w, String exId, String setId, int baseSeconds) {
   if (baseSeconds <= 0) return null;
-  final exercise = w.exercises.where((e) => e.id == exId).firstOrNull;
-  if (exercise == null) return null;
+  final position = w.exercises.indexWhere((e) => e.id == exId);
+  if (position < 0) return null;
+  final exercise = w.exercises[position];
   final i = exercise.sets.indexWhere((s) => s.id == setId);
   if (i < 0) return null;
   final next = i + 1 < exercise.sets.length ? exercise.sets[i + 1] : null;
   if (next != null && !next.done && next.type == SetType.drop) return null;
   final pending = w.exercises.any((e) => e.sets.any((s) => !s.done));
   if (!pending) return null;
+  if (exercise.sets[i].type != SetType.warmup &&
+      continuesSuperset(
+        [for (final e in w.exercises) e.supersetNext],
+        [for (final e in w.exercises) e.sets.any((s) => !s.done)],
+        position,
+      )) {
+    return null;
+  }
   if (exercise.sets[i].type == SetType.warmup) {
     return baseSeconds < 30 ? baseSeconds : (baseSeconds ~/ 2).clamp(30, 60);
   }
@@ -243,26 +255,25 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
               exerciseId: item.exerciseId,
               routineIndex: i,
               routineNotes: item.notes,
-              sets: [for (final type in item.setTypes) _plannedSet(type, item)],
+              repStep: item.repStep,
+              plannedWeightKg: item.weightKg,
+              supersetNext: item.supersetNext,
+              sets: _plannedSets(item.setTypes, item),
             ),
         ],
       ),
     );
   }
 
-  /// Working sets start with the routine's targets; warm-ups and drops are
-  /// lighter by nature, so they start empty and show last time's values.
-  static ActiveSet _plannedSet(SetType type, RoutineItem item) =>
-      switch (type) {
-        SetType.normal || SetType.failure => ActiveSet(
-          id: newLocalId(),
-          type: type,
-          weightKg: item.weightKg,
-          reps: item.reps,
-        ),
-        SetType.warmup ||
-        SetType.drop => ActiveSet(id: newLocalId(), type: type),
-      };
+  /// Sets start empty: the fields show what to aim for (the routine's target
+  /// for each set, adjusted by the last session) and ticking a set fills it.
+  static List<ActiveSet> _plannedSets(List<SetType> types, RoutineItem item) {
+    final targets = plannedTargets(types, item.reps, item.repStep);
+    return [
+      for (final (i, type) in types.indexed)
+        ActiveSet(id: newLocalId(), type: type, targetReps: targets[i]),
+    ];
+  }
 
   /// Starts a new workout with the same exercises and sets as [record]. A
   /// routine workout stays linked to its routine and pinned notes.
@@ -278,6 +289,7 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
         ActiveExercise(
           id: newLocalId(),
           exerciseId: e.exerciseId,
+          supersetNext: e.supersetNext,
           sets: [
             for (final s in e.sets) ActiveSet(id: newLocalId(), type: s.type),
           ],
@@ -289,13 +301,7 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
         for (final (i, e) in exercises.indexed)
           match[i] == null
               ? e
-              : ActiveExercise(
-                  id: e.id,
-                  exerciseId: e.exerciseId,
-                  sets: e.sets,
-                  routineIndex: match[i],
-                  routineNotes: routine.items[match[i]!].notes,
-                ),
+              : _linkToItem(e, match[i]!, routine.items[match[i]!]),
       ];
     }
     _set(
@@ -305,6 +311,31 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
         routineId: record.routineId,
         exercises: exercises,
       ),
+    );
+  }
+
+  static ActiveExercise _linkToItem(
+    ActiveExercise e,
+    int index,
+    RoutineItem item,
+  ) {
+    final targets = plannedTargets(
+      [for (final s in e.sets) s.type],
+      item.reps,
+      item.repStep,
+    );
+    return ActiveExercise(
+      id: e.id,
+      exerciseId: e.exerciseId,
+      sets: [
+        for (final (j, s) in e.sets.indexed)
+          s.copyWith(targetReps: () => targets[j]),
+      ],
+      routineIndex: index,
+      routineNotes: item.notes,
+      repStep: item.repStep,
+      plannedWeightKg: item.weightKg,
+      supersetNext: e.supersetNext,
     );
   }
 
@@ -324,6 +355,7 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
               id: newLocalId(),
               exerciseId: e.exerciseId,
               notes: e.notes,
+              supersetNext: e.supersetNext,
               sets: [
                 for (final s in e.sets)
                   ActiveSet(
@@ -427,7 +459,8 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
   );
 
   /// Adds a working set like the last one (values copied). Drops stay at
-  /// the end, so the new set goes before them.
+  /// the end, so the new set goes before them. With descending reps the new
+  /// set continues the descent.
   void addSet(String exId) => _updateExercise(exId, (e) {
     var at = e.sets.length;
     while (at > 0 && e.sets[at - 1].type == SetType.drop) {
@@ -436,6 +469,8 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
     final last = e.sets
         .take(at)
         .lastWhereOrNull((s) => s.type != SetType.warmup);
+    int? lower(int? reps) =>
+        reps == null ? null : (reps - e.repStep).clamp(1, 999);
     return e.copyWith(
       sets: [...e.sets]
         ..insert(
@@ -444,11 +479,16 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
             id: newLocalId(),
             type: last?.type ?? SetType.normal,
             weightKg: last?.weightKg,
-            reps: last?.reps,
+            reps: lower(last?.reps),
+            targetReps: lower(last?.targetReps),
           ),
         ),
     );
   });
+
+  /// Links (or unlinks) an exercise with the next one in a superset.
+  void toggleSuperset(String exId) =>
+      _updateExercise(exId, (e) => e.copyWith(supersetNext: !e.supersetNext));
 
   /// Removes a set and returns it with its position, for undo.
   (int, ActiveSet)? removeSet(String exId, String setId) {
@@ -479,13 +519,13 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
   void setType(String exId, String setId, SetType type) =>
       _updateSet(exId, setId, (s) => s.copyWith(type: type));
 
-  /// Toggles completion. Empty fields are filled with the [hint] values (the
-  /// previous performance) so a set can be ticked with one tap. Returns
-  /// whether the set is now done.
+  /// Toggles completion. Empty fields are filled with the [hint] values
+  /// (today's aim, or the previous performance) so a set can be ticked with
+  /// one tap. Returns whether the set is now done.
   bool toggleDone(
     String exId,
     String setId, {
-    SetEntry? hint,
+    SetAim? hint,
     required bool weightRequired,
     int? restSeconds,
   }) {
@@ -612,7 +652,12 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
       ];
       if (sets.isNotEmpty) {
         entries.add(
-          ExerciseEntry(exerciseId: e.exerciseId, sets: sets, notes: e.notes),
+          ExerciseEntry(
+            exerciseId: e.exerciseId,
+            sets: sets,
+            notes: e.notes,
+            supersetNext: e.supersetNext,
+          ),
         );
       }
     }
@@ -687,6 +732,8 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
       }
     }
     _set(null);
+    // A finished workout is the moment new data most deserves a copy.
+    unawaited(ref.read(autoBackupProvider).runIfDue());
 
     return WorkoutSummary(
       workoutId: id,

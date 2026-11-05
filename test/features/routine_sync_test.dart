@@ -145,4 +145,55 @@ void main() {
     );
     expect(describeSetTypes([_n]), '1 série');
   });
+
+  test('superset links made in the workout can go to the routine', () {
+    final linked = ActiveExercise(
+      id: 'a',
+      exerciseId: 1,
+      routineIndex: 0,
+      supersetNext: true,
+      sets: [
+        for (var i = 0; i < 3; i++)
+          ActiveSet(id: 'a-$i', weightKg: 20, reps: 10),
+      ],
+    );
+    final w = _workout([
+      linked,
+      _ex('b', 2, [_n, _n, _n], routineIndex: 1, routineNotes: 'banco a 30°'),
+      _ex('c', 3, [_n, _n], routineIndex: 2),
+    ]);
+    final sync = routineSync(w, routine, _library)!;
+    final change = sync.changes.singleWhere((c) => c.id == 'supersets');
+    expect(change.selectedByDefault, isTrue);
+    expect(sync.apply({'supersets'}).first.supersetNext, isTrue);
+    expect(sync.apply({}).first.supersetNext, isFalse);
+  });
+
+  test('descending reps are recognised', () {
+    expect(descendingStep([10, 9, 8]), 1);
+    expect(descendingStep([12, 10, 8]), 2);
+    expect(descendingStep([10, 10, 10]), 0);
+    expect(descendingStep([10, 9, 9]), 0);
+    expect(descendingStep([10]), 0);
+  });
+
+  test('an added exercise with descending reps keeps the descent', () {
+    final added = ActiveExercise(
+      id: 'x',
+      exerciseId: 4,
+      sets: [
+        for (final (i, r) in [10, 9, 8].indexed)
+          ActiveSet(id: 'x-$i', weightKg: 20, reps: r, done: true),
+      ],
+    );
+    final w = _workout([
+      _ex('a', 1, [_n, _n, _n], routineIndex: 0),
+      _ex('b', 2, [_n, _n, _n], routineIndex: 1, routineNotes: 'banco a 30°'),
+      _ex('c', 3, [_n, _n], routineIndex: 2),
+      added,
+    ]);
+    final sync = routineSync(w, routine, _library)!;
+    final item = sync.apply(sync.defaultSelection).last;
+    expect((item.exerciseId, item.reps, item.repStep), (4, 10, 1));
+  });
 }

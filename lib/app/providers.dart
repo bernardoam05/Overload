@@ -17,6 +17,7 @@ import '../domain/ranks.dart';
 import '../domain/records.dart';
 import '../domain/stats.dart';
 import '../features/workout/active_workout_controller.dart';
+import '../services/auto_backup.dart';
 import '../services/update_checker.dart';
 
 /// Overridden in `main` (and in tests) with a real database.
@@ -41,6 +42,17 @@ final bodyWeightRepositoryProvider = Provider(
 );
 final backupRepositoryProvider = Provider(
   (ref) => BackupRepository(ref.watch(databaseProvider)),
+);
+
+final autoBackupProvider = Provider(
+  (ref) => AutoBackupService(
+    ref.watch(settingsRepositoryProvider),
+    ref.watch(backupRepositoryProvider),
+  ),
+);
+
+final autoBackupConfigProvider = StreamProvider<AutoBackupConfig>(
+  (ref) => ref.watch(autoBackupProvider).watch(),
 );
 
 // ---- Raw streams -----------------------------------------------------------

@@ -12,6 +12,7 @@ class ActiveSet {
     this.weightKg,
     this.reps,
     this.done = false,
+    this.targetReps,
   });
 
   final String id;
@@ -20,17 +21,22 @@ class ActiveSet {
   final int? reps;
   final bool done;
 
+  /// Reps (or seconds) the routine plans for this set, if any.
+  final int? targetReps;
+
   ActiveSet copyWith({
     SetType? type,
     double? Function()? weightKg,
     int? Function()? reps,
     bool? done,
+    int? Function()? targetReps,
   }) => ActiveSet(
     id: id,
     type: type ?? this.type,
     weightKg: weightKg == null ? this.weightKg : weightKg(),
     reps: reps == null ? this.reps : reps(),
     done: done ?? this.done,
+    targetReps: targetReps == null ? this.targetReps : targetReps(),
   );
 
   Map<String, Object?> toJson() => {
@@ -39,6 +45,7 @@ class ActiveSet {
     'weightKg': weightKg,
     'reps': reps,
     'done': done,
+    'targetReps': targetReps,
   };
 
   factory ActiveSet.fromJson(Map<String, Object?> j) => ActiveSet(
@@ -47,6 +54,7 @@ class ActiveSet {
     weightKg: (j['weightKg'] as num?)?.toDouble(),
     reps: (j['reps'] as num?)?.toInt(),
     done: j['done'] == true,
+    targetReps: (j['targetReps'] as num?)?.toInt(),
   );
 }
 
@@ -58,6 +66,9 @@ class ActiveExercise {
     this.notes = '',
     this.routineNotes = '',
     this.routineIndex,
+    this.repStep = 0,
+    this.plannedWeightKg,
+    this.supersetNext = false,
   });
 
   final String id;
@@ -75,6 +86,15 @@ class ActiveExercise {
   /// exercise is replaced), or `null` if it was added during the workout.
   final int? routineIndex;
 
+  /// Reps fewer per working set, from the routine (see `RoutineItem`).
+  final int repStep;
+
+  /// Load the routine plans, used when there is no previous performance.
+  final double? plannedWeightKg;
+
+  /// Done back to back with the next exercise (a superset).
+  final bool supersetNext;
+
   int get doneCount => sets.where((s) => s.done).length;
 
   ActiveExercise copyWith({
@@ -82,6 +102,7 @@ class ActiveExercise {
     List<ActiveSet>? sets,
     String? notes,
     String? routineNotes,
+    bool? supersetNext,
   }) => ActiveExercise(
     id: id,
     exerciseId: exerciseId ?? this.exerciseId,
@@ -89,6 +110,9 @@ class ActiveExercise {
     notes: notes ?? this.notes,
     routineNotes: routineNotes ?? this.routineNotes,
     routineIndex: routineIndex,
+    repStep: repStep,
+    plannedWeightKg: plannedWeightKg,
+    supersetNext: supersetNext ?? this.supersetNext,
   );
 
   Map<String, Object?> toJson() => {
@@ -97,6 +121,9 @@ class ActiveExercise {
     'notes': notes,
     'routineNotes': routineNotes,
     'routineIndex': routineIndex,
+    'repStep': repStep,
+    'plannedWeightKg': plannedWeightKg,
+    'supersetNext': supersetNext,
     'sets': [for (final s in sets) s.toJson()],
   };
 
@@ -106,6 +133,9 @@ class ActiveExercise {
     notes: j['notes'] as String? ?? '',
     routineNotes: j['routineNotes'] as String? ?? '',
     routineIndex: (j['routineIndex'] as num?)?.toInt(),
+    repStep: (j['repStep'] as num?)?.toInt() ?? 0,
+    plannedWeightKg: (j['plannedWeightKg'] as num?)?.toDouble(),
+    supersetNext: j['supersetNext'] == true,
     sets: [
       for (final s in (j['sets'] as List? ?? const []))
         ActiveSet.fromJson((s as Map).cast<String, Object?>()),

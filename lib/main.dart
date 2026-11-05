@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -9,10 +10,12 @@ import 'app/providers.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
 import 'data/database.dart';
+import 'data/repositories/backup_repository.dart';
 import 'data/repositories/settings_repository.dart';
 import 'features/notifications/notification_sync.dart';
 import 'features/workout/active_workout.dart';
 import 'features/workout/active_workout_controller.dart';
+import 'services/auto_backup.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +34,13 @@ Future<void> main() async {
         initialActiveWorkoutProvider.overrideWithValue(draft),
       ],
       child: const OverloadApp(),
+    ),
+  );
+  // Once the first frame is up, so a due backup never delays the launch.
+  unawaited(
+    Future<void>.delayed(
+      const Duration(seconds: 3),
+      () => AutoBackupService(settings, BackupRepository(db)).runIfDue(),
     ),
   );
 }

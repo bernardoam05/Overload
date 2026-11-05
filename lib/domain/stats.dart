@@ -39,14 +39,20 @@ List<WeekBucket> weeklyBuckets(
   ];
 }
 
-/// Working sets per muscle since [since]. Secondary muscles count half.
+/// Working sets per muscle from [since] (until [until], exclusive).
+/// Secondary muscles count half.
 Map<Muscle, double> setsPerMuscle(
   Iterable<WorkoutRecord> history,
   Map<int, Exercise> library, {
   required DateTime since,
+  DateTime? until,
 }) {
   final result = <Muscle, double>{};
-  for (final w in history.where((w) => !w.startedAt.isBefore(since))) {
+  for (final w in history.where(
+    (w) =>
+        !w.startedAt.isBefore(since) &&
+        (until == null || w.startedAt.isBefore(until)),
+  )) {
     for (final entry in w.exercises) {
       final ex = library[entry.exerciseId];
       if (ex == null) continue;

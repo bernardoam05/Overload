@@ -60,6 +60,7 @@ class WorkoutRepository {
               ExerciseEntry(
                 exerciseId: e.exerciseId,
                 notes: e.notes,
+                supersetNext: e.supersetNext,
                 sets: [
                   for (final s in setsByEntry[e.id] ?? <WorkoutSetRow>[])
                     SetEntry(
@@ -127,6 +128,7 @@ class WorkoutRepository {
               exerciseId: entry.exerciseId,
               position: i,
               notes: Value(entry.notes),
+              supersetNext: Value(entry.supersetNext),
             ),
           );
       await _db.batch(

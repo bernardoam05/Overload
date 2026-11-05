@@ -84,6 +84,20 @@ class ExerciseRepository {
         ExercisesCompanion(restSeconds: Value(seconds)),
       );
 
+  /// Equipment setup and bench angle, for any exercise (built-in included).
+  Future<void> setSetup(int id, {required String setup, int? benchAngle}) =>
+      (_db.update(_db.exercises)..where((e) => e.id.equals(id))).write(
+        ExercisesCompanion(
+          setup: Value(setup.trim()),
+          benchAngle: Value(benchAngle?.clamp(-90, 90)),
+        ),
+      );
+
+  Future<void> setBenchAngle(int id, int? degrees) =>
+      (_db.update(_db.exercises)..where((e) => e.id.equals(id))).write(
+        ExercisesCompanion(benchAngle: Value(degrees?.clamp(-90, 90))),
+      );
+
   /// Deletes a custom exercise, or archives it when it is referenced by
   /// workouts or routines so history stays intact.
   Future<void> remove(int id) => _db.transaction(() async {

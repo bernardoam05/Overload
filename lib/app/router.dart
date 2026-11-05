@@ -15,6 +15,7 @@ import '../features/profile/profile_screen.dart';
 import '../features/ranks/ranks_screen.dart';
 import '../features/settings/patch_notes_view.dart';
 import '../features/settings/settings_screen.dart';
+import '../features/tools/inclinometer.dart';
 import '../features/tools/tools_screen.dart';
 import '../features/train/routine_editor_screen.dart';
 import '../features/train/train_screen.dart';
@@ -174,6 +175,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/tools',
         parentNavigatorKey: _rootKey,
         builder: (_, _) => const ToolsScreen(),
+      ),
+      GoRoute(
+        path: '/tools/inclinometer',
+        parentNavigatorKey: _rootKey,
+        builder: (_, state) =>
+            InclinometerScreen(forExercise: state.uri.queryParameters['for']),
       ),
       GoRoute(
         path: '/settings',

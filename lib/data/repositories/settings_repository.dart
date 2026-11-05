@@ -20,6 +20,8 @@ class Profile {
     this.reminders = true,
     this.askedNotifications = false,
     this.seenWorkoutTips = false,
+    this.progressionHints = true,
+    this.weeklySetTarget = 10,
   });
 
   final String name;
@@ -48,6 +50,12 @@ class Profile {
   /// Whether the workout gestures tips were dismissed.
   final bool seenWorkoutTips;
 
+  /// Suggest more load or reps in each set from the last session.
+  final bool progressionHints;
+
+  /// Working sets per muscle per week to aim for (0 hides the target).
+  final int weeklySetTarget;
+
   Profile copyWith({
     String? name,
     Sex? sex,
@@ -62,6 +70,8 @@ class Profile {
     bool? reminders,
     bool? askedNotifications,
     bool? seenWorkoutTips,
+    bool? progressionHints,
+    int? weeklySetTarget,
   }) => Profile(
     name: name ?? this.name,
     sex: sex ?? this.sex,
@@ -79,6 +89,8 @@ class Profile {
     reminders: reminders ?? this.reminders,
     askedNotifications: askedNotifications ?? this.askedNotifications,
     seenWorkoutTips: seenWorkoutTips ?? this.seenWorkoutTips,
+    progressionHints: progressionHints ?? this.progressionHints,
+    weeklySetTarget: (weeklySetTarget ?? this.weeklySetTarget).clamp(0, 40),
   );
 
   Map<String, Object?> toJson() => {
@@ -95,6 +107,8 @@ class Profile {
     'reminders': reminders,
     'askedNotifications': askedNotifications,
     'seenWorkoutTips': seenWorkoutTips,
+    'progressionHints': progressionHints,
+    'weeklySetTarget': weeklySetTarget,
   };
 
   /// Lenient parsing: unknown or missing fields fall back to defaults.
@@ -120,6 +134,10 @@ class Profile {
       reminders: j['reminders'] != false,
       askedNotifications: j['askedNotifications'] == true,
       seenWorkoutTips: j['seenWorkoutTips'] == true,
+      progressionHints: j['progressionHints'] != false,
+      weeklySetTarget: j['weeklySetTarget'] is int
+          ? j['weeklySetTarget']! as int
+          : d.weeklySetTarget,
     );
   }
 }

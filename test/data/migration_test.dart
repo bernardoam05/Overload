@@ -6,7 +6,7 @@ import 'package:overload/domain/enums.dart';
 
 import '../helpers.dart';
 
-/// The tables of schema version 1 that the v2 migration touches.
+/// The tables of schema version 1 that the v2 and v3 migrations touch.
 const _v1 = [
   '''CREATE TABLE exercises (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -27,6 +27,17 @@ const _v1 = [
     exercise_id INTEGER NOT NULL REFERENCES exercises (id),
     position INTEGER NOT NULL, sets INTEGER NOT NULL DEFAULT 3,
     reps INTEGER NOT NULL DEFAULT 10, weight_kg REAL NULL)''',
+  '''CREATE TABLE workouts (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL,
+    started_at INTEGER NOT NULL, ended_at INTEGER NOT NULL,
+    notes TEXT NOT NULL DEFAULT '', xp INTEGER NOT NULL DEFAULT 0,
+    routine_id INTEGER NULL REFERENCES routines (id) ON DELETE SET NULL,
+    body_weight_kg REAL NULL)''',
+  '''CREATE TABLE workout_exercises (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    workout_id INTEGER NOT NULL REFERENCES workouts (id) ON DELETE CASCADE,
+    exercise_id INTEGER NOT NULL REFERENCES exercises (id),
+    position INTEGER NOT NULL, notes TEXT NOT NULL DEFAULT '')''',
   '''INSERT INTO exercises (id, name, primary_muscle, equipment, kind, seed_key)
     VALUES (1, 'Curl com halteres', 'biceps', 'dumbbell', 'weighted', 'db_curl')''',
   "INSERT INTO routines (id, name, created_at) VALUES (1, 'Braços', 0)",
@@ -54,11 +65,15 @@ void main() {
     expect(item.setTypes, List.filled(4, SetType.normal));
     expect(item.reps, 12);
     expect(item.notes, '');
+    expect(item.repStep, 0);
+    expect(item.supersetNext, isFalse);
 
     final curl = await (db.select(
       db.exercises,
     )..where((e) => e.seedKey.equals('db_curl'))).getSingle();
     expect(curl.loadMode, LoadMode.perHand);
+    expect(curl.setup, '');
+    expect(curl.benchAngle, isNull);
     final ext = await (db.select(
       db.exercises,
     )..where((e) => e.seedKey.equals('overhead_ext'))).getSingle();

@@ -1,5 +1,31 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2026-11-05",
+    "title": "Progressão, superséries e backup automático",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "Sugestões de progressão: cada série mostra o que tentar hoje com base no último treino. Se cumpriste todas as reps alvo, a app propõe mais carga; se falhaste alguma, mantém a carga e aponta para mais 1 rep.",
+          "Reps descendentes na rotina: escolhe \"−1\", \"−2\" ou \"−3\" por série e cada série passa a ter o seu próprio alvo (por exemplo 10 · 9 · 8), em vez de repetir o alvo da primeira.",
+          "Superséries: junta exercícios seguidos, na rotina ou durante o treino. Entre eles não há descanso; o descanso começa depois do último.",
+          "Inclinómetro: pousa o telemóvel no banco e vê o ângulo. Está em Ferramentas e nas afinações de cada exercício.",
+          "Afinações do equipamento por exercício (ângulo do banco, assento, pega), visíveis durante o treino.",
+          "Backup automático diário ou semanal para uma pasta do telemóvel, mantendo os 5 mais recentes."
+        ]
+      },
+      {
+        "type": "improved",
+        "items": [
+          "As séries por músculo no Perfil passam a ser semanais, com um alvo configurável nas Definições, para veres o que estás a treinar de menos.",
+          "As séries de uma rotina começam vazias e mostram o alvo como sugestão; tocar no visto regista-o.",
+          "Ao guardar um treino como rotina, as reps descendentes e as superséries são reconhecidas."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.1.1",
     "date": "2026-11-05",
     "title": "Atualizações que funcionam",

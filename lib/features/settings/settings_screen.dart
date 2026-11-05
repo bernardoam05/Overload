@@ -17,6 +17,7 @@ import '../../domain/enums.dart';
 import '../../widgets/common.dart';
 import '../workout/active_workout_controller.dart';
 import '../workout/exercise_card.dart';
+import 'auto_backup_tile.dart';
 import 'notification_settings.dart';
 import 'update_dialog.dart';
 
@@ -267,6 +268,52 @@ class SettingsScreen extends ConsumerWidget {
                   onChanged: (v) =>
                       _update(ref, (x) => x.copyWith(autoRestTimer: v)),
                 ),
+                SwitchListTile(
+                  secondary: const Icon(Icons.trending_up_rounded),
+                  title: const Text('Sugestões de progressão'),
+                  subtitle: const Text(
+                    'Propor mais carga ou reps com base no último treino',
+                  ),
+                  value: p.progressionHints,
+                  onChanged: (v) =>
+                      _update(ref, (x) => x.copyWith(progressionHints: v)),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.stacked_bar_chart_rounded),
+                  title: const Text('Séries por músculo por semana'),
+                  subtitle: Text(
+                    p.weeklySetTarget == 0
+                        ? 'Sem alvo'
+                        : 'Alvo de ${p.weeklySetTarget} séries',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove_circle_outline),
+                        onPressed: p.weeklySetTarget > 0
+                            ? () => _update(
+                                ref,
+                                (x) => x.copyWith(
+                                  weeklySetTarget: x.weeklySetTarget - 2,
+                                ),
+                              )
+                            : null,
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add_circle_outline),
+                        onPressed: p.weeklySetTarget < 40
+                            ? () => _update(
+                                ref,
+                                (x) => x.copyWith(
+                                  weeklySetTarget: x.weeklySetTarget + 2,
+                                ),
+                              )
+                            : null,
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -312,6 +359,7 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   onTap: () => _export(context, ref, share: false),
                 ),
+                const AutoBackupTile(),
                 ListTile(
                   leading: const Icon(Icons.ios_share_rounded),
                   title: const Text('Partilhar backup'),

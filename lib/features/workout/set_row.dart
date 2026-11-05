@@ -5,6 +5,7 @@ import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/models.dart';
+import '../../domain/overload.dart';
 import 'active_workout.dart';
 
 /// One editable set line: type · previous · weight · reps · done.
@@ -23,6 +24,7 @@ class SetRow extends StatelessWidget {
     required this.onDelete,
     this.peekHint = false,
     this.comparison,
+    this.aim,
   });
 
   /// Number shown for working sets (warm-ups show "A").
@@ -43,6 +45,10 @@ class SetRow extends StatelessWidget {
   /// For completed sets: 1 beat the previous set, 0 matched it, -1 fell short.
   final int? comparison;
 
+  /// What to aim for today, shown in the empty fields instead of [previous]
+  /// (and highlighted where it differs from it).
+  final SetAim? aim;
+
   void _openOptions(BuildContext context) => showSetOptions(
     context,
     set: set,
@@ -56,6 +62,10 @@ class SetRow extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final done = set.done;
+    final hintKg = aim?.weightKg ?? previous?.weightKg;
+    final hintReps = aim?.reps ?? previous?.reps;
+    final newKg = aim?.weightKg != null && aim!.weightKg != previous?.weightKg;
+    final newReps = aim?.reps != null && aim!.reps != previous?.reps;
     final showWeight = kind != ExerciseKind.duration;
 
     final row = AnimatedContainer(
@@ -87,13 +97,14 @@ class SetRow extends StatelessWidget {
                 value: set.weightKg == null
                     ? null
                     : toDisplayWeight(set.weightKg!, unit),
-                hint: previous == null
+                hint: hintKg == null
                     ? switch (kind) {
                         ExerciseKind.bodyweight => '+0',
                         ExerciseKind.assisted => 'ajuda',
                         _ => unit.label,
                       }
-                    : editableNumber(toDisplayWeight(previous!.weightKg, unit)),
+                    : editableNumber(toDisplayWeight(hintKg, unit)),
+                emphasize: newKg,
                 decimal: true,
                 done: done,
                 onChanged: (v) =>
@@ -106,14 +117,15 @@ class SetRow extends StatelessWidget {
                 ? _DurationField(
                     key: ValueKey('d-${set.id}'),
                     seconds: set.reps,
-                    hint: previous?.reps,
+                    hint: hintReps,
                     done: done,
                     onChanged: onReps,
                   )
                 : _NumberField(
                     key: ValueKey('r-${set.id}'),
                     value: set.reps?.toDouble(),
-                    hint: previous?.reps.toString() ?? 'reps',
+                    hint: hintReps?.toString() ?? 'reps',
+                    emphasize: newReps,
                     decimal: false,
                     done: done,
                     onChanged: (v) => onReps(v?.round()),
@@ -460,10 +472,14 @@ class _NumberField extends StatefulWidget {
     required this.decimal,
     required this.done,
     required this.onChanged,
+    this.emphasize = false,
   });
 
   final double? value;
   final String hint;
+
+  /// The hint is a suggestion that differs from last time.
+  final bool emphasize;
   final bool decimal;
   final bool done;
   final ValueChanged<double?> onChanged;
@@ -520,8 +536,10 @@ class _NumberFieldState extends State<_NumberField> {
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: TextStyle(
-              color: scheme.onSurfaceVariant.withValues(alpha: 0.6),
-              fontWeight: FontWeight.w600,
+              color: widget.emphasize
+                  ? scheme.primary.withValues(alpha: 0.85)
+                  : scheme.onSurfaceVariant.withValues(alpha: 0.6),
+              fontWeight: widget.emphasize ? FontWeight.w800 : FontWeight.w600,
             ),
             isDense: true,
             contentPadding: const EdgeInsets.symmetric(

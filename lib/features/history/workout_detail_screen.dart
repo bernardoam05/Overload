@@ -11,6 +11,7 @@ import '../../domain/enums.dart';
 import '../../domain/models.dart';
 import '../../widgets/common.dart';
 import '../train/routine_editor_screen.dart';
+import '../workout/routine_sync.dart';
 import '../workout/active_workout_controller.dart';
 import '../workout/start_workout.dart';
 
@@ -234,7 +235,13 @@ class WorkoutDetailScreen extends ConsumerWidget {
                 exerciseId: e.exerciseId,
                 setTypes: [for (final s in e.sets) s.type],
                 reps: (e.workingSets.firstOrNull ?? e.sets.first).reps,
+                repStep: descendingStep([
+                  for (final s in e.sets)
+                    if (s.type == SetType.normal || s.type == SetType.failure)
+                      s.reps,
+                ]),
                 notes: e.notes,
+                supersetNext: e.supersetNext,
               ),
           ]),
         );

@@ -10,6 +10,7 @@ import '../../domain/enums.dart';
 import '../../domain/stats.dart';
 import '../../widgets/common.dart';
 import 'achievements_screen.dart';
+import 'weekly_muscle_card.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -150,19 +151,8 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ),
-          const SectionHeader('Séries por músculo · 30 dias'),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: _MuscleBars(
-                data: setsPerMuscle(
-                  history,
-                  library,
-                  since: DateTime.now().subtract(const Duration(days: 30)),
-                ),
-              ),
-            ),
-          ),
+          const SectionHeader('Séries por músculo'),
+          const WeeklyMuscleCard(),
           SectionHeader(
             'Conquistas · ${unlocked.length}/${achievementsList.length}',
             action: 'Ver todas',
@@ -214,8 +204,8 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 ListTile(
                   leading: const Icon(Icons.calculate_outlined),
-                  title: const Text('Calculadoras'),
-                  subtitle: const Text('1RM e discos'),
+                  title: const Text('Ferramentas'),
+                  subtitle: const Text('1RM, discos e inclinação do banco'),
                   trailing: const Icon(Icons.chevron_right_rounded),
                   onTap: () => context.push('/tools'),
                 ),
@@ -334,59 +324,6 @@ class _WeeklyChart extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _MuscleBars extends StatelessWidget {
-  const _MuscleBars({required this.data});
-
-  final Map<Muscle, double> data;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final entries = data.entries.where((e) => e.key != Muscle.cardio).toList()
-      ..sort((a, b) => b.value.compareTo(a.value));
-    if (entries.isEmpty) {
-      return Text(
-        'Sem treinos nos últimos 30 dias.',
-        style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      );
-    }
-    final maxV = entries.first.value;
-    return Column(
-      children: [
-        for (final e in entries.take(8))
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 5),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 96,
-                  child: Text(e.key.label, style: theme.textTheme.bodyMedium),
-                ),
-                Expanded(
-                  child: ProgressBar(
-                    value: e.value / maxV,
-                    color: muscleColor(e.key),
-                    height: 10,
-                  ),
-                ),
-                SizedBox(
-                  width: 44,
-                  child: Text(
-                    formatNumber(e.value, decimals: 1),
-                    textAlign: TextAlign.right,
-                    style: theme.textTheme.labelLarge,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }

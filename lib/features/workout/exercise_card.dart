@@ -9,14 +9,16 @@ import '../../core/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/exercise.dart';
 import '../../domain/models.dart';
+import '../../domain/overload.dart';
 import '../../domain/previous.dart';
 import '../../domain/records.dart';
 import '../../widgets/common.dart';
 import 'active_workout.dart';
 import 'active_workout_controller.dart';
+import 'exercise_card_extras.dart';
 import 'set_row.dart';
 
-enum _Action { notes, rest, replace, up, down, remove }
+enum _Action { notes, setup, rest, superset, replace, up, down, remove }
 
 /// Rebuilds only when its own exercise changes, so typing in one set does
 /// not rebuild every other card of the workout.
@@ -80,12 +82,19 @@ class _CardBody extends ConsumerWidget {
     }
     final kind = exercise.kind;
     final rest = exercise.restSeconds ?? profile.defaultRestSeconds;
+    final progression = isEditing
+        ? Progression.none
+        : progressionFor(entry, previous, exercise, profile);
+    final superset = ref.watch(
+      activeWorkoutProvider.select((w) => supersetOf(w, index)),
+    );
 
     var workingIndex = 0;
     var warmupIndex = 0;
     final rows = <Widget>[];
     for (final (i, set) in entry.sets.indexed) {
       final hint = previous?.match(set.type, warmupIndex, workingIndex);
+      final aim = i < progression.sets.length ? progression.sets[i] : null;
       if (set.type == SetType.warmup) {
         warmupIndex++;
       } else {
@@ -114,6 +123,7 @@ class _CardBody extends ConsumerWidget {
           kind: kind,
           unit: profile.unit,
           previous: hint,
+          aim: aim,
           comparison: comparison,
           onWeight: (kg) => controller.setWeight(entry.id, set.id, kg),
           onReps: (r) => controller.setReps(entry.id, set.id, r),
@@ -132,7 +142,10 @@ class _CardBody extends ConsumerWidget {
             final ok = controller.toggleDone(
               entry.id,
               set.id,
-              hint: hint,
+              hint: SetAim(
+                weightKg: aim?.weightKg ?? hint?.weightKg,
+                reps: aim?.reps ?? hint?.reps,
+              ),
               weightRequired: kind == ExerciseKind.weighted,
               restSeconds: profile.autoRestTimer && !isEditing ? rest : null,
             );
@@ -157,6 +170,7 @@ class _CardBody extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (superset != null) SupersetBadge(membership: superset),
             Padding(
               padding: const EdgeInsets.only(left: 14, right: 4),
               child: Row(
@@ -202,9 +216,22 @@ class _CardBody extends ConsumerWidget {
                         child: Text('Notas'),
                       ),
                       const PopupMenuItem(
+                        value: _Action.setup,
+                        child: Text('Afinações do equipamento'),
+                      ),
+                      const PopupMenuItem(
                         value: _Action.rest,
                         child: Text('Tempo de descanso'),
                       ),
+                      if (index < total - 1 || entry.supersetNext)
+                        PopupMenuItem(
+                          value: _Action.superset,
+                          child: Text(
+                            entry.supersetNext
+                                ? 'Separar do seguinte'
+                                : 'Supersérie com o seguinte',
+                          ),
+                        ),
                       const PopupMenuItem(
                         value: _Action.replace,
                         child: Text('Substituir exercício'),
@@ -234,12 +261,22 @@ class _CardBody extends ConsumerWidget {
               last: previous?.entry.notes.trim() ?? '',
               onTap: () => _editNotes(context, ref, inRoutine),
             ),
+            SetupLine(
+              exercise: exercise,
+              onTap: () => editExerciseSetup(context, ref, exercise),
+            ),
             _ReferenceLine(
               exercise: exercise,
               previous: previous,
               record: record == null
                   ? null
                   : record[RecordType.forKind(kind).first],
+              unit: profile.unit,
+            ),
+            OverloadLine(
+              progression: progression,
+              entry: entry,
+              exercise: exercise,
               unit: profile.unit,
             ),
             const SizedBox(height: 6),
@@ -369,6 +406,10 @@ class _CardBody extends ConsumerWidget {
           ),
         );
         await _editNotes(context, ref, inRoutine);
+      case _Action.setup:
+        await editExerciseSetup(context, ref, exercise);
+      case _Action.superset:
+        controller.toggleSuperset(entry.id);
       case _Action.rest:
         final seconds = await pickRestSeconds(context, exercise.restSeconds);
         if (seconds != null) {

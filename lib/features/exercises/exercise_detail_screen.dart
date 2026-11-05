@@ -13,6 +13,7 @@ import '../../domain/records.dart';
 import '../../domain/stats.dart';
 import '../../widgets/common.dart';
 import '../../widgets/line_chart.dart';
+import '../workout/exercise_card_extras.dart';
 import '../workout/workout_summary_screen.dart';
 
 class ExerciseDetailScreen extends ConsumerWidget {
@@ -324,13 +325,13 @@ class _HistoryTab extends ConsumerWidget {
   }
 }
 
-class _AboutTab extends StatelessWidget {
+class _AboutTab extends ConsumerWidget {
   const _AboutTab({required this.exercise});
 
   final Exercise exercise;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     return ListView(
       padding: const EdgeInsets.all(16),
@@ -378,6 +379,18 @@ class _AboutTab extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ),
+        const SectionHeader('Afinações do equipamento'),
+        Card(
+          child: ListTile(
+            leading: const Icon(Icons.tune_rounded),
+            title: Text(exercise.setupSummary ?? 'Nada guardado'),
+            subtitle: const Text(
+              'Ângulo do banco, assento, pega… aparecem no treino',
+            ),
+            trailing: const Icon(Icons.edit_outlined),
+            onTap: () => editExerciseSetup(context, ref, exercise),
           ),
         ),
         if (exerciseAliases[exercise.seedKey] case final aliases?

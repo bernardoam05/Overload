@@ -15,13 +15,17 @@ class RoutineItem {
     this.reps = 10,
     this.weightKg,
     this.notes = '',
-  }) : setTypes = List.unmodifiable(
+    int repStep = 0,
+    this.supersetNext = false,
+  }) : repStep = repStep.clamp(0, maxRepStep),
+       setTypes = List.unmodifiable(
          setTypes == null || setTypes.isEmpty
              ? List.filled(sets.clamp(1, maxSets), SetType.normal)
              : setTypes.take(maxSets),
        );
 
   static const maxSets = 20;
+  static const maxRepStep = 3;
 
   final int exerciseId;
 
@@ -31,7 +35,17 @@ class RoutineItem {
   final double? weightKg;
   final String notes;
 
+  /// Reps fewer than the previous working set, for each working set after
+  /// the first: with 10 reps and a step of 1 the plan is 10 · 9 · 8.
+  final int repStep;
+
+  /// Done back to back with the next exercise (a superset).
+  final bool supersetNext;
+
   int get sets => setTypes.length;
+
+  /// Target reps for each planned set (`null` for warm-ups and drops).
+  List<int?> get targets => plannedTargets(setTypes, reps, repStep);
 
   RoutineItem copyWith({
     int? exerciseId,
@@ -39,13 +53,40 @@ class RoutineItem {
     int? reps,
     double? Function()? weightKg,
     String? notes,
+    int? repStep,
+    bool? supersetNext,
   }) => RoutineItem(
     exerciseId: exerciseId ?? this.exerciseId,
     setTypes: setTypes ?? this.setTypes,
     reps: reps ?? this.reps,
     weightKg: weightKg == null ? this.weightKg : weightKg(),
     notes: notes ?? this.notes,
+    repStep: repStep ?? this.repStep,
+    supersetNext: supersetNext ?? this.supersetNext,
   );
+}
+
+/// Target reps per planned set: the main sets (normal and to failure) start
+/// at [reps] and drop by [step] each (never below 1); warm-ups and drops
+/// have no target.
+List<int?> plannedTargets(List<SetType> types, int reps, int step) {
+  var k = 0;
+  return [
+    for (final t in types)
+      if (t == SetType.normal || t == SetType.failure)
+        (reps - step * k++).clamp(1, 999)
+      else
+        null,
+  ];
+}
+
+/// "10 reps" or "10 · 9 · 8 reps" (main sets only).
+String describeTargets(RoutineItem item, {bool seconds = false}) {
+  final values = item.targets.whereType<int>().toList();
+  final unit = seconds ? 's' : ' reps';
+  if (values.isEmpty) return '';
+  if (item.repStep == 0 || values.length == 1) return '${values.first}$unit';
+  return '${values.join(' · ')}$unit';
 }
 
 /// "1 aquecimento + 3 séries + 1 drop" (types counted, in a fixed order).
@@ -98,6 +139,8 @@ class RoutineRepository {
               reps: e.reps,
               weightKg: e.weightKg,
               notes: e.notes,
+              repStep: e.repStep,
+              supersetNext: e.supersetNext,
             ),
         ]),
     ];
@@ -147,6 +190,8 @@ class RoutineRepository {
               reps: Value(item.reps.clamp(1, 999)),
               weightKg: Value(item.weightKg),
               notes: Value(item.notes.trim()),
+              repStep: Value(item.repStep),
+              supersetNext: Value(item.supersetNext),
             ),
         ]),
       );
