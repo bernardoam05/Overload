@@ -187,7 +187,8 @@ final appVersionProvider = FutureProvider<String>(
 );
 
 /// Latest GitHub release when it is newer than the running app, else null.
+/// Errors when GitHub can't be reached; no automatic retry (the user retries).
 final updateProvider = FutureProvider<UpdateInfo?>((ref) async {
   final version = await ref.watch(appVersionProvider.future);
   return const UpdateChecker().check(version);
-});
+}, retry: (_, _) => null);

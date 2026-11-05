@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -358,6 +359,8 @@ class SettingsScreen extends ConsumerWidget {
                         ? 'A verificar…'
                         : info != null
                         ? 'Toca para descarregar e instalar'
+                        : update.hasError
+                        ? 'Não foi possível verificar. Toca para tentar de novo'
                         : 'Estás na versão mais recente',
                   ),
                   onTap: info != null
@@ -365,6 +368,16 @@ class SettingsScreen extends ConsumerWidget {
                       : () => ref.invalidate(updateProvider),
                 );
               },
+            ),
+          ),
+          const SizedBox(height: 8),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.article_outlined),
+              title: const Text('Notas de versão'),
+              subtitle: const Text('O que mudou em cada versão'),
+              trailing: const Icon(Icons.chevron_right_rounded),
+              onTap: () => context.push('/settings/patch-notes'),
             ),
           ),
           const SizedBox(height: 24),

@@ -18,7 +18,8 @@ class UpdateInfo {
 }
 
 /// Looks up the latest GitHub release and compares it with the running version.
-/// Every failure resolves to "no update".
+/// Network and HTTP failures throw, so callers can tell them apart from
+/// "up to date" (null).
 class UpdateChecker {
   const UpdateChecker({this.repo = 'bernardoam05/Overload'});
   final String repo;
@@ -31,13 +32,13 @@ class UpdateChecker {
       );
       req.headers.set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
       final res = await req.close().timeout(const Duration(seconds: 8));
-      if (res.statusCode != 200) return null;
+      if (res.statusCode != 200) {
+        throw HttpException('GitHub respondeu ${res.statusCode}');
+      }
       return parseRelease(
         jsonDecode(await res.transform(utf8.decoder).join()),
         currentVersion,
       );
-    } catch (_) {
-      return null;
     } finally {
       client.close(force: true);
     }

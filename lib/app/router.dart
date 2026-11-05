@@ -13,6 +13,7 @@ import '../features/profile/achievements_screen.dart';
 import '../features/profile/body_weight_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/ranks/ranks_screen.dart';
+import '../features/settings/patch_notes_view.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/tools/tools_screen.dart';
 import '../features/train/routine_editor_screen.dart';
@@ -178,6 +179,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/settings',
         parentNavigatorKey: _rootKey,
         builder: (_, _) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: '/settings/patch-notes',
+        parentNavigatorKey: _rootKey,
+        builder: (_, _) => const PatchNotesScreen(),
       ),
     ],
   );

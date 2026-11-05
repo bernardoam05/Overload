@@ -1,0 +1,105 @@
+[
+  {
+    "version": "1.1.1",
+    "date": "2026-11-05",
+    "title": "Atualizações que funcionam",
+    "sections": [
+      {
+        "type": "fixed",
+        "items": [
+          "A app não conseguia procurar atualizações nas versões instaladas porque lhe faltava a permissão de Internet. A partir desta versão, as versões novas aparecem automaticamente."
+        ]
+      },
+      {
+        "type": "improved",
+        "items": [
+          "Quando não é possível verificar atualizações, as Definições dizem-no e deixam tentar de novo, em vez de indicarem que estás na versão mais recente."
+        ]
+      },
+      {
+        "type": "new",
+        "items": [
+          "Notas de versão: depois de atualizar, vês o que mudou desde a última versão que abriste.",
+          "O histórico completo de versões está em Definições, na secção Sobre."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.1.0",
+    "date": "2026-11-03",
+    "title": "Rotinas mais completas",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "Cada exercício da rotina guarda o plano de séries por tipo (aquecimento, normal, até à falha, drop), as reps alvo e uma nota fixa.",
+          "Treino vs rotina: o que mudas num treino fica só nesse treino. Ao terminar, vês o que mudou em relação à rotina e escolhes o que levar para ela.",
+          "As notas \"só neste treino\" aparecem no treino seguinte como \"da última vez\".",
+          "Botões \"+ Aquecimento\" e \"+ Drop\" durante o treino.",
+          "Modo de carga por exercício: peso total, de cada haltere ou por lado (unilateral).",
+          "Novo exercício: extensão de tríceps sobre a cabeça unilateral com halter."
+        ]
+      },
+      {
+        "type": "improved",
+        "items": [
+          "Editor de rotinas com chips por série, reps alvo e nota fixa.",
+          "\"+ Série\" fica antes dos drops.",
+          "Nome mais claro para a extensão de tríceps com 1 halter a duas mãos."
+        ]
+      },
+      {
+        "type": "fixed",
+        "items": [
+          "A rotina já não perde as notas quando é editada."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.2",
+    "date": "2026-10-29",
+    "title": "Atualizar dentro da app",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "A versão nova descarrega-se e instala-se sem sair da app.",
+          "O ficheiro descarregado é verificado (SHA-256) antes da instalação."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.1",
+    "date": "2026-10-29",
+    "title": "Aviso de versão nova",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "Ao abrir, a app verifica se há uma versão nova e avisa."
+        ]
+      }
+    ]
+  },
+  {
+    "version": "1.0.0",
+    "date": "2026-10-29",
+    "title": "Primeira versão",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "Treino ativo com peso e reps, tipos de série, valores da última vez e temporizador de descanso automático.",
+          "Rotinas de exemplo (Push, Pull, Pernas, Corpo inteiro) e rotinas próprias.",
+          "Ranks por grupo muscular, XP, níveis, streak semanal e 25 conquistas.",
+          "Recordes pessoais e gráficos de progresso por exercício.",
+          "Histórico com calendário, biblioteca de cerca de 75 exercícios, peso corporal e calculadoras de 1RM e de discos.",
+          "Backup em JSON, tema escuro ou claro, kg ou lb. Todos os dados ficam no dispositivo."
+        ]
+      }
+    ]
+  }
+]

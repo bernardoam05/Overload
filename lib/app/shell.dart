@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../core/format.dart';
+import '../features/settings/patch_notes.dart';
+import '../features/settings/patch_notes_view.dart';
 import '../features/settings/update_dialog.dart';
 import '../features/workout/active_workout_controller.dart';
 import 'providers.dart';
@@ -34,6 +36,13 @@ class AppShell extends ConsumerWidget {
             ),
           ),
         );
+    });
+    // Once per launch: the notes of versions installed since the last viewing.
+    ref.listen(unseenPatchNotesProvider, (_, next) {
+      final notes = next.value;
+      if (notes == null || notes.isEmpty) return;
+      markPatchNotesSeen(ref);
+      showWhatsNew(context, notes);
     });
     return Scaffold(
       body: shell,

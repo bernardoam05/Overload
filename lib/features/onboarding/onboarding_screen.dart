@@ -7,6 +7,7 @@ import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../domain/enums.dart';
 import '../../widgets/common.dart';
+import '../settings/patch_notes.dart';
 import '../../widgets/rank_badge.dart';
 import '../../domain/ranks.dart';
 
@@ -63,6 +64,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (kg != null) {
       await ref.read(bodyWeightRepositoryProvider).log(DateTime.now(), kg);
     }
+    // A fresh install starts with nothing "new" to show.
+    await markPatchNotesSeen(ref);
     await ref
         .read(settingsRepositoryProvider)
         .saveProfile(
