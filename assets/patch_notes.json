@@ -1,5 +1,19 @@
 [
   {
+    "version": "1.3.1",
+    "date": "2026-11-05",
+    "title": "Ícone novo",
+    "sections": [
+      {
+        "type": "improved",
+        "items": [
+          "Ícone novo: um hexágono, como os emblemas de rank e as cabeças dos halteres, com um halter na diagonal a subir.",
+          "O ícone da notificação de treino e do marcador da barra de séries também é novo, numa versão simplificada para tamanhos pequenos."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.3.0",
     "date": "2026-11-05",
     "title": "Progressão inteligente e biblioteca renovada",
