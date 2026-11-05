@@ -136,7 +136,7 @@ Future<FinishResult?> showFinishSheet(
                     ),
                   ),
                 if (sync != null)
-                  _RoutineChanges(
+                  RoutineChangesList(
                     sync: sync,
                     selected: selected,
                     onChanged: (id, on) => setSheetState(
@@ -197,8 +197,9 @@ Future<FinishResult?> showFinishSheet(
 }
 
 /// Checklist of what changed compared with the routine.
-class _RoutineChanges extends StatelessWidget {
-  const _RoutineChanges({
+class RoutineChangesList extends StatelessWidget {
+  const RoutineChangesList({
+    super.key,
     required this.sync,
     required this.selected,
     required this.onChanged,

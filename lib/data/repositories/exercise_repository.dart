@@ -14,6 +14,7 @@ class ExerciseDraft {
     this.instructions = '',
     this.restSeconds,
     this.loadMode = LoadMode.bilateral,
+    this.category = ExerciseCategory.compound,
   });
 
   final String name;
@@ -24,6 +25,7 @@ class ExerciseDraft {
   final String instructions;
   final int? restSeconds;
   final LoadMode loadMode;
+  final ExerciseCategory category;
 
   /// Validates user input; returns an error message or `null`.
   String? validate() {
@@ -57,6 +59,7 @@ class ExerciseRepository {
             instructions: Value(draft.instructions.trim()),
             restSeconds: Value(draft.restSeconds),
             loadMode: Value(draft.loadMode),
+            category: Value(draft.category),
             isCustom: const Value(true),
           ),
         );
@@ -75,6 +78,7 @@ class ExerciseRepository {
         instructions: Value(draft.instructions.trim()),
         restSeconds: Value(draft.restSeconds),
         loadMode: Value(draft.loadMode),
+        category: Value(draft.category),
       ),
     );
   }
@@ -92,6 +96,16 @@ class ExerciseRepository {
           benchAngle: Value(benchAngle?.clamp(-90, 90)),
         ),
       );
+
+  /// Rep range override; `null` for both goes back to the default.
+  Future<void> setRepRange(int id, int? min, int? max) {
+    if (min != null && max != null && (min < 1 || max > 100 || min > max)) {
+      throw ArgumentError('Gama de repetições inválida.');
+    }
+    return (_db.update(_db.exercises)..where((e) => e.id.equals(id))).write(
+      ExercisesCompanion(repMin: Value(min), repMax: Value(max)),
+    );
+  }
 
   Future<void> setBenchAngle(int id, int? degrees) =>
       (_db.update(_db.exercises)..where((e) => e.id.equals(id))).write(

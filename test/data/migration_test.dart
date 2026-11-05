@@ -74,6 +74,9 @@ void main() {
     expect(curl.loadMode, LoadMode.perHand);
     expect(curl.setup, '');
     expect(curl.benchAngle, isNull);
+    expect(curl.category, ExerciseCategory.isolation, reason: 'from its guide');
+    expect(curl.cues, isNotEmpty);
+    expect(await db.select(db.bodyMeasurements).get(), isEmpty);
     final ext = await (db.select(
       db.exercises,
     )..where((e) => e.seedKey.equals('overhead_ext'))).getSingle();

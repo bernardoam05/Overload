@@ -356,6 +356,7 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
               exerciseId: e.exerciseId,
               notes: e.notes,
               supersetNext: e.supersetNext,
+              form: e.form,
               sets: [
                 for (final s in e.sets)
                   ActiveSet(
@@ -447,6 +448,33 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
     );
   });
 
+  /// Replaces the pending warm-ups of an exercise with [steps], filled in,
+  /// before its working sets. Warm-ups already done stay.
+  void setWarmups(String exId, List<({double kg, int reps})> steps) =>
+      _updateExercise(exId, (e) {
+        final done = [
+          for (final s in e.sets)
+            if (s.type == SetType.warmup && s.done) s,
+        ];
+        final rest = [
+          for (final s in e.sets)
+            if (s.type != SetType.warmup) s,
+        ];
+        return e.copyWith(
+          sets: [
+            ...done,
+            for (final w in steps)
+              ActiveSet(
+                id: newLocalId(),
+                type: SetType.warmup,
+                weightKg: w.kg,
+                reps: w.reps,
+              ),
+            ...rest,
+          ],
+        );
+      });
+
   /// Adds a drop set at the end, empty so last time's drop shows as a hint.
   void addDrop(String exId) => _updateExercise(
     exId,
@@ -485,6 +513,12 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
         ),
     );
   });
+
+  /// Rates the form of an exercise; the same rating again clears it.
+  void setForm(String exId, FormRating rating) => _updateExercise(
+    exId,
+    (e) => e.copyWith(form: () => e.form == rating ? null : rating),
+  );
 
   /// Links (or unlinks) an exercise with the next one in a superset.
   void toggleSuperset(String exId) =>
@@ -657,6 +691,7 @@ class ActiveWorkoutController extends Notifier<ActiveWorkout?> {
             sets: sets,
             notes: e.notes,
             supersetNext: e.supersetNext,
+            form: e.form,
           ),
         );
       }

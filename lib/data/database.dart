@@ -57,6 +57,17 @@ class Exercises extends Table {
 
   /// Bench angle in degrees (negative is a decline), if the exercise uses one.
   IntColumn get benchAngle => integer().nullable()();
+
+  TextColumn get category =>
+      textEnum<ExerciseCategory>().withDefault(const Constant('compound'))();
+
+  /// Rep range chosen by the user; `null` uses the category's default.
+  IntColumn get repMin => integer().nullable()();
+  IntColumn get repMax => integer().nullable()();
+
+  /// Technique cues, one per line, and the most common mistake.
+  TextColumn get cues => text().withDefault(const Constant(''))();
+  TextColumn get mistake => text().withDefault(const Constant(''))();
 }
 
 @DataClassName('WorkoutRow')
@@ -86,6 +97,9 @@ class WorkoutExercises extends Table {
 
   /// Done back to back with the next exercise (a superset).
   BoolColumn get supersetNext => boolean().withDefault(const Constant(false))();
+
+  /// How the form felt (see `FormRating`), if rated.
+  TextColumn get form => textEnum<FormRating>().nullable()();
 }
 
 @DataClassName('WorkoutSetRow')
@@ -147,6 +161,14 @@ class BodyWeights extends Table {
   RealColumn get weightKg => real()();
 }
 
+@DataClassName('MeasurementEntry')
+class BodyMeasurements extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  DateTimeColumn get date => dateTime()();
+  TextColumn get kind => textEnum<Measurement>()();
+  RealColumn get value => real()();
+}
+
 /// Small key/value store for settings and the in-progress workout draft.
 @DataClassName('KeyValue')
 class KeyValues extends Table {
@@ -166,6 +188,7 @@ class KeyValues extends Table {
     Routines,
     RoutineExercises,
     BodyWeights,
+    BodyMeasurements,
     KeyValues,
   ],
 )
@@ -174,7 +197,7 @@ class AppDatabase extends _$AppDatabase {
     : super(executor ?? driftDatabase(name: 'overload'));
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -191,6 +214,15 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(routineExercises, routineExercises.repStep);
         await m.addColumn(routineExercises, routineExercises.supersetNext);
         await m.addColumn(workoutExercises, workoutExercises.supersetNext);
+      }
+      if (from < 4) {
+        await m.addColumn(exercises, exercises.category);
+        await m.addColumn(exercises, exercises.repMin);
+        await m.addColumn(exercises, exercises.repMax);
+        await m.addColumn(exercises, exercises.cues);
+        await m.addColumn(exercises, exercises.mistake);
+        await m.addColumn(workoutExercises, workoutExercises.form);
+        await m.createTable(bodyMeasurements);
       }
     },
     beforeOpen: (details) async {

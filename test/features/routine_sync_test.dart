@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:overload/data/database.dart';
 import 'package:overload/data/repositories/routine_repository.dart';
 import 'package:overload/domain/enums.dart';
+import 'package:overload/domain/models.dart';
 import 'package:overload/features/workout/active_workout.dart';
 import 'package:overload/features/workout/routine_sync.dart';
 
@@ -195,5 +196,74 @@ void main() {
     final sync = routineSync(w, routine, _library)!;
     final item = sync.apply(sync.defaultSelection).last;
     expect((item.exerciseId, item.reps, item.repStep), (4, 10, 1));
+  });
+
+  group('from a past workout', () {
+    WorkoutRecord record(List<ExerciseEntry> e) => WorkoutRecord(
+      id: 1,
+      name: 'Pernas',
+      startedAt: DateTime(2026, 11, 3),
+      endedAt: DateTime(2026, 11, 3, 1),
+      exercises: e,
+    );
+    ExerciseEntry entry(int id, List<int> reps) => ExerciseEntry(
+      exerciseId: id,
+      sets: [
+        for (final r in reps)
+          SetEntry(type: SetType.normal, weightKg: 50, reps: r),
+      ],
+    );
+
+    test('pinned notes are not proposed for deletion', () {
+      final w = workoutAgainstRoutine(
+        record([
+          entry(1, [6, 6, 6]),
+          entry(2, [12, 12, 12]),
+          entry(3, [10, 10]),
+        ]),
+        routine,
+      );
+      expect(routineSync(w, routine, _library), isNull);
+    });
+
+    test('descending reps become the routine targets when ticked', () {
+      final w = workoutAgainstRoutine(
+        record([
+          entry(1, [6, 6, 6]),
+          entry(2, [12, 11, 10]),
+          entry(3, [10, 10]),
+        ]),
+        routine,
+      );
+      final sync = routineSync(w, routine, _library)!;
+      final change = sync.changes.single;
+      expect(change.id, 'targets:1');
+      expect(change.selectedByDefault, isFalse);
+      expect(change.title, contains('12 · 11 · 10'));
+      final items = sync.apply({'targets:1'});
+      expect(
+        (items[1].reps, items[1].repStep, items[1].notes),
+        (12, 1, 'banco a 30°'),
+      );
+      expect(sync.apply({})[1].repStep, 0);
+    });
+
+    test('swapped exercises show as replacements, extras as additions', () {
+      final w = workoutAgainstRoutine(
+        record([
+          entry(4, [6, 6, 6]), // instead of exercise 1
+          entry(2, [12, 12, 12]),
+          entry(3, [10, 10]),
+          entry(9, [8, 8]), // new
+        ]),
+        routine,
+      );
+      final sync = routineSync(w, routine, _library)!;
+      final ids = sync.changes.map((c) => c.id);
+      expect(ids, contains('replaced:0'));
+      expect(ids.where((id) => id.startsWith('removed:')), isEmpty);
+      expect(ids.where((id) => id.startsWith('added:')), hasLength(1));
+      expect(sync.apply({'replaced:0'}).first.exerciseId, 4);
+    });
   });
 }

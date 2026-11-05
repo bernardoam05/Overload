@@ -18,6 +18,11 @@ class Exercise {
     this.loadMode = LoadMode.bilateral,
     this.setup = '',
     this.benchAngle,
+    this.category = ExerciseCategory.compound,
+    this.repMin,
+    this.repMax,
+    this.cues = '',
+    this.mistake = '',
   });
 
   final int id;
@@ -47,6 +52,24 @@ class Exercise {
 
   /// Bench angle in degrees (negative is a decline), if one is used.
   final int? benchAngle;
+
+  /// Kind of lift: sets the default rest and rep range.
+  final ExerciseCategory category;
+
+  /// Rep range chosen by the user (`null` uses the default).
+  final int? repMin;
+  final int? repMax;
+
+  /// Technique cues, one per line, and the most common mistake.
+  final String cues;
+  final String mistake;
+
+  List<String> get cueList => [
+    for (final c in cues.split('\n'))
+      if (c.trim().isNotEmpty) c.trim(),
+  ];
+
+  bool get hasGuide => cueList.isNotEmpty || mistake.trim().isNotEmpty;
 
   /// "Banco 30° · Assento 4", or `null` when nothing is recorded.
   String? get setupSummary {
@@ -81,6 +104,9 @@ String? loadLabelFor(LoadMode mode, Equipment equipment) {
     _ => (null, null),
   };
   return switch (mode) {
+    LoadMode.bilateral
+        when equipment == Equipment.barbell || equipment == Equipment.ezBar =>
+      'Peso total, com a barra',
     LoadMode.bilateral => one == null ? null : '$one seguro com as duas mãos',
     LoadMode.perHand =>
       plural == null

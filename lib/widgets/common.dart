@@ -133,7 +133,11 @@ class EmptyState extends StatelessWidget {
 Color muscleColor(Muscle m) => switch (m) {
   Muscle.chest => const Color(0xFFFF6A3D),
   Muscle.back => const Color(0xFF4F9DFF),
+  Muscle.traps => const Color(0xFF6C8CFF),
+  Muscle.lowerBack => const Color(0xFF5FB3D9),
   Muscle.shoulders => const Color(0xFFFFB547),
+  Muscle.sideDelts => const Color(0xFFFFC97A),
+  Muscle.rearDelts => const Color(0xFFE09A3E),
   Muscle.biceps => const Color(0xFFB18CFF),
   Muscle.triceps => const Color(0xFFFF5A9E),
   Muscle.forearms => const Color(0xFF9AA0AC),
@@ -143,6 +147,7 @@ Color muscleColor(Muscle m) => switch (m) {
   Muscle.adductors => const Color(0xFF9C8CFF),
   Muscle.calves => const Color(0xFF8FB8DE),
   Muscle.core => const Color(0xFFF6C744),
+  Muscle.obliques => const Color(0xFFE0B23A),
   Muscle.fullBody => const Color(0xFFFF8A65),
   Muscle.cardio => const Color(0xFFFF4D6D),
 };

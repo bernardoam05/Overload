@@ -1,5 +1,36 @@
 [
   {
+    "version": "1.3.0",
+    "date": "2026-11-05",
+    "title": "Progressão inteligente e biblioteca renovada",
+    "sections": [
+      {
+        "type": "new",
+        "items": [
+          "A progressão também baixa a carga, mas só quando se repete: pior 2 treinos seguidos leva a baixar um degrau, 3 treinos sem progresso levam a um deload de cerca de 10 %. Um dia mau sozinho não muda nada.",
+          "Avaliação da forma no fim de cada exercício (Má, OK, Boa). Com forma má a app não sugere mais carga; duas vezes seguidas sugere baixar.",
+          "Levar alterações de um treino já feito para uma rotina (no menu do treino, no Histórico), incluindo os alvos de reps, por exemplo 12 · 11 · 10.",
+          "Dicas de execução e erro mais comum em todos os exercícios, à mão durante o treino.",
+          "Gama de reps (8–12 por defeito, 12–20 em gémeos, abdominais, laterais, adutora e abdutora): sobes reps até ao topo e depois a app sugere mais carga.",
+          "Gerar aquecimentos a partir da carga de trabalho, no menu de cada exercício.",
+          "Discos por lado na folha de opções de cada série, nos exercícios com barra.",
+          "Medidas corporais (cintura, braço, coxa, gordura…) com gráfico, no Perfil.",
+          "42 exercícios novos: pendulum squat, Nordic curl, seal row, remada com peito apoiado, Y-raise, pallof press, dead bug, JM press, Smith e muitos mais."
+        ]
+      },
+      {
+        "type": "improved",
+        "items": [
+          "Músculos mais finos: deltoide lateral e posterior, trapézio, lombar e oblíquos aparecem em separado nas séries semanais.",
+          "Descanso por tipo de exercício: compostos pesados descansam mais do que exercícios de isolamento.",
+          "Novos equipamentos: máquina Smith e barra EZ.",
+          "Cada exercício mostra o tipo, a gama de reps e o descanso, e a gama pode ser mudada.",
+          "Nos exercícios com barra fica claro que o peso registado é o total, com a barra."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.2.0",
     "date": "2026-11-05",
     "title": "Progressão, superséries e backup automático",

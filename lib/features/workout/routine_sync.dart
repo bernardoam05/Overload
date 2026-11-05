@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import '../../data/repositories/routine_repository.dart';
 import '../../domain/enums.dart';
 import '../../domain/exercise.dart';
+import '../../domain/models.dart';
 import 'active_workout.dart';
 
 /// What belongs to the workout and what belongs to the routine:
@@ -23,6 +24,7 @@ enum RoutineChangeKind {
   removed,
   order,
   supersets,
+  targets,
 }
 
 class RoutineChange {
@@ -112,6 +114,10 @@ class RoutineSync {
         if (selected.contains('sets:$idx') && e.sets.isNotEmpty) {
           item = item.copyWith(setTypes: setTypesOf(e));
         }
+        if (selected.contains('targets:$idx')) {
+          final t = doneTargets(e);
+          if (t != null) item = item.copyWith(reps: t.reps, repStep: t.step);
+        }
         if (selected.contains('notes:$idx')) {
           item = item.copyWith(notes: e.routineNotes.trim());
         }
@@ -170,6 +176,24 @@ class RoutineSync {
       supersetNext: e.supersetNext,
     );
   }
+}
+
+/// Target reps implied by the main sets done in [e]: the first set's reps
+/// with an even descent (10 · 9 · 8), else the most common reps; `null` when
+/// no main set was done.
+({int reps, int step})? doneTargets(ActiveExercise e) {
+  final main = [
+    for (final s in e.sets)
+      if ((s.type == SetType.normal || s.type == SetType.failure) &&
+          s.done &&
+          (s.reps ?? 0) > 0)
+        s.reps!,
+  ];
+  if (main.isEmpty) return null;
+  final step = descendingStep(main);
+  if (step > 0) return (reps: main.first, step: step);
+  final common = maxBy(main.toSet(), (r) => main.where((x) => x == r).length)!;
+  return (reps: common, step: 0);
 }
 
 /// The constant drop in reps between consecutive sets (10 · 9 · 8 → 1), or
@@ -243,6 +267,23 @@ RoutineSync? routineSync(
         ),
       );
     }
+    final done = doneTargets(e);
+    if (done != null && (done.reps != item.reps || done.step != item.repStep)) {
+      final planned = item.copyWith(
+        setTypes: types.isEmpty ? null : types,
+        reps: done.reps,
+        repStep: done.step,
+      );
+      changes.add(
+        RoutineChange(
+          id: 'targets:$idx',
+          kind: RoutineChangeKind.targets,
+          title: '${name(e.exerciseId)}: alvo ${describeTargets(planned)}',
+          detail: 'Na rotina: ${describeTargets(item)}',
+          selectedByDefault: false,
+        ),
+      );
+    }
     if (e.routineNotes.trim() != item.notes.trim()) {
       final note = e.routineNotes.trim();
       changes.add(
@@ -312,4 +353,65 @@ RoutineSync? routineSync(
 
   if (changes.isEmpty) return null;
   return RoutineSync._(routine, exercises, match, changes);
+}
+
+/// A finished workout seen as if it had just been done from [routine], so
+/// [routineSync] can list what to take to the routine afterwards. Pinned
+/// notes are not in the history, so they are taken from the routine (and
+/// never show as changes).
+ActiveWorkout workoutAgainstRoutine(
+  WorkoutRecord record,
+  RoutineWithItems routine,
+) {
+  var exercises = [
+    for (final (i, e) in record.exercises.indexed)
+      ActiveExercise(
+        id: 'h$i',
+        exerciseId: e.exerciseId,
+        notes: e.notes,
+        supersetNext: e.supersetNext,
+        form: e.form,
+        sets: [
+          for (final (j, s) in e.sets.indexed)
+            ActiveSet(
+              id: 'h$i-$j',
+              type: s.type,
+              weightKg: s.weightKg,
+              reps: s.reps,
+              done: true,
+            ),
+        ],
+      ),
+  ];
+  final match = matchToRoutine(exercises, routine.items);
+  // Exercises left over on both sides were most likely swapped (stiff for
+  // deadlift): pair them in order so they show as replacements.
+  final freeItems = [
+    for (var j = 0; j < routine.items.length; j++)
+      if (!match.contains(j)) j,
+  ];
+  for (var i = 0; i < match.length && freeItems.isNotEmpty; i++) {
+    if (match[i] == null) match[i] = freeItems.removeAt(0);
+  }
+  exercises = [
+    for (final (i, e) in exercises.indexed)
+      match[i] == null
+          ? e
+          : ActiveExercise(
+              id: e.id,
+              exerciseId: e.exerciseId,
+              notes: e.notes,
+              supersetNext: e.supersetNext,
+              form: e.form,
+              sets: e.sets,
+              routineIndex: match[i],
+              routineNotes: routine.items[match[i]!].notes,
+            ),
+  ];
+  return ActiveWorkout(
+    name: record.name,
+    startedAt: record.startedAt,
+    routineId: routine.routine.id,
+    exercises: exercises,
+  );
 }

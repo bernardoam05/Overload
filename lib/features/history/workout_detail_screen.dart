@@ -11,6 +11,7 @@ import '../../domain/enums.dart';
 import '../../domain/models.dart';
 import '../../widgets/common.dart';
 import '../train/routine_editor_screen.dart';
+import 'routine_update_sheet.dart';
 import '../workout/routine_sync.dart';
 import '../workout/active_workout_controller.dart';
 import '../workout/start_workout.dart';
@@ -54,6 +55,10 @@ class WorkoutDetailScreen extends ConsumerWidget {
             onSelected: (v) => _onAction(context, ref, workout, v),
             itemBuilder: (_) => const [
               PopupMenuItem(value: 'edit', child: Text('Editar treino')),
+              PopupMenuItem(
+                value: 'sync',
+                child: Text('Levar alterações para uma rotina'),
+              ),
               PopupMenuItem(
                 value: 'routine',
                 child: Text('Guardar como rotina'),
@@ -226,6 +231,8 @@ class WorkoutDetailScreen extends ConsumerWidget {
         }
         ref.read(activeWorkoutProvider.notifier).edit(workout);
         context.push('/workout');
+      case 'sync':
+        await takeWorkoutToRoutine(context, ref, workout);
       case 'routine':
         context.push(
           '/routines/new',

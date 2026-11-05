@@ -5,6 +5,7 @@ import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../domain/enums.dart';
 import '../../domain/models.dart';
+import '../../domain/one_rm.dart';
 import '../../domain/overload.dart';
 import 'active_workout.dart';
 
@@ -25,6 +26,7 @@ class SetRow extends StatelessWidget {
     this.peekHint = false,
     this.comparison,
     this.aim,
+    this.barKg,
   });
 
   /// Number shown for working sets (warm-ups show "A").
@@ -49,13 +51,36 @@ class SetRow extends StatelessWidget {
   /// (and highlighted where it differs from it).
   final SetAim? aim;
 
+  /// Empty bar weight when the exercise is loaded with plates on a bar.
+  final double? barKg;
+
   void _openOptions(BuildContext context) => showSetOptions(
     context,
     set: set,
     index: index,
     onType: onType,
     onDelete: onDelete,
+    plates: _platesText(),
   );
+
+  /// "Por lado: 20 + 10 + 1,25 kg" for barbell work, or `null`.
+  String? _platesText() {
+    final bar = barKg;
+    final kg = set.weightKg ?? aim?.weightKg ?? previous?.weightKg;
+    if (bar == null || bar <= 0 || kg == null || kg <= bar) return null;
+    final target = toDisplayWeight(kg, unit);
+    final barDisplay = toDisplayWeight(bar, unit);
+    final plates = unit == WeightUnit.kg
+        ? const [25.0, 20.0, 15.0, 10.0, 5.0, 2.5, 1.25]
+        : const [45.0, 35.0, 25.0, 10.0, 5.0, 2.5];
+    final r = platesPerSide(target, barDisplay, plates);
+    final list = r.plates.map((p) => formatNumber(p)).join(' + ');
+    final missing = r.remainder > 0
+        ? ' (faltam ${formatNumber(r.remainder)} ${unit.label})'
+        : '';
+    return '${formatWeight(kg, unit)} com barra de ${formatNumber(barDisplay)}: '
+        '$list ${unit.label} por lado$missing';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -321,6 +346,7 @@ Future<void> showSetOptions(
   required int index,
   required ValueChanged<SetType> onType,
   required VoidCallback onDelete,
+  String? plates,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -341,6 +367,16 @@ Future<void> showSetOptions(
                 style: theme.textTheme.titleLarge,
               ),
             ),
+            if (plates != null)
+              ListTile(
+                contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                leading: Icon(Icons.album_outlined, color: scheme.primary),
+                title: const Text(
+                  'Discos',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+                subtitle: Text(plates),
+              ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 4, 24, 4),
               child: Text(

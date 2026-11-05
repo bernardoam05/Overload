@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../app/providers.dart';
+import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../data/repositories/settings_repository.dart';
 import '../../domain/enums.dart';
 import '../../domain/exercise.dart';
-import '../../domain/models.dart';
 import '../../domain/overload.dart';
 import '../../domain/previous.dart';
 import '../../domain/superset.dart';
@@ -19,8 +19,10 @@ Progression progressionFor(
   ActiveExercise entry,
   PreviousPerformance? previous,
   Exercise exercise,
-  Profile profile,
-) {
+  Profile profile, {
+  List<SessionLog> recent = const [],
+  double bodyWeightKg = 0,
+}) {
   final plan = [for (final s in entry.sets) PlannedSet(s.type, s.targetReps)];
   if (!profile.progressionHints) {
     return Progression(
@@ -37,13 +39,12 @@ Progression progressionFor(
   }
   return suggestProgression(
     plan: plan,
-    previousMain: [
-      for (final s in previous?.working ?? const <SetEntry>[])
-        if (s.type == SetType.normal || s.type == SetType.failure) s,
-    ],
+    recent: recent,
     exercise: exercise,
     unit: profile.unit,
     plannedWeightKg: entry.plannedWeightKg,
+    range: repRangeFor(exercise, profile.repRange),
+    bodyWeightKg: bodyWeightKg,
   );
 }
 
@@ -69,8 +70,11 @@ class OverloadLine extends StatelessWidget {
     required this.entry,
     required this.exercise,
     required this.unit,
+    this.range,
   });
 
+  /// Rep range, when the routine sets no targets.
+  final RepRange? range;
   final Progression progression;
   final ActiveExercise entry;
   final Exercise exercise;
@@ -82,14 +86,30 @@ class OverloadLine extends StatelessWidget {
     String goal() => seconds
         ? targets.map((t) => formatSeconds(t)).join(' · ')
         : '${targets.join(' · ')} reps';
+    String kg() => formatWeight(progression.toKg ?? 0, unit);
+    final range = targets.isEmpty ? this.range : null;
     return switch (progression.advice) {
       null => null,
       OverloadAdvice.start =>
-        targets.isEmpty ? null : 'Objetivo de hoje: ${goal()}',
+        targets.isNotEmpty
+            ? 'Objetivo de hoje: ${goal()}'
+            : range == null
+            ? null
+            : 'Objetivo: ${range.min}–${range.max} reps em cada série',
+      OverloadAdvice.reduceLoad when progression.byForm =>
+        'Forma má 2 treinos seguidos: baixa para ${kg()} e acerta a técnica',
+      OverloadAdvice.reduceLoad =>
+        'Pior 2 treinos seguidos: baixa para ${kg()} e volta a construir',
+      OverloadAdvice.deload =>
+        '3 treinos sem progresso: deload para ${kg()} (cerca de −10 %)',
+      OverloadAdvice.focusForm =>
+        'A forma foi má da última vez: mesma carga, foca na técnica',
       OverloadAdvice.addLoad when exercise.kind == ExerciseKind.assisted =>
         'Cumpriste o objetivo: menos ajuda, ${formatWeight(progression.toKg!, unit)}',
       OverloadAdvice.addLoad =>
         'Cumpriste o objetivo: sobe para ${formatWeight(progression.toKg!, unit)}',
+      OverloadAdvice.reachTargets when targets.isEmpty && range != null =>
+        'Mantém a carga e sobe até às ${range.max} reps',
       OverloadAdvice.reachTargets =>
         'Mantém a carga e chega às reps alvo (${goal()})',
       OverloadAdvice.addReps =>
@@ -105,7 +125,15 @@ class OverloadLine extends StatelessWidget {
     final text = _text();
     if (text == null) return const SizedBox.shrink();
     final theme = Theme.of(context);
-    final color = progression.advice == OverloadAdvice.addLoad
+    final down = switch (progression.advice) {
+      OverloadAdvice.reduceLoad ||
+      OverloadAdvice.deload ||
+      OverloadAdvice.focusForm => true,
+      _ => false,
+    };
+    final color = down
+        ? Brand.amber
+        : progression.advice == OverloadAdvice.addLoad
         ? theme.colorScheme.primary
         : theme.colorScheme.tertiary;
     return Padding(
@@ -118,7 +146,11 @@ class OverloadLine extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.trending_up_rounded, size: 16, color: color),
+            Icon(
+              down ? Icons.trending_down_rounded : Icons.trending_up_rounded,
+              size: 16,
+              color: color,
+            ),
             const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -330,3 +362,217 @@ class _SetupDialogState extends State<_SetupDialog> {
     );
   }
 }
+
+/// "Forma: Má · OK · Boa" once a set of the exercise is done, with a link to
+/// the technique cues.
+class FormRow extends StatelessWidget {
+  const FormRow({
+    super.key,
+    required this.entry,
+    required this.exercise,
+    required this.onRate,
+  });
+
+  final ActiveExercise entry;
+  final Exercise exercise;
+  final ValueChanged<FormRating> onRate;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final c = theme.colorScheme;
+    final rated = entry.form;
+    Color colorOf(FormRating r) => switch (r) {
+      FormRating.bad => c.error,
+      FormRating.ok => Brand.amber,
+      FormRating.good => Brand.success,
+    };
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 6, 8, 0),
+      child: Row(
+        children: [
+          Text(
+            'Forma',
+            style: theme.textTheme.labelMedium?.copyWith(
+              color: c.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 8),
+          for (final r in FormRating.values)
+            Padding(
+              padding: const EdgeInsets.only(right: 6),
+              child: ChoiceChip(
+                label: Text(r.label),
+                selected: rated == r,
+                visualDensity: VisualDensity.compact,
+                selectedColor: colorOf(r).withValues(alpha: 0.22),
+                labelStyle: TextStyle(
+                  color: rated == r ? colorOf(r) : null,
+                  fontWeight: rated == r ? FontWeight.w800 : null,
+                ),
+                showCheckmark: false,
+                onSelected: (_) => onRate(r),
+              ),
+            ),
+          const Spacer(),
+          if (exercise.hasGuide)
+            TextButton(
+              onPressed: () => showExerciseGuide(context, exercise),
+              child: const Text('Dicas'),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Small "Dicas de execução" link shown before any set is done.
+class GuideLink extends StatelessWidget {
+  const GuideLink({super.key, required this.exercise});
+  final Exercise exercise;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!exercise.hasGuide) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () => showExerciseGuide(context, exercise),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 8, 14, 0),
+        child: Row(
+          children: [
+            Icon(
+              Icons.tips_and_updates_outlined,
+              size: 16,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                exercise.cueList.isEmpty
+                    ? 'Dicas de execução'
+                    : exercise.cueList.first,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            Text(
+              'mais',
+              style: theme.textTheme.labelSmall?.copyWith(
+                color: theme.colorScheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Technique cues, the common mistake and how form affects progression.
+Future<void> showExerciseGuide(
+  BuildContext context,
+  Exercise exercise,
+) => showModalBottomSheet<void>(
+  context: context,
+  showDragHandle: true,
+  isScrollControlled: true,
+  builder: (context) {
+    final theme = Theme.of(context);
+    final c = theme.colorScheme;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              exercise.name,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            if (exercise.instructions.isNotEmpty) ...[
+              const SizedBox(height: 6),
+              Text(
+                exercise.instructions,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: c.onSurfaceVariant,
+                ),
+              ),
+            ],
+            const SizedBox(height: 16),
+            for (final (i, cue) in exercise.cueList.indexed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: 22,
+                      height: 22,
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(right: 10, top: 1),
+                      decoration: BoxDecoration(
+                        color: c.primary.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Text(
+                        '${i + 1}',
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: c.primary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(cue, style: theme.textTheme.bodyMedium),
+                    ),
+                  ],
+                ),
+              ),
+            if (exercise.mistake.trim().isNotEmpty)
+              Container(
+                width: double.infinity,
+                margin: const EdgeInsets.only(top: 6),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Brand.amber.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      size: 18,
+                      color: Brand.amber,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        'Erro comum: ${exercise.mistake.trim()}',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 16),
+            Text(
+              'No fim do exercício, regista como foi a forma. Com forma má a '
+              'app não sugere mais carga, e duas vezes seguidas sugere baixar.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: c.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  },
+);

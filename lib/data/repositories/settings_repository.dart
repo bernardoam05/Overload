@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../../domain/enums.dart';
+import '../../domain/exercise.dart';
 import '../database.dart';
 
 enum AppThemeMode { system, dark, light }
@@ -22,6 +23,9 @@ class Profile {
     this.seenWorkoutTips = false,
     this.progressionHints = true,
     this.weeklySetTarget = 10,
+    this.repRangeMin = 8,
+    this.repRangeMax = 12,
+    this.restByCategory = true,
   });
 
   final String name;
@@ -47,6 +51,14 @@ class Profile {
   /// Whether the notification permission prompt was already shown.
   final bool askedNotifications;
 
+  /// Rep range for most exercises.
+  ({int min, int max}) get repRange => (min: repRangeMin, max: repRangeMax);
+
+  /// Rest after a set of [e]: its own, else by kind of lift, else global.
+  int restFor(Exercise e) =>
+      e.restSeconds ??
+      (restByCategory ? e.category.restSeconds : defaultRestSeconds);
+
   /// Whether the workout gestures tips were dismissed.
   final bool seenWorkoutTips;
 
@@ -55,6 +67,14 @@ class Profile {
 
   /// Working sets per muscle per week to aim for (0 hides the target).
   final int weeklySetTarget;
+
+  /// Rep range for most exercises (high-rep ones use 12–20).
+  final int repRangeMin;
+  final int repRangeMax;
+
+  /// Default rest by kind of lift (heavy compounds rest longer) instead of
+  /// [defaultRestSeconds] for every exercise.
+  final bool restByCategory;
 
   Profile copyWith({
     String? name,
@@ -72,6 +92,9 @@ class Profile {
     bool? seenWorkoutTips,
     bool? progressionHints,
     int? weeklySetTarget,
+    int? repRangeMin,
+    int? repRangeMax,
+    bool? restByCategory,
   }) => Profile(
     name: name ?? this.name,
     sex: sex ?? this.sex,
@@ -91,6 +114,12 @@ class Profile {
     seenWorkoutTips: seenWorkoutTips ?? this.seenWorkoutTips,
     progressionHints: progressionHints ?? this.progressionHints,
     weeklySetTarget: (weeklySetTarget ?? this.weeklySetTarget).clamp(0, 40),
+    repRangeMin: (repRangeMin ?? this.repRangeMin).clamp(1, 50),
+    repRangeMax: (repRangeMax ?? this.repRangeMax).clamp(
+      repRangeMin ?? this.repRangeMin,
+      50,
+    ),
+    restByCategory: restByCategory ?? this.restByCategory,
   );
 
   Map<String, Object?> toJson() => {
@@ -109,6 +138,9 @@ class Profile {
     'seenWorkoutTips': seenWorkoutTips,
     'progressionHints': progressionHints,
     'weeklySetTarget': weeklySetTarget,
+    'repRangeMin': repRangeMin,
+    'repRangeMax': repRangeMax,
+    'restByCategory': restByCategory,
   };
 
   /// Lenient parsing: unknown or missing fields fall back to defaults.
@@ -138,6 +170,17 @@ class Profile {
       weeklySetTarget: j['weeklySetTarget'] is int
           ? j['weeklySetTarget']! as int
           : d.weeklySetTarget,
+      repRangeMin: j['repRangeMin'] is int
+          ? j['repRangeMin']! as int
+          : d.repRangeMin,
+      repRangeMax: j['repRangeMax'] is int
+          ? j['repRangeMax']! as int
+          : d.repRangeMax,
+      // Profiles from before 1.3.0 keep a rest they had chosen themselves.
+      restByCategory: j['restByCategory'] is bool
+          ? j['restByCategory']! as bool
+          : !(j['defaultRestSeconds'] is int &&
+                j['defaultRestSeconds'] != d.defaultRestSeconds),
     );
   }
 }

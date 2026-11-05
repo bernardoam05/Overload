@@ -27,6 +27,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
   Equipment _equipment = Equipment.barbell;
   ExerciseKind _kind = ExerciseKind.weighted;
   LoadMode _loadMode = LoadMode.bilateral;
+  ExerciseCategory _category = ExerciseCategory.compound;
   bool _loaded = false;
 
   @override
@@ -45,6 +46,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
       _equipment = existing.equipment;
       _kind = existing.kind;
       _loadMode = existing.loadMode;
+      _category = existing.category;
     }
   }
 
@@ -64,6 +66,7 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
       kind: _kind,
       instructions: _instructions.text,
       loadMode: _loadMode,
+      category: _category,
     );
     final error = draft.validate();
     if (error != null) {
@@ -210,6 +213,28 @@ class _ExerciseEditorScreenState extends ConsumerState<ExerciseEditorScreen> {
           const SizedBox(height: 6),
           Text(
             loadLabelFor(_loadMode, _equipment) ?? _loadMode.weightMeaning,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text('Tipo de exercício', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final c in ExerciseCategory.values)
+                ChoiceChip(
+                  label: Text(c.label),
+                  selected: _category == c,
+                  onSelected: (_) => setState(() => _category = c),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Define o descanso e a gama de reps por defeito.',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

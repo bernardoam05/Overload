@@ -31,6 +31,7 @@ class BackupRepository {
     _db.workoutExercises,
     _db.workoutSets,
     _db.bodyWeights,
+    _db.bodyMeasurements,
     _db.keyValues,
   ];
 

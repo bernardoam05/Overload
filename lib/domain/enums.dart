@@ -4,7 +4,11 @@ library;
 enum Muscle {
   chest('Peito'),
   back('Costas'),
-  shoulders('Ombros'),
+  traps('Trapézio'),
+  lowerBack('Lombar'),
+  shoulders('Deltoide anterior'),
+  sideDelts('Deltoide lateral'),
+  rearDelts('Deltoide posterior'),
   biceps('Bíceps'),
   triceps('Tríceps'),
   forearms('Antebraços'),
@@ -14,6 +18,7 @@ enum Muscle {
   adductors('Adutores'),
   calves('Gémeos'),
   core('Core'),
+  obliques('Oblíquos'),
   fullBody('Corpo inteiro'),
   cardio('Cardio');
 
@@ -23,20 +28,26 @@ enum Muscle {
   /// The rank group this muscle contributes to, if any.
   RankGroup? get rankGroup => switch (this) {
     Muscle.chest => RankGroup.chest,
-    Muscle.back => RankGroup.back,
-    Muscle.shoulders => RankGroup.shoulders,
+    Muscle.back || Muscle.traps => RankGroup.back,
+    Muscle.shoulders ||
+    Muscle.sideDelts ||
+    Muscle.rearDelts => RankGroup.shoulders,
     Muscle.biceps => RankGroup.biceps,
     Muscle.triceps => RankGroup.triceps,
     Muscle.quads => RankGroup.quads,
-    Muscle.hamstrings || Muscle.glutes => RankGroup.posterior,
+    Muscle.hamstrings ||
+    Muscle.glutes ||
+    Muscle.lowerBack => RankGroup.posterior,
     _ => null,
   };
 }
 
 enum Equipment {
   barbell('Barra'),
+  ezBar('Barra EZ'),
   dumbbell('Halteres'),
   machine('Máquina'),
+  smith('Máquina Smith'),
   cable('Polia'),
   bodyweight('Peso corporal'),
   kettlebell('Kettlebell'),
@@ -45,6 +56,58 @@ enum Equipment {
 
   const Equipment(this.label);
   final String label;
+}
+
+/// Kind of lift, which sets the default rest and rep range.
+enum ExerciseCategory {
+  /// Big multi-joint lifts loaded heavy (squat, deadlift, bench press).
+  heavyCompound('Composto pesado', 150),
+
+  /// Other multi-joint lifts (rows, presses, leg press, lunges).
+  compound('Composto', 120),
+
+  /// Single-joint lifts (curls, extensions, flyes).
+  isolation('Isolamento', 75),
+
+  /// Small muscles that respond well to more reps (calves, abs, lateral
+  /// raises, adductors and abductors).
+  highRep('Reps altas', 60);
+
+  const ExerciseCategory(this.label, this.restSeconds);
+  final String label;
+
+  /// Default rest between sets.
+  final int restSeconds;
+}
+
+/// How an exercise felt technically, rated at the end of it.
+enum FormRating {
+  bad('Má'),
+  ok('OK'),
+  good('Boa');
+
+  const FormRating(this.label);
+  final String label;
+}
+
+/// Body measurements tracked besides body weight, in centimetres.
+enum Measurement {
+  waist('Cintura'),
+  hips('Anca'),
+  chest('Peito'),
+  shoulders('Ombros'),
+  arm('Braço'),
+  forearm('Antebraço'),
+  thigh('Coxa'),
+  calf('Gémeo'),
+  neck('Pescoço'),
+  bodyFat('Gordura corporal');
+
+  const Measurement(this.label);
+  final String label;
+
+  /// Unit shown next to the value.
+  String get unit => this == Measurement.bodyFat ? '%' : 'cm';
 }
 
 /// How the load is held, so the logged weight is unambiguous.

@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import '../data/database.dart';
 import '../data/repositories/backup_repository.dart';
 import '../data/repositories/body_weight_repository.dart';
+import '../data/repositories/measurement_repository.dart';
 import '../data/repositories/exercise_repository.dart';
 import '../data/repositories/routine_repository.dart';
 import '../data/repositories/settings_repository.dart';
@@ -42,6 +43,14 @@ final bodyWeightRepositoryProvider = Provider(
 );
 final backupRepositoryProvider = Provider(
   (ref) => BackupRepository(ref.watch(databaseProvider)),
+);
+
+final measurementRepositoryProvider = Provider(
+  (ref) => MeasurementRepository(ref.watch(databaseProvider)),
+);
+
+final measurementsProvider = StreamProvider<List<MeasurementEntry>>(
+  (ref) => ref.watch(measurementRepositoryProvider).watchAll(),
 );
 
 final autoBackupProvider = Provider(

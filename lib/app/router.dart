@@ -11,6 +11,7 @@ import '../features/home/home_screen.dart';
 import '../features/onboarding/onboarding_screen.dart';
 import '../features/profile/achievements_screen.dart';
 import '../features/profile/body_weight_screen.dart';
+import '../features/profile/measurements_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/ranks/ranks_screen.dart';
 import '../features/settings/patch_notes_view.dart';
@@ -165,6 +166,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/body-weight',
         parentNavigatorKey: _rootKey,
         builder: (_, _) => const BodyWeightScreen(),
+      ),
+      GoRoute(
+        path: '/measurements',
+        parentNavigatorKey: _rootKey,
+        builder: (_, _) => const MeasurementsScreen(),
       ),
       GoRoute(
         path: '/achievements',

@@ -1,3 +1,6 @@
+import 'package:overload/domain/enums.dart';
+import 'package:overload/data/seed_more.dart';
+import 'package:overload/data/exercise_guides.dart';
 import 'package:drift/drift.dart' hide isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:overload/data/aliases.dart';
@@ -56,7 +59,7 @@ void main() {
   tearDown(() => db.close());
 
   test('seed keys are unique and every alias points to a real exercise', () {
-    final keys = [for (final s in librarySeed) s.$1];
+    final keys = [for (final s in allLibrarySeeds) s.$1];
     expect(keys.toSet(), hasLength(keys.length));
     expect(exerciseAliases.keys.where((k) => !keys.contains(k)), isEmpty);
   });
@@ -86,6 +89,50 @@ void main() {
     )..where((e) => e.seedKey.equals('leg_curl'))).getSingle();
     expect(row.name, 'Flexão de pernas deitado');
     expect(row.restSeconds, 75);
-    expect(await db.select(db.exercises).get(), hasLength(librarySeed.length));
+    expect(
+      await db.select(db.exercises).get(),
+      hasLength(allLibrarySeeds.length),
+    );
+  });
+
+  test('every library exercise has a guide with cues and a mistake', () {
+    for (final s in allLibrarySeeds) {
+      final guide = libraryGuide(s.$1);
+      expect(guide, isNotNull, reason: s.$1);
+      expect(guide!.cues, isNotEmpty, reason: s.$1);
+      expect(guide.mistake, isNotEmpty, reason: s.$1);
+    }
+    final keys = {for (final s in allLibrarySeeds) s.$1};
+    expect(exerciseGuides.keys.where((k) => !keys.contains(k)), isEmpty);
+    expect(moreGuides.keys.where((k) => !keys.contains(k)), isEmpty);
+  });
+
+  test('seeded rows carry category, cues and the finer muscles', () {
+    Exercise byKey(String k) => library.firstWhere((e) => e.seedKey == k);
+    expect(byKey('squat').category, ExerciseCategory.heavyCompound);
+    expect(byKey('lateral_raise').category, ExerciseCategory.highRep);
+    expect(byKey('lateral_raise').primaryMuscle, Muscle.sideDelts);
+    expect(byKey('lateral_raise').rankGroup, RankGroup.shoulders);
+    expect(byKey('shrug').primaryMuscle, Muscle.traps);
+    expect(byKey('smith_squat').equipment, Equipment.smith);
+    expect(byKey('bench').cueList, hasLength(3));
+    expect(byKey('nordic_curl').mistake, isNotEmpty);
+  });
+
+  test('seeding keeps the rep range and setup the user chose', () async {
+    await (db.update(
+      db.exercises,
+    )..where((e) => e.seedKey.equals('bench'))).write(
+      const ExercisesCompanion(
+        repMin: Value(5),
+        repMax: Value(8),
+        setup: Value('pinos no 4'),
+      ),
+    );
+    await seedExercises(db);
+    final row = await (db.select(
+      db.exercises,
+    )..where((e) => e.seedKey.equals('bench'))).getSingle();
+    expect((row.repMin, row.repMax, row.setup), (5, 8, 'pinos no 4'));
   });
 }

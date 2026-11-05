@@ -401,6 +401,59 @@ void main() {
     expect((done.weightKg, done.reps, done.done), (60.0, 9, true));
   });
 
+  test(
+    'form ratings are saved, survive the draft and come back when editing',
+    () async {
+      final bench = await benchId();
+      controller()
+        ..startEmpty()
+        ..addExercises([bench]);
+      final ex = state().exercises.single;
+      controller()
+        ..setWeight(ex.id, ex.sets.single.id, 60)
+        ..setReps(ex.id, ex.sets.single.id, 10)
+        ..toggleDone(ex.id, ex.sets.single.id, weightRequired: true)
+        ..setForm(ex.id, FormRating.bad);
+      final restored = ActiveWorkout.fromJson(
+        (jsonDecode(jsonEncode(state().toJson())) as Map).cast(),
+      );
+      expect(restored.exercises.single.form, FormRating.bad);
+
+      // Tapping the same rating again clears it.
+      controller().setForm(ex.id, FormRating.good);
+      controller().setForm(ex.id, FormRating.good);
+      expect(state().exercises.single.form, isNull);
+      controller().setForm(ex.id, FormRating.ok);
+
+      await controller().finish();
+      await settle();
+      final saved = (await container.read(historyProvider.future)).single;
+      expect(saved.exercises.single.form, FormRating.ok);
+      controller().edit(saved);
+      expect(state().exercises.single.form, FormRating.ok);
+    },
+  );
+
+  test(
+    'generated warm-ups replace pending ones before the work sets',
+    () async {
+      final bench = await benchId();
+      controller()
+        ..startEmpty()
+        ..addExercises([bench]);
+      final id = state().exercises.single.id;
+      controller()
+        ..addWarmup(id)
+        ..setWarmups(id, const [(kg: 20, reps: 10), (kg: 40, reps: 5)]);
+      final sets = state().exercises.single.sets;
+      expect(sets.map((s) => (s.type, s.weightKg, s.reps)), [
+        (SetType.warmup, 20.0, 10),
+        (SetType.warmup, 40.0, 5),
+        (SetType.normal, null, null),
+      ]);
+    },
+  );
+
   test('supersets are kept in the history and when repeating', () async {
     final bench = await benchId();
     controller()

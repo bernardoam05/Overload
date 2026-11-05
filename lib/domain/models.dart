@@ -52,6 +52,7 @@ class ExerciseEntry {
     required this.sets,
     this.notes = '',
     this.supersetNext = false,
+    this.form,
   });
 
   final int exerciseId;
@@ -60,6 +61,9 @@ class ExerciseEntry {
 
   /// Done back to back with the next exercise (a superset).
   final bool supersetNext;
+
+  /// How the form felt, if rated.
+  final FormRating? form;
 
   Iterable<SetEntry> get workingSets => sets.where((s) => s.type.isWorking);
 }

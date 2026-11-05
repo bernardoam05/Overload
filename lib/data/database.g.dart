@@ -180,6 +180,56 @@ class $ExercisesTable extends Exercises
     requiredDuringInsert: false,
   );
   @override
+  late final GeneratedColumnWithTypeConverter<ExerciseCategory, String>
+  category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('compound'),
+  ).withConverter<ExerciseCategory>($ExercisesTable.$convertercategory);
+  static const VerificationMeta _repMinMeta = const VerificationMeta('repMin');
+  @override
+  late final GeneratedColumn<int> repMin = GeneratedColumn<int>(
+    'rep_min',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _repMaxMeta = const VerificationMeta('repMax');
+  @override
+  late final GeneratedColumn<int> repMax = GeneratedColumn<int>(
+    'rep_max',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _cuesMeta = const VerificationMeta('cues');
+  @override
+  late final GeneratedColumn<String> cues = GeneratedColumn<String>(
+    'cues',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  static const VerificationMeta _mistakeMeta = const VerificationMeta(
+    'mistake',
+  );
+  @override
+  late final GeneratedColumn<String> mistake = GeneratedColumn<String>(
+    'mistake',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     name,
@@ -196,6 +246,11 @@ class $ExercisesTable extends Exercises
     loadMode,
     setup,
     benchAngle,
+    category,
+    repMin,
+    repMax,
+    cues,
+    mistake,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -272,6 +327,30 @@ class $ExercisesTable extends Exercises
       context.handle(
         _benchAngleMeta,
         benchAngle.isAcceptableOrUnknown(data['bench_angle']!, _benchAngleMeta),
+      );
+    }
+    if (data.containsKey('rep_min')) {
+      context.handle(
+        _repMinMeta,
+        repMin.isAcceptableOrUnknown(data['rep_min']!, _repMinMeta),
+      );
+    }
+    if (data.containsKey('rep_max')) {
+      context.handle(
+        _repMaxMeta,
+        repMax.isAcceptableOrUnknown(data['rep_max']!, _repMaxMeta),
+      );
+    }
+    if (data.containsKey('cues')) {
+      context.handle(
+        _cuesMeta,
+        cues.isAcceptableOrUnknown(data['cues']!, _cuesMeta),
+      );
+    }
+    if (data.containsKey('mistake')) {
+      context.handle(
+        _mistakeMeta,
+        mistake.isAcceptableOrUnknown(data['mistake']!, _mistakeMeta),
       );
     }
     return context;
@@ -353,6 +432,28 @@ class $ExercisesTable extends Exercises
         DriftSqlType.int,
         data['${effectivePrefix}bench_angle'],
       ),
+      category: $ExercisesTable.$convertercategory.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}category'],
+        )!,
+      ),
+      repMin: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rep_min'],
+      ),
+      repMax: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rep_max'],
+      ),
+      cues: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}cues'],
+      )!,
+      mistake: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mistake'],
+      )!,
     );
   }
 
@@ -371,6 +472,10 @@ class $ExercisesTable extends Exercises
       const EnumNameConverter<ExerciseKind>(ExerciseKind.values);
   static JsonTypeConverter2<LoadMode, String, String> $converterloadMode =
       const EnumNameConverter<LoadMode>(LoadMode.values);
+  static JsonTypeConverter2<ExerciseCategory, String, String>
+  $convertercategory = const EnumNameConverter<ExerciseCategory>(
+    ExerciseCategory.values,
+  );
 }
 
 class ExercisesCompanion extends UpdateCompanion<Exercise> {
@@ -389,6 +494,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
   final Value<LoadMode> loadMode;
   final Value<String> setup;
   final Value<int?> benchAngle;
+  final Value<ExerciseCategory> category;
+  final Value<int?> repMin;
+  final Value<int?> repMax;
+  final Value<String> cues;
+  final Value<String> mistake;
   const ExercisesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -405,6 +515,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     this.loadMode = const Value.absent(),
     this.setup = const Value.absent(),
     this.benchAngle = const Value.absent(),
+    this.category = const Value.absent(),
+    this.repMin = const Value.absent(),
+    this.repMax = const Value.absent(),
+    this.cues = const Value.absent(),
+    this.mistake = const Value.absent(),
   });
   ExercisesCompanion.insert({
     this.id = const Value.absent(),
@@ -422,6 +537,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     this.loadMode = const Value.absent(),
     this.setup = const Value.absent(),
     this.benchAngle = const Value.absent(),
+    this.category = const Value.absent(),
+    this.repMin = const Value.absent(),
+    this.repMax = const Value.absent(),
+    this.cues = const Value.absent(),
+    this.mistake = const Value.absent(),
   }) : name = Value(name),
        primaryMuscle = Value(primaryMuscle),
        equipment = Value(equipment),
@@ -442,6 +562,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Expression<String>? loadMode,
     Expression<String>? setup,
     Expression<int>? benchAngle,
+    Expression<String>? category,
+    Expression<int>? repMin,
+    Expression<int>? repMax,
+    Expression<String>? cues,
+    Expression<String>? mistake,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -459,6 +584,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       if (loadMode != null) 'load_mode': loadMode,
       if (setup != null) 'setup': setup,
       if (benchAngle != null) 'bench_angle': benchAngle,
+      if (category != null) 'category': category,
+      if (repMin != null) 'rep_min': repMin,
+      if (repMax != null) 'rep_max': repMax,
+      if (cues != null) 'cues': cues,
+      if (mistake != null) 'mistake': mistake,
     });
   }
 
@@ -478,6 +608,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     Value<LoadMode>? loadMode,
     Value<String>? setup,
     Value<int?>? benchAngle,
+    Value<ExerciseCategory>? category,
+    Value<int?>? repMin,
+    Value<int?>? repMax,
+    Value<String>? cues,
+    Value<String>? mistake,
   }) {
     return ExercisesCompanion(
       id: id ?? this.id,
@@ -495,6 +630,11 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
       loadMode: loadMode ?? this.loadMode,
       setup: setup ?? this.setup,
       benchAngle: benchAngle ?? this.benchAngle,
+      category: category ?? this.category,
+      repMin: repMin ?? this.repMin,
+      repMax: repMax ?? this.repMax,
+      cues: cues ?? this.cues,
+      mistake: mistake ?? this.mistake,
     );
   }
 
@@ -558,6 +698,23 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
     if (benchAngle.present) {
       map['bench_angle'] = Variable<int>(benchAngle.value);
     }
+    if (category.present) {
+      map['category'] = Variable<String>(
+        $ExercisesTable.$convertercategory.toSql(category.value),
+      );
+    }
+    if (repMin.present) {
+      map['rep_min'] = Variable<int>(repMin.value);
+    }
+    if (repMax.present) {
+      map['rep_max'] = Variable<int>(repMax.value);
+    }
+    if (cues.present) {
+      map['cues'] = Variable<String>(cues.value);
+    }
+    if (mistake.present) {
+      map['mistake'] = Variable<String>(mistake.value);
+    }
     return map;
   }
 
@@ -578,7 +735,12 @@ class ExercisesCompanion extends UpdateCompanion<Exercise> {
           ..write('archived: $archived, ')
           ..write('loadMode: $loadMode, ')
           ..write('setup: $setup, ')
-          ..write('benchAngle: $benchAngle')
+          ..write('benchAngle: $benchAngle, ')
+          ..write('category: $category, ')
+          ..write('repMin: $repMin, ')
+          ..write('repMax: $repMax, ')
+          ..write('cues: $cues, ')
+          ..write('mistake: $mistake')
           ..write(')'))
         .toString();
   }
@@ -1568,6 +1730,15 @@ class $WorkoutExercisesTable extends WorkoutExercises
     defaultValue: const Constant(false),
   );
   @override
+  late final GeneratedColumnWithTypeConverter<FormRating?, String> form =
+      GeneratedColumn<String>(
+        'form',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      ).withConverter<FormRating?>($WorkoutExercisesTable.$converterformn);
+  @override
   List<GeneratedColumn> get $columns => [
     id,
     workoutId,
@@ -1575,6 +1746,7 @@ class $WorkoutExercisesTable extends WorkoutExercises
     position,
     notes,
     supersetNext,
+    form,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -1663,6 +1835,12 @@ class $WorkoutExercisesTable extends WorkoutExercises
         DriftSqlType.bool,
         data['${effectivePrefix}superset_next'],
       )!,
+      form: $WorkoutExercisesTable.$converterformn.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}form'],
+        ),
+      ),
     );
   }
 
@@ -1670,6 +1848,11 @@ class $WorkoutExercisesTable extends WorkoutExercises
   $WorkoutExercisesTable createAlias(String alias) {
     return $WorkoutExercisesTable(attachedDatabase, alias);
   }
+
+  static JsonTypeConverter2<FormRating, String, String> $converterform =
+      const EnumNameConverter<FormRating>(FormRating.values);
+  static JsonTypeConverter2<FormRating?, String?, String?> $converterformn =
+      JsonTypeConverter2.asNullable($converterform);
 }
 
 class WorkoutExerciseRow extends DataClass
@@ -1682,6 +1865,9 @@ class WorkoutExerciseRow extends DataClass
 
   /// Done back to back with the next exercise (a superset).
   final bool supersetNext;
+
+  /// How the form felt (see `FormRating`), if rated.
+  final FormRating? form;
   const WorkoutExerciseRow({
     required this.id,
     required this.workoutId,
@@ -1689,6 +1875,7 @@ class WorkoutExerciseRow extends DataClass
     required this.position,
     required this.notes,
     required this.supersetNext,
+    this.form,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1699,6 +1886,11 @@ class WorkoutExerciseRow extends DataClass
     map['position'] = Variable<int>(position);
     map['notes'] = Variable<String>(notes);
     map['superset_next'] = Variable<bool>(supersetNext);
+    if (!nullToAbsent || form != null) {
+      map['form'] = Variable<String>(
+        $WorkoutExercisesTable.$converterformn.toSql(form),
+      );
+    }
     return map;
   }
 
@@ -1710,6 +1902,7 @@ class WorkoutExerciseRow extends DataClass
       position: Value(position),
       notes: Value(notes),
       supersetNext: Value(supersetNext),
+      form: form == null && nullToAbsent ? const Value.absent() : Value(form),
     );
   }
 
@@ -1725,6 +1918,9 @@ class WorkoutExerciseRow extends DataClass
       position: serializer.fromJson<int>(json['position']),
       notes: serializer.fromJson<String>(json['notes']),
       supersetNext: serializer.fromJson<bool>(json['supersetNext']),
+      form: $WorkoutExercisesTable.$converterformn.fromJson(
+        serializer.fromJson<String?>(json['form']),
+      ),
     );
   }
   @override
@@ -1737,6 +1933,9 @@ class WorkoutExerciseRow extends DataClass
       'position': serializer.toJson<int>(position),
       'notes': serializer.toJson<String>(notes),
       'supersetNext': serializer.toJson<bool>(supersetNext),
+      'form': serializer.toJson<String?>(
+        $WorkoutExercisesTable.$converterformn.toJson(form),
+      ),
     };
   }
 
@@ -1747,6 +1946,7 @@ class WorkoutExerciseRow extends DataClass
     int? position,
     String? notes,
     bool? supersetNext,
+    Value<FormRating?> form = const Value.absent(),
   }) => WorkoutExerciseRow(
     id: id ?? this.id,
     workoutId: workoutId ?? this.workoutId,
@@ -1754,6 +1954,7 @@ class WorkoutExerciseRow extends DataClass
     position: position ?? this.position,
     notes: notes ?? this.notes,
     supersetNext: supersetNext ?? this.supersetNext,
+    form: form.present ? form.value : this.form,
   );
   WorkoutExerciseRow copyWithCompanion(WorkoutExercisesCompanion data) {
     return WorkoutExerciseRow(
@@ -1767,6 +1968,7 @@ class WorkoutExerciseRow extends DataClass
       supersetNext: data.supersetNext.present
           ? data.supersetNext.value
           : this.supersetNext,
+      form: data.form.present ? data.form.value : this.form,
     );
   }
 
@@ -1778,14 +1980,22 @@ class WorkoutExerciseRow extends DataClass
           ..write('exerciseId: $exerciseId, ')
           ..write('position: $position, ')
           ..write('notes: $notes, ')
-          ..write('supersetNext: $supersetNext')
+          ..write('supersetNext: $supersetNext, ')
+          ..write('form: $form')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, workoutId, exerciseId, position, notes, supersetNext);
+  int get hashCode => Object.hash(
+    id,
+    workoutId,
+    exerciseId,
+    position,
+    notes,
+    supersetNext,
+    form,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1795,7 +2005,8 @@ class WorkoutExerciseRow extends DataClass
           other.exerciseId == this.exerciseId &&
           other.position == this.position &&
           other.notes == this.notes &&
-          other.supersetNext == this.supersetNext);
+          other.supersetNext == this.supersetNext &&
+          other.form == this.form);
 }
 
 class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
@@ -1805,6 +2016,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
   final Value<int> position;
   final Value<String> notes;
   final Value<bool> supersetNext;
+  final Value<FormRating?> form;
   const WorkoutExercisesCompanion({
     this.id = const Value.absent(),
     this.workoutId = const Value.absent(),
@@ -1812,6 +2024,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
     this.position = const Value.absent(),
     this.notes = const Value.absent(),
     this.supersetNext = const Value.absent(),
+    this.form = const Value.absent(),
   });
   WorkoutExercisesCompanion.insert({
     this.id = const Value.absent(),
@@ -1820,6 +2033,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
     required int position,
     this.notes = const Value.absent(),
     this.supersetNext = const Value.absent(),
+    this.form = const Value.absent(),
   }) : workoutId = Value(workoutId),
        exerciseId = Value(exerciseId),
        position = Value(position);
@@ -1830,6 +2044,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
     Expression<int>? position,
     Expression<String>? notes,
     Expression<bool>? supersetNext,
+    Expression<String>? form,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1838,6 +2053,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
       if (position != null) 'position': position,
       if (notes != null) 'notes': notes,
       if (supersetNext != null) 'superset_next': supersetNext,
+      if (form != null) 'form': form,
     });
   }
 
@@ -1848,6 +2064,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
     Value<int>? position,
     Value<String>? notes,
     Value<bool>? supersetNext,
+    Value<FormRating?>? form,
   }) {
     return WorkoutExercisesCompanion(
       id: id ?? this.id,
@@ -1856,6 +2073,7 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
       position: position ?? this.position,
       notes: notes ?? this.notes,
       supersetNext: supersetNext ?? this.supersetNext,
+      form: form ?? this.form,
     );
   }
 
@@ -1880,6 +2098,11 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
     if (supersetNext.present) {
       map['superset_next'] = Variable<bool>(supersetNext.value);
     }
+    if (form.present) {
+      map['form'] = Variable<String>(
+        $WorkoutExercisesTable.$converterformn.toSql(form.value),
+      );
+    }
     return map;
   }
 
@@ -1891,7 +2114,8 @@ class WorkoutExercisesCompanion extends UpdateCompanion<WorkoutExerciseRow> {
           ..write('exerciseId: $exerciseId, ')
           ..write('position: $position, ')
           ..write('notes: $notes, ')
-          ..write('supersetNext: $supersetNext')
+          ..write('supersetNext: $supersetNext, ')
+          ..write('form: $form')
           ..write(')'))
         .toString();
   }
@@ -3215,6 +3439,308 @@ class BodyWeightsCompanion extends UpdateCompanion<BodyWeightEntry> {
   }
 }
 
+class $BodyMeasurementsTable extends BodyMeasurements
+    with TableInfo<$BodyMeasurementsTable, MeasurementEntry> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BodyMeasurementsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime> date = GeneratedColumn<DateTime>(
+    'date',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  late final GeneratedColumnWithTypeConverter<Measurement, String> kind =
+      GeneratedColumn<String>(
+        'kind',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      ).withConverter<Measurement>($BodyMeasurementsTable.$converterkind);
+  static const VerificationMeta _valueMeta = const VerificationMeta('value');
+  @override
+  late final GeneratedColumn<double> value = GeneratedColumn<double>(
+    'value',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, date, kind, value];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'body_measurements';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<MeasurementEntry> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('date')) {
+      context.handle(
+        _dateMeta,
+        date.isAcceptableOrUnknown(data['date']!, _dateMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
+    if (data.containsKey('value')) {
+      context.handle(
+        _valueMeta,
+        value.isAcceptableOrUnknown(data['value']!, _valueMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_valueMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  MeasurementEntry map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return MeasurementEntry(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      date: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}date'],
+      )!,
+      kind: $BodyMeasurementsTable.$converterkind.fromSql(
+        attachedDatabase.typeMapping.read(
+          DriftSqlType.string,
+          data['${effectivePrefix}kind'],
+        )!,
+      ),
+      value: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}value'],
+      )!,
+    );
+  }
+
+  @override
+  $BodyMeasurementsTable createAlias(String alias) {
+    return $BodyMeasurementsTable(attachedDatabase, alias);
+  }
+
+  static JsonTypeConverter2<Measurement, String, String> $converterkind =
+      const EnumNameConverter<Measurement>(Measurement.values);
+}
+
+class MeasurementEntry extends DataClass
+    implements Insertable<MeasurementEntry> {
+  final int id;
+  final DateTime date;
+  final Measurement kind;
+  final double value;
+  const MeasurementEntry({
+    required this.id,
+    required this.date,
+    required this.kind,
+    required this.value,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['date'] = Variable<DateTime>(date);
+    {
+      map['kind'] = Variable<String>(
+        $BodyMeasurementsTable.$converterkind.toSql(kind),
+      );
+    }
+    map['value'] = Variable<double>(value);
+    return map;
+  }
+
+  BodyMeasurementsCompanion toCompanion(bool nullToAbsent) {
+    return BodyMeasurementsCompanion(
+      id: Value(id),
+      date: Value(date),
+      kind: Value(kind),
+      value: Value(value),
+    );
+  }
+
+  factory MeasurementEntry.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return MeasurementEntry(
+      id: serializer.fromJson<int>(json['id']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      kind: $BodyMeasurementsTable.$converterkind.fromJson(
+        serializer.fromJson<String>(json['kind']),
+      ),
+      value: serializer.fromJson<double>(json['value']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'date': serializer.toJson<DateTime>(date),
+      'kind': serializer.toJson<String>(
+        $BodyMeasurementsTable.$converterkind.toJson(kind),
+      ),
+      'value': serializer.toJson<double>(value),
+    };
+  }
+
+  MeasurementEntry copyWith({
+    int? id,
+    DateTime? date,
+    Measurement? kind,
+    double? value,
+  }) => MeasurementEntry(
+    id: id ?? this.id,
+    date: date ?? this.date,
+    kind: kind ?? this.kind,
+    value: value ?? this.value,
+  );
+  MeasurementEntry copyWithCompanion(BodyMeasurementsCompanion data) {
+    return MeasurementEntry(
+      id: data.id.present ? data.id.value : this.id,
+      date: data.date.present ? data.date.value : this.date,
+      kind: data.kind.present ? data.kind.value : this.kind,
+      value: data.value.present ? data.value.value : this.value,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('MeasurementEntry(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('kind: $kind, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, date, kind, value);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is MeasurementEntry &&
+          other.id == this.id &&
+          other.date == this.date &&
+          other.kind == this.kind &&
+          other.value == this.value);
+}
+
+class BodyMeasurementsCompanion extends UpdateCompanion<MeasurementEntry> {
+  final Value<int> id;
+  final Value<DateTime> date;
+  final Value<Measurement> kind;
+  final Value<double> value;
+  const BodyMeasurementsCompanion({
+    this.id = const Value.absent(),
+    this.date = const Value.absent(),
+    this.kind = const Value.absent(),
+    this.value = const Value.absent(),
+  });
+  BodyMeasurementsCompanion.insert({
+    this.id = const Value.absent(),
+    required DateTime date,
+    required Measurement kind,
+    required double value,
+  }) : date = Value(date),
+       kind = Value(kind),
+       value = Value(value);
+  static Insertable<MeasurementEntry> custom({
+    Expression<int>? id,
+    Expression<DateTime>? date,
+    Expression<String>? kind,
+    Expression<double>? value,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (date != null) 'date': date,
+      if (kind != null) 'kind': kind,
+      if (value != null) 'value': value,
+    });
+  }
+
+  BodyMeasurementsCompanion copyWith({
+    Value<int>? id,
+    Value<DateTime>? date,
+    Value<Measurement>? kind,
+    Value<double>? value,
+  }) {
+    return BodyMeasurementsCompanion(
+      id: id ?? this.id,
+      date: date ?? this.date,
+      kind: kind ?? this.kind,
+      value: value ?? this.value,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
+    }
+    if (kind.present) {
+      map['kind'] = Variable<String>(
+        $BodyMeasurementsTable.$converterkind.toSql(kind.value),
+      );
+    }
+    if (value.present) {
+      map['value'] = Variable<double>(value.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BodyMeasurementsCompanion(')
+          ..write('id: $id, ')
+          ..write('date: $date, ')
+          ..write('kind: $kind, ')
+          ..write('value: $value')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $KeyValuesTable extends KeyValues
     with TableInfo<$KeyValuesTable, KeyValue> {
   @override
@@ -3435,6 +3961,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this,
   );
   late final $BodyWeightsTable bodyWeights = $BodyWeightsTable(this);
+  late final $BodyMeasurementsTable bodyMeasurements = $BodyMeasurementsTable(
+    this,
+  );
   late final $KeyValuesTable keyValues = $KeyValuesTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -3448,6 +3977,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     workoutSets,
     routineExercises,
     bodyWeights,
+    bodyMeasurements,
     keyValues,
   ];
   @override
@@ -3500,6 +4030,11 @@ typedef $$ExercisesTableCreateCompanionBuilder =
       Value<LoadMode> loadMode,
       Value<String> setup,
       Value<int?> benchAngle,
+      Value<ExerciseCategory> category,
+      Value<int?> repMin,
+      Value<int?> repMax,
+      Value<String> cues,
+      Value<String> mistake,
     });
 typedef $$ExercisesTableUpdateCompanionBuilder =
     ExercisesCompanion Function({
@@ -3518,6 +4053,11 @@ typedef $$ExercisesTableUpdateCompanionBuilder =
       Value<LoadMode> loadMode,
       Value<String> setup,
       Value<int?> benchAngle,
+      Value<ExerciseCategory> category,
+      Value<int?> repMin,
+      Value<int?> repMax,
+      Value<String> cues,
+      Value<String> mistake,
     });
 
 final class $$ExercisesTableReferences
@@ -3651,6 +4191,32 @@ class $$ExercisesTableFilterComposer
 
   ColumnFilters<int> get benchAngle => $composableBuilder(
     column: $table.benchAngle,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<ExerciseCategory, ExerciseCategory, String>
+  get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnWithTypeConverterFilters(column),
+  );
+
+  ColumnFilters<int> get repMin => $composableBuilder(
+    column: $table.repMin,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get repMax => $composableBuilder(
+    column: $table.repMax,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get cues => $composableBuilder(
+    column: $table.cues,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mistake => $composableBuilder(
+    column: $table.mistake,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3788,6 +4354,31 @@ class $$ExercisesTableOrderingComposer
     column: $table.benchAngle,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get repMin => $composableBuilder(
+    column: $table.repMin,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get repMax => $composableBuilder(
+    column: $table.repMax,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get cues => $composableBuilder(
+    column: $table.cues,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mistake => $composableBuilder(
+    column: $table.mistake,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ExercisesTableAnnotationComposer
@@ -3857,6 +4448,21 @@ class $$ExercisesTableAnnotationComposer
     column: $table.benchAngle,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<ExerciseCategory, String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<int> get repMin =>
+      $composableBuilder(column: $table.repMin, builder: (column) => column);
+
+  GeneratedColumn<int> get repMax =>
+      $composableBuilder(column: $table.repMax, builder: (column) => column);
+
+  GeneratedColumn<String> get cues =>
+      $composableBuilder(column: $table.cues, builder: (column) => column);
+
+  GeneratedColumn<String> get mistake =>
+      $composableBuilder(column: $table.mistake, builder: (column) => column);
 
   Expression<T> workoutExercisesRefs<T extends Object>(
     Expression<T> Function($$WorkoutExercisesTableAnnotationComposer a) f,
@@ -3955,6 +4561,11 @@ class $$ExercisesTableTableManager
                 Value<LoadMode> loadMode = const Value.absent(),
                 Value<String> setup = const Value.absent(),
                 Value<int?> benchAngle = const Value.absent(),
+                Value<ExerciseCategory> category = const Value.absent(),
+                Value<int?> repMin = const Value.absent(),
+                Value<int?> repMax = const Value.absent(),
+                Value<String> cues = const Value.absent(),
+                Value<String> mistake = const Value.absent(),
               }) => ExercisesCompanion(
                 id: id,
                 name: name,
@@ -3971,6 +4582,11 @@ class $$ExercisesTableTableManager
                 loadMode: loadMode,
                 setup: setup,
                 benchAngle: benchAngle,
+                category: category,
+                repMin: repMin,
+                repMax: repMax,
+                cues: cues,
+                mistake: mistake,
               ),
           createCompanionCallback:
               ({
@@ -3989,6 +4605,11 @@ class $$ExercisesTableTableManager
                 Value<LoadMode> loadMode = const Value.absent(),
                 Value<String> setup = const Value.absent(),
                 Value<int?> benchAngle = const Value.absent(),
+                Value<ExerciseCategory> category = const Value.absent(),
+                Value<int?> repMin = const Value.absent(),
+                Value<int?> repMax = const Value.absent(),
+                Value<String> cues = const Value.absent(),
+                Value<String> mistake = const Value.absent(),
               }) => ExercisesCompanion.insert(
                 id: id,
                 name: name,
@@ -4005,6 +4626,11 @@ class $$ExercisesTableTableManager
                 loadMode: loadMode,
                 setup: setup,
                 benchAngle: benchAngle,
+                category: category,
+                repMin: repMin,
+                repMax: repMax,
+                cues: cues,
+                mistake: mistake,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -4978,6 +5604,7 @@ typedef $$WorkoutExercisesTableCreateCompanionBuilder =
       required int position,
       Value<String> notes,
       Value<bool> supersetNext,
+      Value<FormRating?> form,
     });
 typedef $$WorkoutExercisesTableUpdateCompanionBuilder =
     WorkoutExercisesCompanion Function({
@@ -4987,6 +5614,7 @@ typedef $$WorkoutExercisesTableUpdateCompanionBuilder =
       Value<int> position,
       Value<String> notes,
       Value<bool> supersetNext,
+      Value<FormRating?> form,
     });
 
 final class $$WorkoutExercisesTableReferences
@@ -5083,6 +5711,12 @@ class $$WorkoutExercisesTableFilterComposer
     column: $table.supersetNext,
     builder: (column) => ColumnFilters(column),
   );
+
+  ColumnWithTypeConverterFilters<FormRating?, FormRating, String> get form =>
+      $composableBuilder(
+        column: $table.form,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
 
   $$WorkoutsTableFilterComposer get workoutId {
     final $$WorkoutsTableFilterComposer composer = $composerBuilder(
@@ -5185,6 +5819,11 @@ class $$WorkoutExercisesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get form => $composableBuilder(
+    column: $table.form,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$WorkoutsTableOrderingComposer get workoutId {
     final $$WorkoutsTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -5254,6 +5893,9 @@ class $$WorkoutExercisesTableAnnotationComposer
     column: $table.supersetNext,
     builder: (column) => column,
   );
+
+  GeneratedColumnWithTypeConverter<FormRating?, String> get form =>
+      $composableBuilder(column: $table.form, builder: (column) => column);
 
   $$WorkoutsTableAnnotationComposer get workoutId {
     final $$WorkoutsTableAnnotationComposer composer = $composerBuilder(
@@ -5367,6 +6009,7 @@ class $$WorkoutExercisesTableTableManager
                 Value<int> position = const Value.absent(),
                 Value<String> notes = const Value.absent(),
                 Value<bool> supersetNext = const Value.absent(),
+                Value<FormRating?> form = const Value.absent(),
               }) => WorkoutExercisesCompanion(
                 id: id,
                 workoutId: workoutId,
@@ -5374,6 +6017,7 @@ class $$WorkoutExercisesTableTableManager
                 position: position,
                 notes: notes,
                 supersetNext: supersetNext,
+                form: form,
               ),
           createCompanionCallback:
               ({
@@ -5383,6 +6027,7 @@ class $$WorkoutExercisesTableTableManager
                 required int position,
                 Value<String> notes = const Value.absent(),
                 Value<bool> supersetNext = const Value.absent(),
+                Value<FormRating?> form = const Value.absent(),
               }) => WorkoutExercisesCompanion.insert(
                 id: id,
                 workoutId: workoutId,
@@ -5390,6 +6035,7 @@ class $$WorkoutExercisesTableTableManager
                 position: position,
                 notes: notes,
                 supersetNext: supersetNext,
+                form: form,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -6518,6 +7164,188 @@ typedef $$BodyWeightsTableProcessedTableManager =
       BodyWeightEntry,
       PrefetchHooks Function()
     >;
+typedef $$BodyMeasurementsTableCreateCompanionBuilder =
+    BodyMeasurementsCompanion Function({
+      Value<int> id,
+      required DateTime date,
+      required Measurement kind,
+      required double value,
+    });
+typedef $$BodyMeasurementsTableUpdateCompanionBuilder =
+    BodyMeasurementsCompanion Function({
+      Value<int> id,
+      Value<DateTime> date,
+      Value<Measurement> kind,
+      Value<double> value,
+    });
+
+class $$BodyMeasurementsTableFilterComposer
+    extends Composer<_$AppDatabase, $BodyMeasurementsTable> {
+  $$BodyMeasurementsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnWithTypeConverterFilters<Measurement, Measurement, String> get kind =>
+      $composableBuilder(
+        column: $table.kind,
+        builder: (column) => ColumnWithTypeConverterFilters(column),
+      );
+
+  ColumnFilters<double> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$BodyMeasurementsTableOrderingComposer
+    extends Composer<_$AppDatabase, $BodyMeasurementsTable> {
+  $$BodyMeasurementsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get date => $composableBuilder(
+    column: $table.date,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get kind => $composableBuilder(
+    column: $table.kind,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get value => $composableBuilder(
+    column: $table.value,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$BodyMeasurementsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BodyMeasurementsTable> {
+  $$BodyMeasurementsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get date =>
+      $composableBuilder(column: $table.date, builder: (column) => column);
+
+  GeneratedColumnWithTypeConverter<Measurement, String> get kind =>
+      $composableBuilder(column: $table.kind, builder: (column) => column);
+
+  GeneratedColumn<double> get value =>
+      $composableBuilder(column: $table.value, builder: (column) => column);
+}
+
+class $$BodyMeasurementsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BodyMeasurementsTable,
+          MeasurementEntry,
+          $$BodyMeasurementsTableFilterComposer,
+          $$BodyMeasurementsTableOrderingComposer,
+          $$BodyMeasurementsTableAnnotationComposer,
+          $$BodyMeasurementsTableCreateCompanionBuilder,
+          $$BodyMeasurementsTableUpdateCompanionBuilder,
+          (
+            MeasurementEntry,
+            BaseReferences<
+              _$AppDatabase,
+              $BodyMeasurementsTable,
+              MeasurementEntry
+            >,
+          ),
+          MeasurementEntry,
+          PrefetchHooks Function()
+        > {
+  $$BodyMeasurementsTableTableManager(
+    _$AppDatabase db,
+    $BodyMeasurementsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BodyMeasurementsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BodyMeasurementsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BodyMeasurementsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<DateTime> date = const Value.absent(),
+                Value<Measurement> kind = const Value.absent(),
+                Value<double> value = const Value.absent(),
+              }) => BodyMeasurementsCompanion(
+                id: id,
+                date: date,
+                kind: kind,
+                value: value,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required DateTime date,
+                required Measurement kind,
+                required double value,
+              }) => BodyMeasurementsCompanion.insert(
+                id: id,
+                date: date,
+                kind: kind,
+                value: value,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$BodyMeasurementsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BodyMeasurementsTable,
+      MeasurementEntry,
+      $$BodyMeasurementsTableFilterComposer,
+      $$BodyMeasurementsTableOrderingComposer,
+      $$BodyMeasurementsTableAnnotationComposer,
+      $$BodyMeasurementsTableCreateCompanionBuilder,
+      $$BodyMeasurementsTableUpdateCompanionBuilder,
+      (
+        MeasurementEntry,
+        BaseReferences<_$AppDatabase, $BodyMeasurementsTable, MeasurementEntry>,
+      ),
+      MeasurementEntry,
+      PrefetchHooks Function()
+    >;
 typedef $$KeyValuesTableCreateCompanionBuilder =
     KeyValuesCompanion Function({
       required String key,
@@ -6669,6 +7497,8 @@ class $AppDatabaseManager {
       $$RoutineExercisesTableTableManager(_db, _db.routineExercises);
   $$BodyWeightsTableTableManager get bodyWeights =>
       $$BodyWeightsTableTableManager(_db, _db.bodyWeights);
+  $$BodyMeasurementsTableTableManager get bodyMeasurements =>
+      $$BodyMeasurementsTableTableManager(_db, _db.bodyMeasurements);
   $$KeyValuesTableTableManager get keyValues =>
       $$KeyValuesTableTableManager(_db, _db.keyValues);
 }

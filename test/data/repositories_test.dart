@@ -20,7 +20,7 @@ void main() {
 
   test('seeds the exercise library and example routines', () async {
     final exercises = await db.select(db.exercises).get();
-    expect(exercises, hasLength(librarySeed.length));
+    expect(exercises, hasLength(allLibrarySeeds.length));
     expect(exercises.where((e) => e.rankFactor != null), isNotEmpty);
     final routines = await RoutineRepository(db).watchAll().first;
     expect(routines, isNotEmpty);
@@ -55,7 +55,10 @@ void main() {
 
   test('seeding again does not duplicate exercises', () async {
     await seedExercises(db);
-    expect(await db.select(db.exercises).get(), hasLength(librarySeed.length));
+    expect(
+      await db.select(db.exercises).get(),
+      hasLength(allLibrarySeeds.length),
+    );
   });
 
   test('workouts round-trip with exercises and sets in order', () async {
@@ -301,7 +304,10 @@ void main() {
       ),
     );
     await BackupRepository(db).wipe();
-    expect(await db.select(db.exercises).get(), hasLength(librarySeed.length));
+    expect(
+      await db.select(db.exercises).get(),
+      hasLength(allLibrarySeeds.length),
+    );
     expect(await db.select(db.routines).get(), isNotEmpty);
   });
 }

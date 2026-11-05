@@ -203,6 +203,13 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/exercises'),
                 ),
                 ListTile(
+                  leading: const Icon(Icons.straighten_outlined),
+                  title: const Text('Medidas corporais'),
+                  subtitle: const Text('Cintura, braço, coxa…'),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () => context.push('/measurements'),
+                ),
+                ListTile(
                   leading: const Icon(Icons.calculate_outlined),
                   title: const Text('Ferramentas'),
                   subtitle: const Text('1RM, discos e inclinação do banco'),

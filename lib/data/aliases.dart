@@ -1,10 +1,12 @@
+import 'seed_more.dart';
+
 /// Other names people use for built-in exercises, so search finds them
 /// whatever you call them: the usual English names, common abbreviations,
 /// Brazilian Portuguese names and Portuguese gym slang.
 ///
 /// Keyed by the exercise's `seedKey`. Matching ignores case, accents,
 /// punctuation, word order and plurals (see `searchScore`).
-const exerciseAliases = <String, List<String>>{
+const _firstLibraryAliases = <String, List<String>>{
   // Peito
   'bench': [
     'bench press',
@@ -515,4 +517,10 @@ const exerciseAliases = <String, List<String>>{
     'passadeira inclinada',
     'esteira inclinada',
   ],
+};
+
+/// Other names (mostly English and gym slang) per seed key, for search.
+final Map<String, List<String>> exerciseAliases = {
+  ..._firstLibraryAliases,
+  ...moreAliases,
 };

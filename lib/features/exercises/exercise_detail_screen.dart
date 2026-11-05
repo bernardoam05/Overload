@@ -13,7 +13,9 @@ import '../../domain/records.dart';
 import '../../domain/stats.dart';
 import '../../widgets/common.dart';
 import '../../widgets/line_chart.dart';
+import '../settings/training_prefs.dart';
 import '../workout/exercise_card_extras.dart';
+import '../../domain/overload.dart';
 import '../workout/workout_summary_screen.dart';
 
 class ExerciseDetailScreen extends ConsumerWidget {
@@ -381,6 +383,8 @@ class _AboutTab extends ConsumerWidget {
             ],
           ),
         ),
+        const SectionHeader('Progressão'),
+        _ProgressionCard(exercise: exercise),
         const SectionHeader('Afinações do equipamento'),
         Card(
           child: ListTile(
@@ -415,6 +419,66 @@ class _AboutTab extends ConsumerWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Kind of lift, rep range and rest of an exercise.
+class _ProgressionCard extends ConsumerWidget {
+  const _ProgressionCard({required this.exercise});
+  final Exercise exercise;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profile = ref.watch(currentProfileProvider);
+    final range = repRangeFor(exercise, profile.repRange);
+    final custom = exercise.repMin != null && exercise.repMax != null;
+    final rest = profile.restFor(exercise);
+    return Card(
+      child: Column(
+        children: [
+          ListTile(
+            leading: const Icon(Icons.category_outlined),
+            title: const Text('Tipo'),
+            subtitle: Text(exercise.category.label),
+          ),
+          if (range != null)
+            ListTile(
+              leading: const Icon(Icons.repeat_rounded),
+              title: const Text('Gama de reps'),
+              subtitle: Text(
+                '${range.min}–${range.max}${custom ? '' : ' (predefinida)'}',
+              ),
+              trailing: const Icon(Icons.edit_outlined),
+              onTap: () async {
+                final picked = await showRepRangeDialog(
+                  context,
+                  title: 'Gama de reps',
+                  min: range.min,
+                  max: range.max,
+                  allowDefault: true,
+                );
+                if (picked == null) return;
+                final reset = picked.min == 0;
+                await ref
+                    .read(exerciseRepositoryProvider)
+                    .setRepRange(
+                      exercise.id,
+                      reset ? null : picked.min,
+                      reset ? null : picked.max,
+                    );
+              },
+            ),
+          ListTile(
+            leading: const Icon(Icons.timer_outlined),
+            title: const Text('Descanso'),
+            subtitle: Text(
+              '${rest == 0 ? 'Desligado' : formatSeconds(rest)}'
+              '${exercise.restSeconds == null ? ' (predefinido)' : ''}',
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -69,6 +69,7 @@ class ActiveExercise {
     this.repStep = 0,
     this.plannedWeightKg,
     this.supersetNext = false,
+    this.form,
   });
 
   final String id;
@@ -95,6 +96,9 @@ class ActiveExercise {
   /// Done back to back with the next exercise (a superset).
   final bool supersetNext;
 
+  /// How the form felt, rated after the sets.
+  final FormRating? form;
+
   int get doneCount => sets.where((s) => s.done).length;
 
   ActiveExercise copyWith({
@@ -103,6 +107,7 @@ class ActiveExercise {
     String? notes,
     String? routineNotes,
     bool? supersetNext,
+    FormRating? Function()? form,
   }) => ActiveExercise(
     id: id,
     exerciseId: exerciseId ?? this.exerciseId,
@@ -113,6 +118,7 @@ class ActiveExercise {
     repStep: repStep,
     plannedWeightKg: plannedWeightKg,
     supersetNext: supersetNext ?? this.supersetNext,
+    form: form == null ? this.form : form(),
   );
 
   Map<String, Object?> toJson() => {
@@ -124,6 +130,7 @@ class ActiveExercise {
     'repStep': repStep,
     'plannedWeightKg': plannedWeightKg,
     'supersetNext': supersetNext,
+    'form': form?.name,
     'sets': [for (final s in sets) s.toJson()],
   };
 
@@ -136,6 +143,7 @@ class ActiveExercise {
     repStep: (j['repStep'] as num?)?.toInt() ?? 0,
     plannedWeightKg: (j['plannedWeightKg'] as num?)?.toDouble(),
     supersetNext: j['supersetNext'] == true,
+    form: FormRating.values.asNameMap()[j['form']],
     sets: [
       for (final s in (j['sets'] as List? ?? const []))
         ActiveSet.fromJson((s as Map).cast<String, Object?>()),

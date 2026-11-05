@@ -2,6 +2,8 @@ import 'package:drift/drift.dart';
 
 import '../domain/enums.dart';
 import 'database.dart';
+import 'exercise_guides.dart';
+import 'seed_more.dart';
 
 /// key, name, primary, secondary, equipment, kind, rankFactor, tip.
 typedef ExerciseSeed = (
@@ -183,7 +185,7 @@ const List<ExerciseSeed> librarySeed = [
     'Supino inclinado na máquina Smith',
     Muscle.chest,
     [Muscle.shoulders, Muscle.triceps],
-    _mach,
+    Equipment.smith,
     _w,
     1.15,
     'Banco a 30°. A barra guiada desce à parte superior do peito.',
@@ -203,7 +205,7 @@ const List<ExerciseSeed> librarySeed = [
     'bb_row',
     'Remada curvada com barra',
     Muscle.back,
-    [Muscle.biceps, Muscle.forearms],
+    [Muscle.rearDelts, Muscle.biceps, Muscle.lowerBack],
     _bar,
     _w,
     1.0,
@@ -213,7 +215,7 @@ const List<ExerciseSeed> librarySeed = [
     'db_row',
     'Remada unilateral com halter',
     Muscle.back,
-    [Muscle.biceps],
+    [Muscle.rearDelts, Muscle.biceps],
     _db,
     _w,
     2.2,
@@ -225,7 +227,7 @@ const List<ExerciseSeed> librarySeed = [
     'kneeling_cable_row',
     'Remada ajoelhada na polia baixa (pegas separadas)',
     Muscle.back,
-    [Muscle.biceps, Muscle.shoulders],
+    [Muscle.rearDelts, Muscle.biceps],
     _cab,
     _w,
     1.6,
@@ -235,7 +237,7 @@ const List<ExerciseSeed> librarySeed = [
     'cable_row',
     'Remada sentada na polia',
     Muscle.back,
-    [Muscle.biceps],
+    [Muscle.rearDelts, Muscle.biceps],
     _cab,
     _w,
     0.9,
@@ -275,7 +277,7 @@ const List<ExerciseSeed> librarySeed = [
     't_bar_row',
     'Remada T',
     Muscle.back,
-    [Muscle.biceps],
+    [Muscle.rearDelts, Muscle.biceps],
     _bar,
     _w,
     0.9,
@@ -285,7 +287,7 @@ const List<ExerciseSeed> librarySeed = [
     'machine_row',
     'Remada na máquina',
     Muscle.back,
-    [Muscle.biceps],
+    [Muscle.rearDelts, Muscle.biceps],
     _mach,
     _w,
     0.9,
@@ -294,7 +296,7 @@ const List<ExerciseSeed> librarySeed = [
   (
     'shrug',
     'Encolhimentos com halteres',
-    Muscle.back,
+    Muscle.traps,
     [Muscle.forearms],
     _db,
     _w,
@@ -344,7 +346,7 @@ const List<ExerciseSeed> librarySeed = [
   (
     'back_extension',
     'Hiperextensões lombares',
-    Muscle.back,
+    Muscle.lowerBack,
     [Muscle.glutes, Muscle.hamstrings],
     _body,
     _bw,
@@ -356,7 +358,7 @@ const List<ExerciseSeed> librarySeed = [
     'ohp',
     'Press militar com barra',
     Muscle.shoulders,
-    [Muscle.triceps],
+    [Muscle.triceps, Muscle.sideDelts],
     _bar,
     _w,
     1.0,
@@ -366,7 +368,7 @@ const List<ExerciseSeed> librarySeed = [
     'db_shoulder_press',
     'Press de ombros com halteres',
     Muscle.shoulders,
-    [Muscle.triceps],
+    [Muscle.triceps, Muscle.sideDelts],
     _db,
     _w,
     2.5,
@@ -376,7 +378,7 @@ const List<ExerciseSeed> librarySeed = [
     'arnold_press',
     'Arnold press',
     Muscle.shoulders,
-    [Muscle.triceps],
+    [Muscle.triceps, Muscle.sideDelts],
     _db,
     _w,
     2.7,
@@ -386,7 +388,7 @@ const List<ExerciseSeed> librarySeed = [
     'machine_shoulder_press',
     'Press de ombros na máquina',
     Muscle.shoulders,
-    [Muscle.triceps],
+    [Muscle.triceps, Muscle.sideDelts],
     _mach,
     _w,
     0.9,
@@ -395,7 +397,7 @@ const List<ExerciseSeed> librarySeed = [
   (
     'lateral_raise',
     'Elevações laterais',
-    Muscle.shoulders,
+    Muscle.sideDelts,
     [],
     _db,
     _w,
@@ -405,7 +407,7 @@ const List<ExerciseSeed> librarySeed = [
   (
     'cable_lateral',
     'Elevação lateral na polia',
-    Muscle.shoulders,
+    Muscle.sideDelts,
     [],
     _cab,
     _w,
@@ -425,8 +427,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'rear_delt_fly',
     'Aberturas posteriores',
-    Muscle.shoulders,
-    [Muscle.back],
+    Muscle.rearDelts,
+    [Muscle.traps],
     _db,
     _w,
     null,
@@ -435,8 +437,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'face_pull',
     'Face pull',
-    Muscle.shoulders,
-    [Muscle.back],
+    Muscle.rearDelts,
+    [Muscle.traps, Muscle.sideDelts],
     _cab,
     _w,
     null,
@@ -445,8 +447,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'upright_row',
     'Remada alta',
-    Muscle.shoulders,
-    [Muscle.back],
+    Muscle.sideDelts,
+    [Muscle.traps, Muscle.shoulders],
     _bar,
     _w,
     0.85,
@@ -455,8 +457,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'reverse_pec_deck',
     'Peck deck invertido (deltoide posterior)',
-    Muscle.shoulders,
-    [Muscle.back],
+    Muscle.rearDelts,
+    [Muscle.traps],
     _mach,
     _w,
     null,
@@ -465,7 +467,7 @@ const List<ExerciseSeed> librarySeed = [
   (
     'machine_lateral',
     'Elevação lateral na máquina',
-    Muscle.shoulders,
+    Muscle.sideDelts,
     [],
     _mach,
     _w,
@@ -488,7 +490,7 @@ const List<ExerciseSeed> librarySeed = [
     'Curl com barra EZ',
     Muscle.biceps,
     [Muscle.forearms],
-    _bar,
+    Equipment.ezBar,
     _w,
     1.05,
     'Pega nas zonas anguladas da barra para poupar os pulsos.',
@@ -599,7 +601,7 @@ const List<ExerciseSeed> librarySeed = [
     'Testa com barra EZ',
     Muscle.triceps,
     [],
-    _bar,
+    Equipment.ezBar,
     _w,
     1.9,
     'Deitado; desce a barra à testa dobrando só os cotovelos.',
@@ -780,7 +782,7 @@ const List<ExerciseSeed> librarySeed = [
     'Agachamento na máquina Smith',
     Muscle.quads,
     [Muscle.glutes],
-    _mach,
+    Equipment.smith,
     _w,
     0.9,
     'Pés ligeiramente à frente da barra; desce até as coxas ficarem paralelas.',
@@ -790,7 +792,7 @@ const List<ExerciseSeed> librarySeed = [
     'Agachamento búlgaro na máquina Smith',
     Muscle.quads,
     [Muscle.glutes],
-    _mach,
+    Equipment.smith,
     _w,
     null,
     'Pé de trás no banco; a barra guiada ajuda no equilíbrio.',
@@ -819,7 +821,13 @@ const List<ExerciseSeed> librarySeed = [
     'deadlift',
     'Peso morto',
     Muscle.hamstrings,
-    [Muscle.glutes, Muscle.back, Muscle.forearms],
+    [
+      Muscle.glutes,
+      Muscle.lowerBack,
+      Muscle.traps,
+      Muscle.back,
+      Muscle.forearms,
+    ],
     _bar,
     _w,
     1.0,
@@ -829,7 +837,7 @@ const List<ExerciseSeed> librarySeed = [
     'sumo_deadlift',
     'Peso morto sumo',
     Muscle.glutes,
-    [Muscle.hamstrings, Muscle.quads, Muscle.back],
+    [Muscle.hamstrings, Muscle.quads, Muscle.lowerBack, Muscle.traps],
     _bar,
     _w,
     1.0,
@@ -839,7 +847,7 @@ const List<ExerciseSeed> librarySeed = [
     'rdl',
     'Peso morto romeno',
     Muscle.hamstrings,
-    [Muscle.glutes, Muscle.back],
+    [Muscle.glutes, Muscle.lowerBack],
     _bar,
     _w,
     1.25,
@@ -889,7 +897,7 @@ const List<ExerciseSeed> librarySeed = [
     'stiff',
     'Stiff (peso morto de pernas rígidas)',
     Muscle.hamstrings,
-    [Muscle.glutes, Muscle.back],
+    [Muscle.glutes, Muscle.lowerBack],
     _bar,
     _w,
     1.25,
@@ -899,7 +907,7 @@ const List<ExerciseSeed> librarySeed = [
     'good_morning',
     'Good morning',
     Muscle.hamstrings,
-    [Muscle.back, Muscle.glutes],
+    [Muscle.lowerBack, Muscle.glutes],
     _bar,
     _w,
     1.6,
@@ -999,8 +1007,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'side_plank',
     'Prancha lateral',
-    Muscle.core,
-    [],
+    Muscle.obliques,
+    [Muscle.core],
     _body,
     _t,
     null,
@@ -1020,7 +1028,7 @@ const List<ExerciseSeed> librarySeed = [
     'hanging_leg_raise',
     'Elevação de pernas suspenso',
     Muscle.core,
-    [Muscle.forearms],
+    [Muscle.obliques, Muscle.forearms],
     _body,
     _bw,
     null,
@@ -1049,8 +1057,8 @@ const List<ExerciseSeed> librarySeed = [
   (
     'russian_twist',
     'Russian twist',
-    Muscle.core,
-    [],
+    Muscle.obliques,
+    [Muscle.core],
     Equipment.other,
     _w,
     null,
@@ -1091,7 +1099,7 @@ const List<ExerciseSeed> librarySeed = [
     'farmer_walk',
     'Farmer\'s walk',
     Muscle.forearms,
-    [Muscle.core, Muscle.back],
+    [Muscle.traps, Muscle.core],
     _db,
     _t,
     null,
@@ -1101,7 +1109,7 @@ const List<ExerciseSeed> librarySeed = [
     'power_clean',
     'Power clean',
     Muscle.fullBody,
-    [Muscle.hamstrings, Muscle.glutes, Muscle.back],
+    [Muscle.hamstrings, Muscle.glutes, Muscle.traps],
     _bar,
     _w,
     null,
@@ -1203,9 +1211,26 @@ const List<ExerciseSeed> librarySeed = [
 /// Inserts new built-in exercises and refreshes the descriptive fields of
 /// existing ones (names, muscles, tips). The kind is never changed, so past
 /// sets keep their meaning, and user settings like rest time are kept.
+/// Every library exercise, the first library and the ones added later.
+final List<ExerciseSeed> allLibrarySeeds = [...librarySeed, ...librarySeedMore];
+
+/// Load mode of a library exercise.
+LoadMode libraryLoadMode(String key) =>
+    libraryLoadModes[key] ?? moreLoadModes[key] ?? LoadMode.bilateral;
+
+/// Technique guide of a library exercise, if any.
+ExerciseGuide? libraryGuide(String key) =>
+    exerciseGuides[key] ?? moreGuides[key];
+
+/// Inserts library exercises and refreshes their library fields. What the
+/// user sets on them (rest, setup, rep range) is never touched.
 Future<void> seedExercises(AppDatabase db) async {
   await db.batch((b) {
-    for (final s in librarySeed) {
+    for (final s in allLibrarySeeds) {
+      final guide = libraryGuide(s.$1);
+      final category = guide?.category ?? ExerciseCategory.compound;
+      final cues = guide?.cues.join('\n') ?? '';
+      final mistake = guide?.mistake ?? '';
       b.insert(
         db.exercises,
         ExercisesCompanion.insert(
@@ -1217,7 +1242,10 @@ Future<void> seedExercises(AppDatabase db) async {
           kind: s.$6,
           rankFactor: Value(s.$7),
           instructions: Value(s.$8),
-          loadMode: Value(libraryLoadModes[s.$1] ?? LoadMode.bilateral),
+          loadMode: Value(libraryLoadMode(s.$1)),
+          category: Value(category),
+          cues: Value(cues),
+          mistake: Value(mistake),
         ),
         onConflict: DoUpdate(
           (_) => ExercisesCompanion(
@@ -1227,7 +1255,10 @@ Future<void> seedExercises(AppDatabase db) async {
             equipment: Value(s.$5),
             rankFactor: Value(s.$7),
             instructions: Value(s.$8),
-            loadMode: Value(libraryLoadModes[s.$1] ?? LoadMode.bilateral),
+            loadMode: Value(libraryLoadMode(s.$1)),
+            category: Value(category),
+            cues: Value(cues),
+            mistake: Value(mistake),
           ),
           target: [db.exercises.seedKey],
         ),

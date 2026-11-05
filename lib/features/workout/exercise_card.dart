@@ -11,6 +11,7 @@ import '../../domain/exercise.dart';
 import '../../domain/models.dart';
 import '../../domain/overload.dart';
 import '../../domain/previous.dart';
+import '../../domain/warmup.dart';
 import '../../domain/records.dart';
 import '../../widgets/common.dart';
 import 'active_workout.dart';
@@ -18,7 +19,17 @@ import 'active_workout_controller.dart';
 import 'exercise_card_extras.dart';
 import 'set_row.dart';
 
-enum _Action { notes, setup, rest, superset, replace, up, down, remove }
+enum _Action {
+  notes,
+  setup,
+  warmups,
+  rest,
+  superset,
+  replace,
+  up,
+  down,
+  remove,
+}
 
 /// Rebuilds only when its own exercise changes, so typing in one set does
 /// not rebuild every other card of the workout.
@@ -81,10 +92,27 @@ class _CardBody extends ConsumerWidget {
       return const Card(child: ListTile(title: Text('Exercício removido')));
     }
     final kind = exercise.kind;
-    final rest = exercise.restSeconds ?? profile.defaultRestSeconds;
+    final rest = profile.restFor(exercise);
+    final routineId = ref.watch(
+      activeWorkoutProvider.select((w) => w?.routineId),
+    );
+    final recent = isEditing
+        ? const <SessionLog>[]
+        : recentSessions(
+            ref.watch(historyListProvider),
+            entry.exerciseId,
+            routineId: routineId,
+          );
     final progression = isEditing
         ? Progression.none
-        : progressionFor(entry, previous, exercise, profile);
+        : progressionFor(
+            entry,
+            previous,
+            exercise,
+            profile,
+            recent: recent,
+            bodyWeightKg: bodyWeight,
+          );
     final superset = ref.watch(
       activeWorkoutProvider.select((w) => supersetOf(w, index)),
     );
@@ -124,6 +152,9 @@ class _CardBody extends ConsumerWidget {
           unit: profile.unit,
           previous: hint,
           aim: aim,
+          barKg: barWeightKg(exercise.equipment, profile.unit) > 0
+              ? barWeightKg(exercise.equipment, profile.unit)
+              : null,
           comparison: comparison,
           onWeight: (kg) => controller.setWeight(entry.id, set.id, kg),
           onReps: (r) => controller.setReps(entry.id, set.id, r),
@@ -209,7 +240,13 @@ class _CardBody extends ConsumerWidget {
                   ),
                   PopupMenuButton<_Action>(
                     icon: const Icon(Icons.more_horiz_rounded),
-                    onSelected: (a) => _onAction(context, ref, a, exercise),
+                    onSelected: (a) => _onAction(
+                      context,
+                      ref,
+                      a,
+                      exercise,
+                      _workKg(progression, entry, previous),
+                    ),
                     itemBuilder: (_) => [
                       const PopupMenuItem(
                         value: _Action.notes,
@@ -219,6 +256,11 @@ class _CardBody extends ConsumerWidget {
                         value: _Action.setup,
                         child: Text('Afinações do equipamento'),
                       ),
+                      if (kind == ExerciseKind.weighted)
+                        const PopupMenuItem(
+                          value: _Action.warmups,
+                          child: Text('Gerar aquecimentos'),
+                        ),
                       const PopupMenuItem(
                         value: _Action.rest,
                         child: Text('Tempo de descanso'),
@@ -265,6 +307,8 @@ class _CardBody extends ConsumerWidget {
               exercise: exercise,
               onTap: () => editExerciseSetup(context, ref, exercise),
             ),
+            if (entry.doneCount == 0 && !isEditing)
+              GuideLink(exercise: exercise),
             _ReferenceLine(
               exercise: exercise,
               previous: previous,
@@ -278,6 +322,7 @@ class _CardBody extends ConsumerWidget {
               entry: entry,
               exercise: exercise,
               unit: profile.unit,
+              range: repRangeFor(exercise, profile.repRange),
             ),
             const SizedBox(height: 6),
             _Header(kind: kind, unit: profile.unit),
@@ -304,6 +349,12 @@ class _CardBody extends ConsumerWidget {
                 ],
               ),
             ),
+            if (entry.doneCount > 0 || entry.form != null)
+              FormRow(
+                entry: entry,
+                exercise: exercise,
+                onRate: (r) => controller.setForm(entry.id, r),
+              ),
           ],
         ),
       ),
@@ -391,14 +442,50 @@ class _CardBody extends ConsumerWidget {
       );
   }
 
+  /// Load of the first working set: typed, suggested, or last time's.
+  static double? _workKg(
+    Progression progression,
+    ActiveExercise entry,
+    PreviousPerformance? previous,
+  ) {
+    for (final (i, s) in entry.sets.indexed) {
+      if (s.type == SetType.warmup || s.type == SetType.drop) continue;
+      final aim = i < progression.sets.length ? progression.sets[i] : null;
+      return s.weightKg ??
+          aim?.weightKg ??
+          previous?.working.firstOrNull?.weightKg;
+    }
+    return previous?.working.firstOrNull?.weightKg;
+  }
+
   Future<void> _onAction(
     BuildContext context,
     WidgetRef ref,
     _Action action,
     Exercise exercise,
+    double? workKg,
   ) async {
     final controller = ref.read(activeWorkoutProvider.notifier);
     switch (action) {
+      case _Action.warmups:
+        final unit = ref.read(currentProfileProvider).unit;
+        final steps = workKg == null
+            ? const <WarmupStep>[]
+            : warmupRamp(exercise: exercise, workKg: workKg, unit: unit);
+        if (steps.isEmpty) {
+          showMessage(
+            context,
+            workKg == null
+                ? 'Indica o peso da primeira série para gerar o aquecimento.'
+                : 'Com esta carga não é preciso aquecimento.',
+          );
+          return;
+        }
+        controller.setWarmups(entry.id, steps);
+        showMessage(
+          context,
+          'Aquecimento: ${steps.map((s) => '${formatWeight(s.kg, unit)} × ${s.reps}').join(' · ')}',
+        );
       case _Action.notes:
         final inRoutine = ref.read(
           activeWorkoutProvider.select(
