@@ -216,43 +216,43 @@ class RoutineChangesList extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 4, bottom: 8),
       child: Material(
-      color: theme.colorScheme.surfaceContainerHigh,
-      borderRadius: BorderRadius.circular(16),
-      child: Padding(
-      padding: const EdgeInsets.fromLTRB(12, 12, 4, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Levar para a rotina «${sync.routine.routine.name}»?',
-            style: theme.textTheme.titleSmall,
+        color: theme.colorScheme.surfaceContainerHigh,
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 4, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Levar para a rotina «${sync.routine.routine.name}»?',
+                style: theme.textTheme.titleSmall,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Só o que marcares muda a rotina. O resto fica apenas neste treino.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              for (final c in sync.changes)
+                CheckboxListTile(
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: selected.contains(c.id),
+                  onChanged: (v) => onChanged(c.id, v ?? false),
+                  title: Text(c.title),
+                  subtitle: c.detail == null
+                      ? null
+                      : Text(
+                          c.detail!,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                ),
+            ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            'Só o que marcares muda a rotina. O resto fica apenas neste treino.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          for (final c in sync.changes)
-            CheckboxListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              controlAffinity: ListTileControlAffinity.leading,
-              value: selected.contains(c.id),
-              onChanged: (v) => onChanged(c.id, v ?? false),
-              title: Text(c.title),
-              subtitle: c.detail == null
-                  ? null
-                  : Text(
-                      c.detail!,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-            ),
-        ],
-      ),
-      ),
+        ),
       ),
     );
   }
