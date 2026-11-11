@@ -310,7 +310,7 @@ class _CardBody extends ConsumerWidget {
               exercise: exercise,
               onTap: () => editExerciseSetup(context, ref, exercise),
             ),
-            if (entry.doneCount == 0 && current && !isEditing)
+            if (entry.doneCount == 0 && !isEditing)
               GuideLink(exercise: exercise),
             _ReferenceLine(
               exercise: exercise,
@@ -352,7 +352,9 @@ class _CardBody extends ConsumerWidget {
                 ],
               ),
             ),
-            if (entry.doneCount > 0 || entry.form != null)
+            if (entry.doneCount > 0 ||
+                entry.form != null ||
+                (current && !isEditing))
               FormRow(
                 entry: entry,
                 exercise: exercise,

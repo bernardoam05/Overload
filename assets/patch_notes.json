@@ -1,5 +1,20 @@
 [
   {
+    "version": "1.3.3",
+    "date": "2026-11-11",
+    "title": "Forma e dicas no exercício atual",
+    "sections": [
+      {
+        "type": "fixed",
+        "items": [
+          "A linha de Forma e Dicas no fim do exercício já não espera pela primeira série: aparece no primeiro exercício do treino e no seguinte assim que o anterior estiver completo.",
+          "Numa supersérie, aparece em todos os exercícios assim que a supersérie começa.",
+          "A dica de execução no topo de cada exercício volta a aparecer em todos, como antes da 1.3.2."
+        ]
+      }
+    ]
+  },
+  {
     "version": "1.3.2",
     "date": "2026-11-11",
     "title": "Dicas no exercício certo",

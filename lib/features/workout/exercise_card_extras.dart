@@ -62,7 +62,8 @@ Progression progressionFor(
   return (group: g, position: members.indexOf(index), size: members.length);
 }
 
-/// Whether exercise [index] is the one being done now, so its tips show:
+/// Whether exercise [index] is the one being done now, so its form and tips
+/// row shows before the first set:
 /// it is the first, it has started, or the exercise before it is complete.
 /// A superset counts as one block: all its exercises are current as soon as
 /// the block before is complete or any of them has started.
@@ -402,8 +403,8 @@ class _SetupDialogState extends State<_SetupDialog> {
   }
 }
 
-/// "Forma: Má · OK · Boa" once a set of the exercise is done, with a link to
-/// the technique cues.
+/// "Forma: Má · OK · Boa" with a link to the technique cues, on the current
+/// exercise (see [isCurrentExercise]) and on any exercise already started.
 class FormRow extends StatelessWidget {
   const FormRow({
     super.key,
@@ -465,8 +466,8 @@ class FormRow extends StatelessWidget {
   }
 }
 
-/// "Dicas de execução" line with the first cue, shown on the current
-/// exercise before any set is done.
+/// Small "Dicas de execução" line with the first cue, shown before any set
+/// of the exercise is done.
 class GuideLink extends StatelessWidget {
   const GuideLink({super.key, required this.exercise});
   final Exercise exercise;
