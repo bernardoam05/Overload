@@ -212,13 +212,14 @@ class RoutineChangesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      margin: const EdgeInsets.only(top: 4, bottom: 8),
+    // Material, not a coloured box, so the checkbox rows show their ripple.
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: Material(
+      color: theme.colorScheme.surfaceContainerHigh,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
       padding: const EdgeInsets.fromLTRB(12, 12, 4, 4),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -250,6 +251,8 @@ class RoutineChangesList extends StatelessWidget {
                     ),
             ),
         ],
+      ),
+      ),
       ),
     );
   }
