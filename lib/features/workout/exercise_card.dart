@@ -116,6 +116,9 @@ class _CardBody extends ConsumerWidget {
     final superset = ref.watch(
       activeWorkoutProvider.select((w) => supersetOf(w, index)),
     );
+    final current = ref.watch(
+      activeWorkoutProvider.select((w) => isCurrentExercise(w, index)),
+    );
 
     var workingIndex = 0;
     var warmupIndex = 0;
@@ -307,7 +310,7 @@ class _CardBody extends ConsumerWidget {
               exercise: exercise,
               onTap: () => editExerciseSetup(context, ref, exercise),
             ),
-            if (entry.doneCount == 0 && !isEditing)
+            if (entry.doneCount == 0 && current && !isEditing)
               GuideLink(exercise: exercise),
             _ReferenceLine(
               exercise: exercise,

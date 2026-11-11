@@ -62,6 +62,45 @@ Progression progressionFor(
   return (group: g, position: members.indexOf(index), size: members.length);
 }
 
+/// Whether exercise [index] is the one being done now, so its tips show:
+/// it is the first, it has started, or the exercise before it is complete.
+/// A superset counts as one block: all its exercises are current as soon as
+/// the block before is complete or any of them has started.
+bool isCurrentExercise(ActiveWorkout? w, int index) {
+  if (w == null || index < 0 || index >= w.exercises.length) return false;
+  final exercises = w.exercises;
+  final groups = supersetGroups([for (final e in exercises) e.supersetNext]);
+  final group = groups[index];
+  var first = index;
+  var last = index;
+  if (group != null) {
+    while (first > 0 && groups[first - 1] == group) {
+      first--;
+    }
+    while (last < exercises.length - 1 && groups[last + 1] == group) {
+      last++;
+    }
+  }
+  bool complete(ActiveExercise e) =>
+      e.sets.isNotEmpty && e.sets.every((s) => s.done);
+  if (first == 0) return true;
+  for (var i = first; i <= last; i++) {
+    if (exercises[i].doneCount > 0) return true;
+  }
+  // The block right before: one exercise, or a whole superset.
+  final before = groups[first - 1];
+  var start = first - 1;
+  if (before != null) {
+    while (start > 0 && groups[start - 1] == before) {
+      start--;
+    }
+  }
+  for (var i = start; i < first; i++) {
+    if (!complete(exercises[i])) return false;
+  }
+  return true;
+}
+
 /// One line saying what to do today to progress.
 class OverloadLine extends StatelessWidget {
   const OverloadLine({
@@ -426,7 +465,8 @@ class FormRow extends StatelessWidget {
   }
 }
 
-/// Small "Dicas de execução" link shown before any set is done.
+/// "Dicas de execução" line with the first cue, shown on the current
+/// exercise before any set is done.
 class GuideLink extends StatelessWidget {
   const GuideLink({super.key, required this.exercise});
   final Exercise exercise;
@@ -460,7 +500,7 @@ class GuideLink extends StatelessWidget {
               ),
             ),
             Text(
-              'mais',
+              'Dicas',
               style: theme.textTheme.labelSmall?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w700,
