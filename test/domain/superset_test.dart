@@ -94,22 +94,25 @@ void main() {
       expect(current(_w([_ex('a'), _ex('b'), _ex('c')])), [true, false, false]);
       expect(current(_w([full('a'), _ex('b'), _ex('c')])), [true, true, false]);
       // Started but not complete: the next one waits.
-      expect(
-        current(_w([_ex('a', done: true), _ex('b'), _ex('c')])),
-        [true, false, false],
-      );
+      expect(current(_w([_ex('a', done: true), _ex('b'), _ex('c')])), [
+        true,
+        false,
+        false,
+      ]);
       // Started out of order: shows on that one too.
-      expect(
-        current(_w([_ex('a'), _ex('b'), _ex('c', done: true)])),
-        [true, false, true],
-      );
+      expect(current(_w([_ex('a'), _ex('b'), _ex('c', done: true)])), [
+        true,
+        false,
+        true,
+      ]);
     });
 
     test('a superset shows all its exercises at once', () {
-      expect(
-        current(_w([_ex('a', link: true), _ex('b'), _ex('c')])),
-        [true, true, false],
-      );
+      expect(current(_w([_ex('a', link: true), _ex('b'), _ex('c')])), [
+        true,
+        true,
+        false,
+      ]);
       expect(
         current(_w([_ex('a'), _ex('b', link: true), _ex('c'), _ex('d')])),
         [true, false, false, false],
@@ -123,10 +126,11 @@ void main() {
         current(_w([full('a', link: true), _ex('b', done: true), _ex('c')])),
         [true, true, false],
       );
-      expect(
-        current(_w([full('a', link: true), full('b'), _ex('c')])),
-        [true, true, true],
-      );
+      expect(current(_w([full('a', link: true), full('b'), _ex('c')])), [
+        true,
+        true,
+        true,
+      ]);
     });
   });
 }

@@ -1,0 +1,282 @@
+00:00 +0: loading /home/runner/work/Overload/Overload/test/data/library_test.dart
+00:00 +0: /home/runner/work/Overload/Overload/test/data/library_test.dart: seed keys are unique and every alias points to a real exercise
+00:00 +1: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
+00:00 +2: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
+00:00 +3: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
+00:00 +4: /home/runner/work/Overload/Overload/test/data/migration_test.dart: v1 databases gain set plans, pinned notes and load modes
+00:00 +5: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Peck deck" finds pec deck
+00:00 +6: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises polia" finds cable lateral
+00:00 +7: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lateral raises" finds lateral raise
+00:00 +8: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Skullcrushers haltere" finds db skull crusher
+00:00 +9: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Tricep polia" finds pushdown
+00:00 +10: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Pull up" finds pull up
+00:00 +11: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada baixa" finds cable row
+00:00 +12: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral" finds kneeling cable row
+00:00 +13: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Remada unilateral polia" finds kneeling cable row
+00:00 +14: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Deadlift" finds deadlift
+00:00 +15: /home/runner/work/Overload/Overload/test/data/library_test.dart: "RDL" finds rdl
+00:00 +16: /home/runner/work/Overload/Overload/test/data/library_test.dart: "OHP" finds ohp
+00:00 +17: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Lat pulldown" finds lat pulldown
+00:00 +18: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Hip thrust" finds hip thrust
+00:00 +19: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Reverse fly" finds reverse pec deck
+00:00 +20: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bíceps banco 45" finds incline db curl
+00:00 +21: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Shrugs" finds shrug
+00:00 +22: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Rosca martelo" finds hammer curl
+00:00 +23: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora deitado" finds leg curl
+00:00 +24: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Stiff" finds stiff
+00:00 +25: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Flexora em pé" finds standing leg curl
+00:00 +26: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Addutora" finds hip adduction
+00:00 +27: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Gemeos prensa" finds leg press calf
+00:00 +28: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora" finds leg extension
+00:00 +29: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Extensora unilateral" finds leg extension single
+00:00 +30: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Prensa" finds leg press
+00:00 +31: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Bulgarian split squats" finds bulgarian split
+00:00 +32: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Agachamento" finds squat
+00:00 +33: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Abdutora" finds hip abduction
+00:00 +34: /home/runner/work/Overload/Overload/test/data/library_test.dart: "Elevação de gémeos sentado" finds seated calf
+00:00 +35: /home/runner/work/Overload/Overload/test/data/library_test.dart: seeding refreshes built-in names but keeps user settings
+00:00 +36: /home/runner/work/Overload/Overload/test/data/library_test.dart: every library exercise has a guide with cues and a mistake
+00:01 +37: /home/runner/work/Overload/Overload/test/data/library_test.dart: seeded rows carry category, cues and the finer muscles
+00:01 +38: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: seeds the exercise library and example routines
+00:01 +39: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: seeds the exercise library and example routines
+00:01 +40: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: routines keep set types and pinned notes
+00:01 +41: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: seeding again does not duplicate exercises
+00:01 +42: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: workouts round-trip with exercises and sets in order
+00:01 +43: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: replacing a workout rewrites its sets
+00:01 +44: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: deleting a workout cascades to its sets
+00:01 +45: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: custom exercises are archived instead of deleted when used
+00:01 +46: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: exercise validation rejects empty names
+00:01 +47: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: body weight keeps one entry per day
+00:01 +48: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: profile survives a round-trip and tolerates garbage
+00:01 +49: /home/runner/work/Overload/Overload/test/data/repositories_test.dart: backup export and import restore the same data
+00:01 +50: /home/runner/work/Overload/Overload/test/data/measurements_test.dart: one value per kind and day; other kinds untouched
+00:01 +51: /home/runner/work/Overload/Overload/test/data/measurements_test.dart: one value per kind and day; other kinds untouched
+00:01 +52: /home/runner/work/Overload/Overload/test/data/measurements_test.dart: one value per kind and day; other kinds untouched
+00:01 +53: /home/runner/work/Overload/Overload/test/data/measurements_test.dart: rejects values out of range
+00:01 +54: /home/runner/work/Overload/Overload/test/data/measurements_test.dart: measurements survive a backup round trip
+00:02 +55: /home/runner/work/Overload/Overload/test/data/profile_test.dart: rest: the exercise own, else by kind of lift, else the default
+00:02 +56: /home/runner/work/Overload/Overload/test/data/profile_test.dart: new profile fields round-trip and default sensibly
+00:02 +57: /home/runner/work/Overload/Overload/test/data/profile_test.dart: the max of the rep range never goes below the min
+00:02 +58: /home/runner/work/Overload/Overload/test/services/auto_backup_test.dart: file names sort chronologically
+00:02 +59: /home/runner/work/Overload/Overload/test/services/auto_backup_test.dart: pruning keeps the newest automatic backups only
+00:02 +60: /home/runner/work/Overload/Overload/test/services/auto_backup_test.dart: due when enabled and the interval has passed
+00:02 +61: /home/runner/work/Overload/Overload/test/services/auto_backup_test.dart: config survives a JSON round trip
+00:02 +62: /home/runner/work/Overload/Overload/test/services/auto_backup_test.dart: runNow writes a restorable backup to the chosen folder
+00:03 +63: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.parseRelease collects APKs per ABI and the checksums file
+00:03 +64: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.parseRelease returns null when not newer or malformed
+00:03 +65: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.isNewer compares major, minor and patch numerically
+00:03 +66: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.isNewer equal or older is not an update
+00:03 +67: /home/runner/work/Overload/Overload/test/services/update_checker_test.dart: UpdateChecker.isNewer ignores build number and malformed versions
+00:03 +68: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: no changes, nothing to ask
+00:03 +69: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: a warm-up, a drop and a pinned note are proposed and applied
+00:03 +70: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: removed sets and exercises are listed but not selected
+00:03 +71: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: added exercises keep their place; replacements and order are opt-in
+00:03 +72: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: workouts without routine links are matched by exercise
+00:03 +73: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: describes set plans
+00:03 +74: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: superset links made in the workout can go to the routine
+00:03 +75: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: descending reps are recognised
+00:03 +76: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: an added exercise with descending reps keeps the descent
+00:03 +77: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: from a past workout pinned notes are not proposed for deletion
+00:03 +78: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: from a past workout descending reps become the routine targets when ticked
+00:03 +79: /home/runner/work/Overload/Overload/test/features/routine_sync_test.dart: from a past workout swapped exercises show as replacements, extras as additions
+00:04 +80: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +81: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +82: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +83: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +84: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +85: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +86: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: logging sets and finishing stores the workout
+00:04 +87: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: ticking an empty set uses the previous performance
+00:04 +88: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: a set without values and without hint cannot be completed
+00:04 +89: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: finishing without completed sets fails
+00:04 +90: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: second workout detects personal records
+00:04 +91: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: editing replaces the original workout
+00:04 +92: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: draft is persisted and can be decoded
+00:04 +93: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest timer can be adjusted and skipped
+00:04 +94: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: removed exercises and sets can be restored in place
+00:04 +95: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set no rest before a drop set, full rest after it
+00:04 +96: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set warm-ups get a shorter rest
+00:04 +97: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: rest after a set no rest after the last set of the workout
+00:04 +98: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: filled but unticked sets can be completed in one go
+00:04 +99: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: a routine plan carries warm-ups, drops and pinned notes
+00:05 +100: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: descending reps: each set gets its own target
+00:05 +101: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: form ratings are saved, survive the draft and come back when editing
+00:05 +102: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: generated warm-ups replace pending ones before the work sets
+00:05 +103: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: supersets are kept in the history and when repeating
+00:05 +104: /home/runner/work/Overload/Overload/test/features/inclinometer_test.dart: incline from gravity: flat, inclined, declined
+00:05 +105: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: warm-ups go before working sets, drops at the end
+00:05 +106: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: warm-ups go before working sets, drops at the end
+00:05 +107: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: warm-ups go before working sets, drops at the end
+00:05 +108: /home/runner/work/Overload/Overload/test/features/active_workout_test.dart: assisted sets use body weight minus the assistance
+00:06 +109: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: the workout card shows the plan, pinned note and load mode
+00:07 +110: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:08 +111: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:08 +111: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: finishing lists the changes to take to the routine
+══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞═════════════════════════════════════════════════════════
+The following assertion was thrown:
+ListTile background color or ink splashes may be invisible.
+The ListTile is wrapped in a DecoratedBox that has a background color. Because ListTile paints its
+background and ink splashes on the nearest Material ancestor, this DecoratedBox will hide those
+effects.
+To fix this, wrap the ListTile in its own Material widget, or remove the background color from the
+intermediate DecoratedBox.
+
+ListTile:
+  ListTile(dense: true, selectedColor: Color(alpha: 1.0000, red: 0.3843, green: 0.3569, blue: 0.4431, colorSpace: ColorSpace.sRGB), contentPadding: EdgeInsets.zero, onTap: Closure: () => void from Function '_handleValueChange@1181134056':.)
+DecoratedBox:
+  DecoratedBox(bg: BoxDecoration(color: Color(alpha: 1.0000, red: 0.9255, green: 0.9020, blue: 0.9412, colorSpace: ColorSpace.sRGB), borderRadius: BorderRadius.circular(16.0)))
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞═════════════════════════════════════════════════════════
+The following assertion was thrown:
+ListTile background color or ink splashes may be invisible.
+The ListTile is wrapped in a DecoratedBox that has a background color. Because ListTile paints its
+background and ink splashes on the nearest Material ancestor, this DecoratedBox will hide those
+effects.
+To fix this, wrap the ListTile in its own Material widget, or remove the background color from the
+intermediate DecoratedBox.
+
+ListTile:
+  ListTile(dense: true, selectedColor: Color(alpha: 1.0000, red: 0.3843, green: 0.3569, blue: 0.4431, colorSpace: ColorSpace.sRGB), contentPadding: EdgeInsets.zero, onTap: Closure: () => void from Function '_handleValueChange@1181134056':.)
+DecoratedBox:
+  DecoratedBox(bg: BoxDecoration(color: Color(alpha: 1.0000, red: 0.9255, green: 0.9020, blue: 0.9412, colorSpace: ColorSpace.sRGB), borderRadius: BorderRadius.circular(16.0)))
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞═════════════════════════════════════════════════════════
+The following assertion was thrown:
+ListTile background color or ink splashes may be invisible.
+The ListTile is wrapped in a DecoratedBox that has a background color. Because ListTile paints its
+background and ink splashes on the nearest Material ancestor, this DecoratedBox will hide those
+effects.
+To fix this, wrap the ListTile in its own Material widget, or remove the background color from the
+intermediate DecoratedBox.
+
+ListTile:
+  ListTile(dense: true, selectedColor: Color(alpha: 1.0000, red: 0.3843, green: 0.3569, blue: 0.4431, colorSpace: ColorSpace.sRGB), contentPadding: EdgeInsets.zero, onTap: Closure: () => void from Function '_handleValueChange@1181134056':.)
+DecoratedBox:
+  DecoratedBox(bg: BoxDecoration(color: Color(alpha: 1.0000, red: 0.9255, green: 0.9020, blue: 0.9412, colorSpace: ColorSpace.sRGB), borderRadius: BorderRadius.circular(16.0)))
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER FRAMEWORK ╞═════════════════════════════════════════════════════════
+The following assertion was thrown:
+ListTile background color or ink splashes may be invisible.
+The ListTile is wrapped in a DecoratedBox that has a background color. Because ListTile paints its
+background and ink splashes on the nearest Material ancestor, this DecoratedBox will hide those
+effects.
+To fix this, wrap the ListTile in its own Material widget, or remove the background color from the
+intermediate DecoratedBox.
+
+ListTile:
+  ListTile(dense: true, selectedColor: Color(alpha: 1.0000, red: 0.3843, green: 0.3569, blue: 0.4431, colorSpace: ColorSpace.sRGB), contentPadding: EdgeInsets.zero, onTap: Closure: () => void from Function '_handleValueChange@1181134056':.)
+DecoratedBox:
+  DecoratedBox(bg: BoxDecoration(color: Color(alpha: 1.0000, red: 0.9255, green: 0.9020, blue: 0.9412, colorSpace: ColorSpace.sRGB), borderRadius: BorderRadius.circular(16.0)))
+════════════════════════════════════════════════════════════════════════════════════════════════════
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: null
+  Actual: 'Multiple exceptions (4) were detected during the running of the current test, and at
+least one was unexpected.'
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart:190:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:192:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1953:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart line 190
+The test description was:
+  finishing lists the changes to take to the routine
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:08 +111 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:08 +111 -1: /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: finishing lists the changes to take to the routine [E]
+  Test failed. See exception logs above.
+  The test description was: finishing lists the changes to take to the routine
+  
+00:09 +112 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +113 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +114 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +115 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +116 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +117 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +118 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:09 +119 -1: /home/runner/work/Overload/Overload/test/features/navigation_test.dart: swiping horizontally changes tab and keeps the nav bar in sync
+00:10 +120 -1: /home/runner/work/Overload/Overload/test/domain/warmup_test.dart: heavy barbell lift: empty bar, then 40 / 60 / 80 %
+00:10 +121 -1: /home/runner/work/Overload/Overload/test/domain/warmup_test.dart: steps are rounded to loadable weights and never repeat
+00:10 +122 -1: /home/runner/work/Overload/Overload/test/domain/warmup_test.dart: compound with dumbbells: two steps, 2 kg increments
+00:10 +123 -1: /home/runner/work/Overload/Overload/test/domain/warmup_test.dart: isolation: one light set
+00:10 +124 -1: /home/runner/work/Overload/Overload/test/domain/warmup_test.dart: nothing to warm up with tiny loads or without load
+00:10 +125 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max single rep is the weight itself
+00:10 +126 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max Epley estimate and inverse agree
+00:10 +127 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max reps are capped for very high rep sets
+00:10 +128 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max invalid input yields zero
+00:10 +129 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: one rep max plate calculator loads greedily and reports remainder
+00:10 +130 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score interpolates between thresholds
+00:10 +131 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks score is capped at the top tier
+00:10 +132 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks best working set defines the group rank
+00:10 +133 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks warm-up sets do not count
+00:10 +134 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks female standards are lower
+00:10 +135 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks divisions and next label
+00:10 +136 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: ranks overall is the mean of all groups
+00:10 +137 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression levels accumulate xp
+00:10 +138 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression xp rewards sets, time and records
+00:10 +139 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression week starts on monday
+00:10 +140 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression streak counts consecutive weeks meeting the goal
+00:10 +141 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression a missed week breaks the streak
+00:10 +142 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: progression several workouts on one day count as one day
+00:10 +143 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records first time doing an exercise is not a record
+00:10 +144 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records detects improved weight, e1rm and volume
+00:10 +145 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records more reps at lower weight can be an e1rm record only
+00:10 +146 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records body-weight exercises track reps
+00:10 +147 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: records counts record breaks chronologically
+00:10 +148 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats weekly buckets include empty weeks
+00:10 +149 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats progress series is oldest first
+00:10 +150 -1: /home/runner/work/Overload/Overload/test/domain/domain_test.dart: stats volume excludes warm-ups
+00:11 +151 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: plannedTargets equal reps by default
+00:11 +152 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: plannedTargets descending reps drop on main sets only
+00:11 +153 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: plannedTargets never below one rep
+00:11 +154 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: plannedTargets describeTargets shows the descent
+00:11 +155 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression first time: the routine targets, set by set
+00:11 +156 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression descending reps: each set aims at its own target, not the first
+00:11 +157 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression descending reps all hit: more load, same descent
+00:11 +158 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression a miss aims one rep higher, capped at the target
+00:11 +159 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression warm-ups and drops get no suggestion
+00:11 +160 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression without targets (free workout): one more rep than last time
+00:11 +161 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression extra sets today follow the last set of last time
+00:11 +162 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression dumbbells go up 2 kg, kettlebells 4 kg, pounds 5 lb
+00:11 +163 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression assisted exercises progress with less assistance
+00:11 +164 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression pure body weight progresses in reps
+00:11 +165 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: suggestProgression duration progresses in seconds
+00:11 +166 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form one bad day changes nothing: same load, aim for the targets
+00:11 +167 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form worse two sessions in a row: one step less load
+00:11 +168 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form no progress in three sessions: deload about 10 %
+00:11 +169 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form never lowers again right after the load went down
+00:11 +170 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form bad form: no more load even with every target hit
+00:11 +171 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form bad form twice: one step less load
+00:11 +172 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: regression and form good form and targets hit: more load
+00:11 +173 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: rep range (no routine targets) climbs one rep at a time up to the top
+00:11 +174 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: rep range (no routine targets) top of the range in every set: more load, back to the bottom
+00:11 +175 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: rep range (no routine targets) routine targets win over the range
+00:11 +176 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: rep range (no routine targets) defaults: user range, else 12–20 for high-rep, else general
+00:11 +177 -1: /home/runner/work/Overload/Overload/test/domain/overload_test.dart: recentSessions prefers the same routine and keeps the form
+00:11 +178 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: groups consecutive linked exercises
+00:11 +179 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: a link on the last exercise is ignored
+00:11 +180 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: letters
+00:11 +181 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: rest inside a superset no rest when handing over to the next exercise
+00:11 +182 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: rest inside a superset normal rest after the last exercise of the superset
+00:11 +183 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: rest inside a superset normal rest when the next exercise has nothing left
+00:11 +184 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: rest inside a superset warm-ups keep their short rest
+00:11 +185 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: tips show on the current exercise first exercise, and the next once the previous is complete
+00:11 +186 -1: /home/runner/work/Overload/Overload/test/domain/superset_test.dart: tips show on the current exercise a superset shows all its exercises at once
+00:11 +187 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder fires at 18h on the last day the goal can still be met
+00:11 +188 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder once the goal is met
+00:11 +189 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder no reminder when the last chance already passed
+00:11 +190 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: streak reminder mentions the streak at stake
+00:11 +191 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: unfinished workout reminder waits at least 3 hours from the start
+00:11 +192 -1: /home/runner/work/Overload/Overload/test/domain/reminders_test.dart: live notification shows progress and the next set
+00:11 +193 -1: Some tests failed.
+
+Failing tests:
+  /home/runner/work/Overload/Overload/test/features/routine_flow_widget_test.dart: finishing lists the changes to take to the routine
+exit=1
